@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "./use-auth";
 import { useResendCooldown } from "./use-resend-cooldown";
 
@@ -10,6 +10,20 @@ export function useRegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const urlEmail = params.get("email");
+      const urlSent = params.get("sent");
+      if (urlEmail) {
+        setEmail(urlEmail);
+      }
+      if (urlSent === "true" && urlEmail) {
+        setIsSuccess(true);
+      }
+    }
+  }, []);
 
   const {
     handleSignUpEmail,
@@ -37,6 +51,10 @@ export function useRegisterForm() {
     if (success) {
       setIsSuccess(true);
       startCooldown(60);
+      if (typeof window !== "undefined") {
+        const newUrl = `${window.location.pathname}?sent=true&email=${encodeURIComponent(email)}`;
+        window.history.pushState({ path: newUrl }, "", newUrl);
+      }
     }
   };
 

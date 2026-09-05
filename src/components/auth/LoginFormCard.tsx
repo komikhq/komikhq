@@ -1,25 +1,28 @@
-import React, { useState } from "react";
-import { Lock, EnvelopeSimple, GoogleLogo, ArrowRight, Eye, EyeSlash } from "@phosphor-icons/react";
+import React from "react";
+import { Lock, EnvelopeSimple, GoogleLogo, ArrowRight, Eye, EyeSlash, PaperPlaneRight, ArrowClockwise } from "@phosphor-icons/react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { useAuth } from "@/hooks/use-auth";
+import { useLoginForm } from "@/hooks/use-login-form";
 
 export function LoginFormCard() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-
-  const { handleSignInEmail, handleSignInGoogle, isLoading, authError } = useAuth();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const success = await handleSignInEmail(email, password);
-    if (success) {
-      window.location.href = "/account";
-    }
-  };
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    showPassword,
+    setShowPassword,
+    isUnverified,
+    isLoading,
+    authError,
+    cooldownSeconds,
+    isCooldownActive,
+    handleSubmit,
+    handleResendUnverified,
+    handleSignInGoogle,
+  } = useLoginForm();
 
   return (
     <TooltipProvider>
@@ -35,6 +38,32 @@ export function LoginFormCard() {
             {authError && (
               <div className="p-3 text-xs rounded-md border border-destructive/50 bg-destructive/10 text-destructive">
                 {authError}
+              </div>
+            )}
+
+            {isUnverified && (
+              <div className="p-4 rounded-lg border border-amber-500/30 bg-amber-500/10 text-amber-500 space-y-2 text-xs">
+                <div className="flex items-center gap-2 font-semibold text-amber-600 dark:text-amber-400">
+                  <PaperPlaneRight className="h-4 w-4" />
+                  <span>Email Belum Diverifikasi</span>
+                </div>
+                <p className="text-muted-foreground leading-relaxed">
+                  Akun Anda belum aktif karena email belum diverifikasi. Silakan periksa email Anda atau minta kirim ulang tautan verifikasi.
+                </p>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  className="w-full h-8 text-xs font-semibold flex items-center justify-center gap-1.5 mt-1"
+                  onClick={handleResendUnverified}
+                  disabled={isCooldownActive || isLoading}
+                >
+                  <ArrowClockwise className={`h-3.5 w-3.5 ${isLoading ? "animate-spin" : ""}`} />
+                  <span>
+                    {isCooldownActive
+                      ? `Kirim Ulang dalam ${cooldownSeconds}s`
+                      : "Kirim Ulang Email Verifikasi"}
+                  </span>
+                </Button>
               </div>
             )}
 
