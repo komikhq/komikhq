@@ -1,38 +1,34 @@
-import React, { useState } from "react";
-import { Lock, EnvelopeSimple, User, GoogleLogo, ArrowRight, Eye, EyeSlash, PaperPlaneRight } from "@phosphor-icons/react";
+import React from "react";
+import { Lock, EnvelopeSimple, User, GoogleLogo, ArrowRight, Eye, EyeSlash, PaperPlaneRight, ArrowClockwise } from "@phosphor-icons/react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { useAuth } from "@/hooks/use-auth";
+import { useRegisterForm } from "@/hooks/use-register-form";
 
 export function RegisterFormCard() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-
-  const { handleSignUpEmail, handleSignInGoogle, isLoading, authError, setAuthError } = useAuth();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password !== confirmPassword) {
-      setAuthError("Konfirmasi kata sandi tidak cocok.");
-      return;
-    }
-    if (password.length < 8) {
-      setAuthError("Kata sandi minimal 8 karakter.");
-      return;
-    }
-
-    const success = await handleSignUpEmail(name, email, password);
-    if (success) {
-      setIsSuccess(true);
-    }
-  };
+  const {
+    name,
+    setName,
+    email,
+    setEmail,
+    password,
+    setPassword,
+    confirmPassword,
+    setConfirmPassword,
+    showPassword,
+    setShowPassword,
+    showConfirmPassword,
+    setShowConfirmPassword,
+    isSuccess,
+    isLoading,
+    authError,
+    cooldownSeconds,
+    isCooldownActive,
+    handleSubmit,
+    handleResend,
+    handleSignInGoogle,
+  } = useRegisterForm();
 
   return (
     <TooltipProvider>
@@ -52,11 +48,28 @@ export function RegisterFormCard() {
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   Kami telah mengirimkan tautan verifikasi ke <strong className="text-foreground">{email}</strong>. Silakan periksa kotak masuk dan lakukan verifikasi untuk mengaktifkan akun.
                 </p>
-                <a href="/login">
-                  <Button variant="outline" className="w-full mt-2">
-                    Kembali ke Halaman Masuk
+                <div className="space-y-2 pt-2">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    className="w-full text-xs font-semibold flex items-center justify-center gap-1.5"
+                    onClick={handleResend}
+                    disabled={isCooldownActive || isLoading}
+                  >
+                    <ArrowClockwise className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
+                    <span>
+                      {isCooldownActive
+                        ? `Kirim Ulang dalam ${cooldownSeconds}s`
+                        : "Kirim Ulang Email Verifikasi"}
+                    </span>
                   </Button>
-                </a>
+
+                  <a href="/login" className="block">
+                    <Button variant="outline" className="w-full">
+                      Kembali ke Halaman Masuk
+                    </Button>
+                  </a>
+                </div>
               </div>
             ) : (
               <>

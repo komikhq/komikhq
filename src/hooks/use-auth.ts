@@ -13,6 +13,7 @@ export interface UseAuthReturn {
   handleSignInEmail: (email: string, password: string) => Promise<boolean>;
   handleSignInGoogle: () => Promise<void>;
   handleSignUpEmail: (name: string, email: string, password: string) => Promise<boolean>;
+  handleSendVerificationEmail: (email: string) => Promise<boolean>;
   handleSignOut: () => Promise<void>;
   refetch: () => Promise<any>;
 }
@@ -120,6 +121,34 @@ export function useAuth(): UseAuthReturn {
     }
   };
 
+  const handleSendVerificationEmail = async (email: string): Promise<boolean> => {
+    setIsLoading(true);
+    setAuthError(null);
+    try {
+      const { error: err } = await authClient.sendVerificationEmail({
+        email,
+        callbackURL: window.location.origin + "/verify-email",
+      });
+
+      if (err) {
+        const msg = err.message || "Gagal mengirim ulang email verifikasi.";
+        setAuthError(msg);
+        toast.error(msg);
+        return false;
+      }
+
+      toast.success(`Email verifikasi baru telah dikirim ke ${email}`);
+      return true;
+    } catch (e: any) {
+      const msg = e.message || "Terjadi kesalahan saat mengirim ulang email verifikasi.";
+      setAuthError(msg);
+      toast.error(msg);
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleSignOut = async (): Promise<void> => {
     setIsLoading(true);
     try {
@@ -147,6 +176,7 @@ export function useAuth(): UseAuthReturn {
     handleSignInEmail,
     handleSignInGoogle,
     handleSignUpEmail,
+    handleSendVerificationEmail,
     handleSignOut,
     refetch,
   };
