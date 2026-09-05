@@ -19,7 +19,7 @@ export async function apiFetch<T = any>(
   const fullUrl = `${baseUrl}${cleanPath}`;
 
   // 1. Server-Side Astro (SSR/SSG) Service Binding Execution
-  const serviceBinding = astroLocals?.runtime?.env?.HONO_API;
+  const serviceBinding = astroLocals?.runtime?.env?.BACKEND;
   if (serviceBinding && typeof serviceBinding.fetch === "function") {
     const request = new Request(fullUrl, {
       ...options,
