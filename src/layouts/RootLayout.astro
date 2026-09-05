@@ -1,5 +1,6 @@
 ---
 import "@/styles/global.css";
+import { ClientRouter } from "astro:transitions";
 import { SiteHeader } from "@/components/common/SiteHeader";
 import { BottomNav } from "@/components/common/BottomNav";
 import { SITE_NAME, SITE_DESCRIPTION } from "@/constants";
@@ -21,6 +22,7 @@ const { title = SITE_NAME, description = SITE_DESCRIPTION } = Astro.props;
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <ClientRouter />
 
     <script is:inline>
       (function () {

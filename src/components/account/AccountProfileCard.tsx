@@ -11,17 +11,29 @@ export function AccountProfileCard() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
 
-  if (isPending) {
+  if (isPending && !user) {
     return (
       <Card>
-        <CardContent className="p-6">
-          <p className="text-sm text-muted-foreground animate-pulse">Memuat profil akun...</p>
+        <CardHeader className="flex flex-row items-center justify-between pb-4">
+          <div className="space-y-2">
+            <div className="h-6 w-36 bg-muted animate-pulse rounded" />
+            <div className="h-4 w-60 bg-muted animate-pulse rounded" />
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col sm:flex-row items-center gap-6 p-4 border rounded-lg bg-card/50">
+            <div className="h-24 w-24 rounded-full bg-muted animate-pulse" />
+            <div className="space-y-2 text-center sm:text-left w-full">
+              <div className="h-5 w-40 bg-muted animate-pulse rounded mx-auto sm:mx-0" />
+              <div className="h-4 w-48 bg-muted animate-pulse rounded mx-auto sm:mx-0" />
+            </div>
+          </div>
         </CardContent>
       </Card>
     );
   }
 
-  if (!isAuthenticated || !user) {
+  if (!user) {
     return (
       <Card className="text-center p-6 space-y-4">
         <WarningCircle className="h-12 w-12 text-destructive mx-auto" />

@@ -122,11 +122,16 @@
   * {
     @apply border-border outline-ring/50;
     }
+  html {
+    @apply font-sans;
+    scrollbar-gutter: stable;
+    }
   body {
     @apply bg-background text-foreground;
     }
-  html {
-    @apply font-sans;
+  body[data-scroll-locked] {
+    padding-right: 0px !important;
+    overflow: hidden !important;
     }
   button:not(:disabled), [role="button"]:not(:disabled) {
     cursor: pointer;

@@ -12,9 +12,10 @@ export function AuthGuard({ children, redirectTo = "/login" }: AuthGuardProps) {
 
   if (isPending) {
     return (
-      <Card className="max-w-4xl mx-auto my-6">
-        <CardContent className="p-8 text-center">
-          <p className="text-sm text-muted-foreground animate-pulse">
+      <Card className="w-full">
+        <CardContent className="p-8 text-center space-y-3">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent mx-auto" />
+          <p className="text-sm text-muted-foreground">
             Memeriksa sesi otentikasi...
           </p>
         </CardContent>
@@ -24,9 +25,9 @@ export function AuthGuard({ children, redirectTo = "/login" }: AuthGuardProps) {
 
   if (!isAuthenticated) {
     return (
-      <Card className="max-w-4xl mx-auto my-6">
-        <CardContent className="p-8 text-center">
-          <p className="text-sm text-muted-foreground animate-pulse">
+      <Card className="w-full">
+        <CardContent className="p-8 text-center space-y-3">
+          <p className="text-sm text-muted-foreground">
             Mengalihkan ke halaman masuk...
           </p>
         </CardContent>
@@ -34,5 +35,5 @@ export function AuthGuard({ children, redirectTo = "/login" }: AuthGuardProps) {
     );
   }
 
-  return <>{children}</>;
+  return <div className="space-y-6 w-full">{children}</div>;
 }
