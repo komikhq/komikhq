@@ -41,7 +41,11 @@ export function useAuth() {
       await authClient.signIn.social({
         provider: "google",
         callbackURL: window.location.origin + "/account",
-      });
+        newUserCallbackURL: window.location.origin + "/account",
+        authParams: {
+          prompt: "select_account consent",
+        },
+      } as any);
     } catch (e: any) {
       setAuthError(e.message || "Gagal menghubungkan dengan Google OAuth.");
       setIsLoading(false);
