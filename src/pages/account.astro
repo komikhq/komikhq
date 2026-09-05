@@ -1,5 +1,6 @@
 ---
 import RootLayout from "@/layouts/RootLayout.astro";
+import { AuthGuard } from "@/components/auth/AuthGuard";
 import { AccountProfileCard } from "@/components/account/AccountProfileCard";
 import { AccountIdentityCard } from "@/components/account/AccountIdentityCard";
 import { AccountThemeCard } from "@/components/account/AccountThemeCard";
@@ -7,8 +8,10 @@ import { AccountThemeCard } from "@/components/account/AccountThemeCard";
 
 <RootLayout title="Profil Saya - KomikHQ">
   <div class="max-w-4xl mx-auto space-y-6 pb-20 pt-4 px-4">
-    <AccountProfileCard client:load />
-    <AccountIdentityCard client:load />
-    <AccountThemeCard client:load />
+    <AuthGuard client:only="react">
+      <AccountProfileCard />
+      <AccountIdentityCard />
+      <AccountThemeCard />
+    </AuthGuard>
   </div>
 </RootLayout>

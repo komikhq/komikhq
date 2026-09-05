@@ -2,6 +2,7 @@ export const API_PREFIX = "/v1";
 
 export const API_ROUTES = {
   AUTH: {
+    BASE: `${API_PREFIX}/auth`,
     SIGN_IN_EMAIL: `${API_PREFIX}/auth/sign-in/email`,
     SIGN_UP_EMAIL: `${API_PREFIX}/auth/sign-up/email`,
     SIGN_IN_GOOGLE: `${API_PREFIX}/auth/sign-in/social?provider=google`,

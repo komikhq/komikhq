@@ -3,11 +3,11 @@ import { UploadSimple, WarningCircle } from "@phosphor-icons/react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useAuth } from "@/hooks/use-auth";
+import { useRequireAuth } from "@/hooks/use-require-auth";
 import { API_ROUTES } from "@/constants/api-routes";
 
 export function AccountProfileCard() {
-  const { user, isPending, isAuthenticated, handleSignOut, refetch } = useAuth();
+  const { user, isPending, isAuthenticated, handleSignOut, refetch } = useRequireAuth("/login");
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
 
@@ -25,7 +25,7 @@ export function AccountProfileCard() {
     return (
       <Card className="text-center p-6 space-y-4">
         <WarningCircle className="h-12 w-12 text-destructive mx-auto" />
-        <h2 className="text-xl font-bold">Belum Masuk</h2>
+        <h2 className="text-xl font-bold">Mengalihkan...</h2>
         <p className="text-sm text-muted-foreground">Silakan masuk ke akun Anda terlebih dahulu.</p>
         <a href="/login">
           <Button className="w-full">Masuk Sekarang</Button>
