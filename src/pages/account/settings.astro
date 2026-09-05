@@ -2,12 +2,13 @@
 import RootLayout from "@/layouts/RootLayout.astro";
 import { AuthGuard } from "@/components/auth/AuthGuard";
 import { AccountTabNav } from "@/components/account/AccountTabNav";
-import { AccountProfileCard } from "@/components/account/AccountProfileCard";
-import { AccountIdentityCard } from "@/components/account/AccountIdentityCard";
+import { AccountThemeCard } from "@/components/account/AccountThemeCard";
+import { AccountPreferencesCard } from "@/components/account/AccountPreferencesCard";
+import { AccountDangerZoneCard } from "@/components/account/AccountDangerZoneCard";
 import { UserCircle } from "@phosphor-icons/react";
 ---
 
-<RootLayout title="Profil Saya - KomikHQ">
+<RootLayout title="Pengaturan Akun - KomikHQ">
   <div class="max-w-4xl mx-auto space-y-6 pb-20 pt-4 px-4">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
@@ -20,12 +21,15 @@ import { UserCircle } from "@phosphor-icons/react";
         </p>
       </div>
 
-      <AccountTabNav currentTab="profile" client:load />
+      <AccountTabNav currentTab="settings" client:load />
     </div>
 
     <AuthGuard client:only="react">
-      <AccountProfileCard />
-      <AccountIdentityCard />
+      <div class="space-y-6">
+        <AccountThemeCard client:load />
+        <AccountPreferencesCard client:load />
+        <AccountDangerZoneCard client:load />
+      </div>
     </AuthGuard>
   </div>
 </RootLayout>
