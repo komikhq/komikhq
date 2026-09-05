@@ -35,5 +35,5 @@ export function AuthGuard({ children, redirectTo = "/login" }: AuthGuardProps) {
     );
   }
 
-  return <div className="space-y-6 w-full">{children}</div>;
+  return <div className="flex flex-col gap-6 w-full">{children}</div>;
 }

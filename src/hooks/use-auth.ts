@@ -1,7 +1,22 @@
 import { useState } from "react";
 import { authClient, useSession } from "@/lib/auth-client";
 
-export function useAuth() {
+export interface UseAuthReturn {
+  user: any;
+  session: any;
+  isPending: boolean;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  authError: string | null;
+  setAuthError: (err: string | null) => void;
+  handleSignInEmail: (email: string, password: string) => Promise<boolean>;
+  handleSignInGoogle: () => Promise<void>;
+  handleSignUpEmail: (name: string, email: string, password: string) => Promise<boolean>;
+  handleSignOut: () => Promise<void>;
+  refetch: () => Promise<any>;
+}
+
+export function useAuth(): UseAuthReturn {
   const { data: sessionData, isPending, refetch } = useSession();
   const [authError, setAuthError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -90,7 +105,7 @@ export function useAuth() {
     }
   };
 
-  const handleSignOut = async () => {
+  const handleSignOut = async (): Promise<void> => {
     setIsLoading(true);
     try {
       await authClient.signOut();
