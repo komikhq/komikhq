@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "./use-auth";
+import { useGuestOnly } from "./use-guest-only";
 import { useResendCooldown } from "./use-resend-cooldown";
 
 export function useRegisterForm() {
+  useGuestOnly("/account");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
