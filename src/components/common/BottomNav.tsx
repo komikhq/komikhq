@@ -32,7 +32,7 @@ export function BottomNav() {
             const isActive = currentPath === item.href;
             return (
               <Tooltip key={item.href}>
-                <TooltipTrigger>
+                <TooltipTrigger asChild>
                   <a
                     href={item.href}
                     className={`flex flex-col items-center justify-center gap-1 w-full h-full py-1 text-xs transition-colors ${

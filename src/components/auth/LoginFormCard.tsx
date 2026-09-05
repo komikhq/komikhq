@@ -82,7 +82,7 @@ export function LoginFormCard() {
                     required
                   />
                   <Tooltip>
-                    <TooltipTrigger>
+                    <TooltipTrigger asChild>
                       <Button
                         type="button"
                         variant="ghost"

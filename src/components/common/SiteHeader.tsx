@@ -41,7 +41,7 @@ export function SiteHeader() {
         <div className="container flex h-14 max-w-screen-2xl items-center justify-between gap-4 px-4 mx-auto">
           <div className="flex items-center gap-6">
             <Tooltip>
-              <TooltipTrigger>
+              <TooltipTrigger asChild>
                 <a
                   href="/"
                   aria-label={SITE_NAME}
@@ -58,7 +58,7 @@ export function SiteHeader() {
                 const IconComponent = HEADER_NAV_ICONS[item.iconName];
                 return (
                   <Tooltip key={item.href}>
-                    <TooltipTrigger>
+                    <TooltipTrigger asChild>
                       <a
                         href={item.href}
                         className="flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-foreground"
@@ -104,7 +104,7 @@ export function SiteHeader() {
               </div>
             ) : (
               <Tooltip>
-                <TooltipTrigger>
+                <TooltipTrigger asChild>
                   <Button className="hidden md:inline-flex" onClick={() => (window.location.href = "/login")}>
                     <SignIn className="h-4 w-4 mr-1.5" />
                     <span>Masuk</span>
