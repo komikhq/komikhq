@@ -4,6 +4,7 @@ import { AuthGuard } from "@/components/auth/AuthGuard";
 import { AccountTabNav } from "@/components/account/AccountTabNav";
 import { AccountThemeCard } from "@/components/account/AccountThemeCard";
 import { AccountPreferencesCard } from "@/components/account/AccountPreferencesCard";
+import { AccountPasswordCard } from "@/components/account/AccountPasswordCard";
 import { AccountDangerZoneCard } from "@/components/account/AccountDangerZoneCard";
 import { UserCircle } from "@phosphor-icons/react";
 ---
@@ -28,6 +29,7 @@ import { UserCircle } from "@phosphor-icons/react";
       <div class="flex flex-col gap-6">
         <AccountThemeCard client:load />
         <AccountPreferencesCard client:load />
+        <AccountPasswordCard client:load />
         <AccountDangerZoneCard client:load />
       </div>
     </AuthGuard>
