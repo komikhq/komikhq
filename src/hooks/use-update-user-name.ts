@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 
 export function useUpdateUserName() {
@@ -20,7 +21,9 @@ export function useUpdateUserName() {
 
   const saveName = useCallback(async (): Promise<boolean> => {
     if (!editedName.trim()) {
-      setErrorMsg("Nama tidak boleh kosong.");
+      const msg = "Nama tidak boleh kosong.";
+      setErrorMsg(msg);
+      toast.error(msg);
       return false;
     }
     setIsSavingName(true);
@@ -30,14 +33,19 @@ export function useUpdateUserName() {
         name: editedName.trim(),
       });
       if (res.error) {
-        setErrorMsg(res.error.message || "Gagal memperbarui nama profil.");
+        const msg = res.error.message || "Gagal memperbarui nama profil.";
+        setErrorMsg(msg);
+        toast.error(msg);
         return false;
       } else {
+        toast.success("Nama profil berhasil diperbarui!");
         setIsEditingName(false);
         return true;
       }
     } catch (err: any) {
-      setErrorMsg(err?.message || "Terjadi kesalahan saat memperbarui nama.");
+      const msg = err?.message || "Terjadi kesalahan saat memperbarui nama.";
+      setErrorMsg(msg);
+      toast.error(msg);
       return false;
     } finally {
       setIsSavingName(false);

@@ -1,4 +1,5 @@
 import React from "react";
+import { toast } from "sonner";
 import { Sun, Moon, Desktop } from "@phosphor-icons/react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,6 +7,11 @@ import { useTheme, type Theme } from "@/hooks/use-theme";
 
 export function AccountThemeCard() {
   const { theme, setTheme, mounted } = useTheme();
+
+  const handleSelectTheme = (newTheme: Theme, label: string) => {
+    setTheme(newTheme);
+    toast.info(`Tema aplikasi diubah ke: ${label}`);
+  };
 
   const themeOptions: { value: Theme; label: string; icon: React.ReactNode }[] = [
     { value: "light", label: "Terang", icon: <Sun className="h-4 w-4" /> },
@@ -30,7 +36,7 @@ export function AccountThemeCard() {
                 variant={isActive ? "default" : "outline"}
                 size="sm"
                 className="flex items-center justify-center gap-2 w-full"
-                onClick={() => setTheme(opt.value)}
+                onClick={() => handleSelectTheme(opt.value, opt.label)}
               >
                 {opt.icon}
                 <span>{opt.label}</span>

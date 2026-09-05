@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 import { API_ROUTES } from "@/constants/api-routes";
 import { getBaseApiUrl } from "@/lib/api-client";
@@ -39,10 +40,12 @@ export function useUploadAvatar() {
         image: finalUrl,
       });
 
+      toast.success("Foto profil berhasil diperbarui!");
       return finalUrl;
     } catch (err: any) {
       const message = err?.message || "Terjadi kesalahan saat mengunggah foto profil.";
       setUploadError(message);
+      toast.error(message);
       throw err;
     } finally {
       setIsUploading(false);

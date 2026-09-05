@@ -3,6 +3,7 @@ import "@/styles/global.css";
 import { ClientRouter } from "astro:transitions";
 import { SiteHeader } from "@/components/common/SiteHeader";
 import { BottomNav } from "@/components/common/BottomNav";
+import { Toaster } from "@/components/ui/sonner";
 import { SITE_NAME, SITE_DESCRIPTION } from "@/constants";
 
 interface Props {
@@ -49,6 +50,7 @@ const { title = SITE_NAME, description = SITE_DESCRIPTION } = Astro.props;
         <slot />
       </main>
       <BottomNav client:load />
+      <Toaster client:load position="top-right" richColors />
     </div>
   </body>
 </html>

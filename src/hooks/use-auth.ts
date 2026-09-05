@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "sonner";
 import { authClient, useSession } from "@/lib/auth-client";
 
 export interface UseAuthReturn {
@@ -43,14 +44,19 @@ export function useAuth(): UseAuthReturn {
       });
 
       if (err) {
-        setAuthError(err.message || "Gagal masuk. Periksa email dan kata sandi Anda.");
+        const msg = err.message || "Gagal masuk. Periksa email dan kata sandi Anda.";
+        setAuthError(msg);
+        toast.error(msg);
         return false;
       }
 
+      toast.success("Berhasil masuk akun!");
       await refetch();
       return true;
     } catch (e: any) {
-      setAuthError(e.message || "Terjadi kesalahan saat masuk.");
+      const msg = e.message || "Terjadi kesalahan saat masuk.";
+      setAuthError(msg);
+      toast.error(msg);
       return false;
     } finally {
       setIsLoading(false);
@@ -70,7 +76,9 @@ export function useAuth(): UseAuthReturn {
         },
       } as any);
     } catch (e: any) {
-      setAuthError(e.message || "Gagal menghubungkan dengan Google OAuth.");
+      const msg = e.message || "Gagal menghubungkan dengan Google OAuth.";
+      setAuthError(msg);
+      toast.error(msg);
       setIsLoading(false);
     }
   };
@@ -91,14 +99,19 @@ export function useAuth(): UseAuthReturn {
       });
 
       if (err) {
-        setAuthError(err.message || "Gagal membuat akun baru.");
+        const msg = err.message || "Gagal membuat akun baru.";
+        setAuthError(msg);
+        toast.error(msg);
         return false;
       }
 
+      toast.success("Akun berhasil dibuat!");
       await refetch();
       return true;
     } catch (e: any) {
-      setAuthError(e.message || "Terjadi kesalahan saat mendaftar.");
+      const msg = e.message || "Terjadi kesalahan saat mendaftar.";
+      setAuthError(msg);
+      toast.error(msg);
       return false;
     } finally {
       setIsLoading(false);
@@ -110,9 +123,12 @@ export function useAuth(): UseAuthReturn {
     try {
       await authClient.signOut();
       await refetch();
+      toast.success("Berhasil keluar dari akun.");
       window.location.href = "/login";
     } catch (e: any) {
-      setAuthError(e.message || "Gagal keluar.");
+      const msg = e.message || "Gagal keluar.";
+      setAuthError(msg);
+      toast.error(msg);
     } finally {
       setIsLoading(false);
     }

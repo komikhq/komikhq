@@ -46,8 +46,8 @@ export function BrowseComicGrid() {
         {isLoading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
             {Array.from({ length: 10 }).map((_, i) => (
-              <div key={i} className="space-y-2">
-                <div className="aspect-[3/4] bg-muted animate-pulse rounded-md" />
+              <div key={i} className="flex flex-col space-y-2 border rounded-lg p-2 bg-card">
+                <div className="aspect-[3/4] overflow-hidden rounded-md bg-muted animate-pulse" />
                 <div className="h-4 bg-muted animate-pulse rounded w-3/4" />
                 <div className="h-3 bg-muted animate-pulse rounded w-1/2" />
               </div>
