@@ -9,7 +9,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { SITE_NAME, SITE_DESCRIPTION, COMMON_GENRES, TOP_GENRES_LIMIT, type GenreDefinition } from "@/constants";
+import { SITE_NAME, SITE_DESCRIPTION, COMMON_GENRES, TOP_GENRES_LIMIT, API_ROUTES, type GenreDefinition } from "@/constants";
 import { apiFetch } from "@/lib/api-client";
 import { useRealtimeViewers } from "@/hooks/use-realtime-viewers";
 
@@ -25,7 +25,7 @@ export function HomeContent() {
     let isMounted = true;
     setIsLoading(true);
 
-    apiFetch(`/v1/comics/trending?period=${period}`)
+    apiFetch(API_ROUTES.COMICS.TRENDING(period))
       .then((data) => {
         if (isMounted) {
           setTrendingComics(data.comics || []);
