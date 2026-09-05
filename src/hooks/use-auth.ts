@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { authClient, useSession } from "@/lib/auth-client";
+import { authClient, useSession, sendVerificationEmail } from "@/lib/auth-client";
 
 export interface UseAuthReturn {
   user: any;
@@ -121,12 +121,12 @@ export function useAuth(): UseAuthReturn {
     }
   };
 
-  const handleSendVerificationEmail = async (email: string): Promise<boolean> => {
+  const handleSendVerificationEmail = async (emailToVerify: string): Promise<boolean> => {
     setIsLoading(true);
     setAuthError(null);
     try {
-      const { error: err } = await authClient.sendVerificationEmail({
-        email,
+      const { error: err } = await sendVerificationEmail({
+        email: emailToVerify,
         callbackURL: window.location.origin + "/verify-email",
       });
 
@@ -137,7 +137,7 @@ export function useAuth(): UseAuthReturn {
         return false;
       }
 
-      toast.success(`Email verifikasi baru telah dikirim ke ${email}`);
+      toast.success(`Email verifikasi baru telah dikirim ke ${emailToVerify}`);
       return true;
     } catch (e: any) {
       const msg = e.message || "Terjadi kesalahan saat mengirim ulang email verifikasi.";
