@@ -27,15 +27,38 @@ const { title = SITE_NAME, description = SITE_DESCRIPTION } = Astro.props;
 
     <script is:inline>
       (function () {
-        try {
-          var stored = localStorage.getItem("theme");
-          var supportDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-          if (stored === "dark" || (!stored && supportDark) || (stored === "system" && supportDark)) {
-            document.documentElement.classList.add("dark");
-          } else {
-            document.documentElement.classList.remove("dark");
+        function getTheme() {
+          try {
+            var stored = localStorage.getItem("theme");
+            var supportDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+            if (stored === "dark" || (!stored && supportDark) || (stored === "system" && supportDark)) {
+              return "dark";
+            }
+            return "light";
+          } catch (e) {
+            return "dark";
           }
-        } catch (e) {}
+        }
+
+        function applyTheme(doc) {
+          var targetDoc = doc || document;
+          var theme = getTheme();
+          if (theme === "dark") {
+            targetDoc.documentElement.classList.add("dark");
+          } else {
+            targetDoc.documentElement.classList.remove("dark");
+          }
+        }
+
+        applyTheme();
+
+        document.addEventListener("astro:before-swap", function (ev) {
+          applyTheme(ev.newDocument);
+        });
+
+        document.addEventListener("astro:after-swap", function () {
+          applyTheme();
+        });
       })();
     </script>
 
