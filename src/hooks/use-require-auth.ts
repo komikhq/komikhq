@@ -8,7 +8,7 @@ export function useRequireAuth(redirectTo: string = "/login") {
   useEffect(() => {
     if (!isPending && !isAuthenticated) {
       if (typeof window !== "undefined") {
-        window.location.href = redirectTo;
+        window.location.replace(redirectTo);
       }
     }
   }, [isPending, isAuthenticated, redirectTo]);

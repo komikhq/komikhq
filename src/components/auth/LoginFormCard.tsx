@@ -24,7 +24,7 @@ export function LoginFormCard() {
   return (
     <TooltipProvider>
       <div className="flex min-h-[calc(100vh-8rem)] items-center justify-center p-4">
-        <Card className="w-full sm:w-[85%] md:w-[42%] max-w-lg mx-auto">
+        <Card className="w-full max-w-[440px] mx-auto">
           <CardHeader className="text-center pb-4">
             <CardTitle className="text-2xl font-bold">Masuk ke KomikHQ</CardTitle>
             <CardDescription>

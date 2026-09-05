@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 export function VerifyEmailCard() {
   return (
     <div className="flex min-h-[calc(100vh-8rem)] items-center justify-center p-4">
-      <Card className="w-full sm:w-[85%] md:w-[42%] max-w-lg mx-auto text-center">
+      <Card className="w-full max-w-[440px] mx-auto text-center">
         <CardHeader className="pb-2">
           <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary">
             <CheckCircle className="h-8 w-8" />

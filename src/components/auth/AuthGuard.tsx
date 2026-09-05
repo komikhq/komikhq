@@ -10,28 +10,11 @@ interface AuthGuardProps {
 export function AuthGuard({ children, redirectTo = "/login" }: AuthGuardProps) {
   const { isPending, isAuthenticated } = useRequireAuth(redirectTo);
 
-  if (isPending) {
+  if (isPending || !isAuthenticated) {
     return (
-      <Card className="w-full">
-        <CardContent className="p-8 text-center space-y-3">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent mx-auto" />
-          <p className="text-sm text-muted-foreground">
-            Memeriksa sesi otentikasi...
-          </p>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return (
-      <Card className="w-full">
-        <CardContent className="p-8 text-center space-y-3">
-          <p className="text-sm text-muted-foreground">
-            Mengalihkan ke halaman masuk...
-          </p>
-        </CardContent>
-      </Card>
+      <div className="flex flex-col items-center justify-center min-h-[300px] w-full p-8 text-center space-y-3">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent mx-auto" />
+      </div>
     );
   }
 

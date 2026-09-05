@@ -107,7 +107,7 @@ export function SiteHeader() {
             {mounted && isAuthenticated && user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="hidden md:flex items-center gap-2 px-2 h-9 rounded-full hover:bg-accent">
+                  <Button variant="ghost" className="hidden md:flex items-center gap-2 px-2 h-9 rounded-full hover:bg-accent cursor-pointer">
                     <Avatar className="h-7 w-7 border border-primary/40">
                       <AvatarImage src={user.image || undefined} alt={user.name || "User"} />
                       <AvatarFallback className="text-xs font-bold bg-primary/10 text-primary">
