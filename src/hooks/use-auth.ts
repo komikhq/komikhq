@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { authClient, useSession } from "@/lib/auth-client";
 
@@ -22,13 +22,15 @@ export function useAuth(): UseAuthReturn {
   const [authError, setAuthError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  if (typeof window !== "undefined") {
-    console.log("[Auth Session Debug]", {
-      isPending,
-      sessionData,
-      user: sessionData?.user || null,
-    });
-  }
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      console.log("[Auth Session Debug]", {
+        isPending,
+        sessionData,
+        user: sessionData?.user || null,
+      });
+    }
+  }, [isPending, sessionData]);
 
   const user = sessionData?.user || null;
   const session = sessionData?.session || null;

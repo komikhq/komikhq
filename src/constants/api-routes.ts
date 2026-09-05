@@ -42,5 +42,8 @@ export const API_ROUTES = {
   RATINGS: {
     SUBMIT: `${API_PREFIX}/ratings`,
   },
+  REALTIME: {
+    AUTH: `${API_PREFIX}/realtime/auth`,
+  },
   VIEW: `${API_PREFIX}/view`,
 } as const;

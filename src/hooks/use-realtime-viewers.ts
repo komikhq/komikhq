@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import Pusher from "pusher-js";
+import { getBaseApiUrl } from "@/lib/api-client";
+import { API_ROUTES } from "@/constants/api-routes";
 
 export interface UseRealtimeViewersOptions {
   pusherKey?: string;
@@ -16,9 +18,20 @@ export function useRealtimeViewers(options: UseRealtimeViewersOptions = {}) {
   useEffect(() => {
     if (!key || typeof window === "undefined") return;
 
+    const baseUrl = getBaseApiUrl();
+    const authEndpoint = `${baseUrl}${API_ROUTES.REALTIME.AUTH}`;
+
     const pusher = new Pusher(key, {
       cluster,
       forceTLS: true,
+      userAuthentication: {
+        endpoint: authEndpoint,
+        transport: "ajax",
+      },
+      channelAuthorization: {
+        endpoint: authEndpoint,
+        transport: "ajax",
+      },
     });
 
     const channel = pusher.subscribe(channelName);
