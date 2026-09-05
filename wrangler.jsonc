@@ -4,6 +4,7 @@
   "compatibility_flags": ["global_fetch_strictly_public"],
   "name": "komikhq-astro",
   "workers_dev": true,
+  "keep_vars": true,
   "routes": [
     {
       "pattern": "komikhq.com",

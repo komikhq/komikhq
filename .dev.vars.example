@@ -1,0 +1,12 @@
+# KomikHQ Astro Local Environment Variables Template
+PUBLIC_API_URL="http://localhost:8787"
+PUBLIC_USERS_CDN_URL="https://cdn-01.komikhq.com"
+PUBLIC_MEDIA_CDN_URL="https://cdn-02.komikhq.com"
+
+# Pusher Realtime Client Keys
+PUBLIC_PUSHER_KEY="your_pusher_key"
+PUBLIC_PUSHER_CLUSTER="ap1"
+
+# Better Auth Session & Backend Configuration
+BETTER_AUTH_URL="http://localhost:8787"
+BETTER_AUTH_SECRET="your-32-byte-secret-string-here"
