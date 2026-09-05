@@ -3,6 +3,17 @@
   "compatibility_date": "2026-08-31",
   "compatibility_flags": ["global_fetch_strictly_public"],
   "name": "komikhq-astro",
+  "workers_dev": true,
+  "routes": [
+    {
+      "pattern": "komikhq.com",
+      "custom_domain": true
+    },
+    {
+      "pattern": "www.komikhq.com",
+      "custom_domain": true
+    }
+  ],
   "main": "@astrojs/cloudflare/entrypoints/server",
   "assets": {
     "directory": "./dist",
