@@ -57,7 +57,9 @@ export function AccountPasswordCard() {
         <form onSubmit={submitPassword} className="space-y-4 max-w-md">
           {hasPassword && (
             <div className="space-y-1.5">
-              <Label htmlFor="currentPassword">Kata Sandi Saat Ini</Label>
+              <Label htmlFor="currentPassword">
+                Kata Sandi Saat Ini
+              </Label>
               <div className="relative">
                 <Input
                   id="currentPassword"
@@ -106,7 +108,9 @@ export function AccountPasswordCard() {
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="confirmPassword">Konfirmasi Kata Sandi Baru</Label>
+            <Label htmlFor="confirmPassword">
+              Konfirmasi Kata Sandi Baru
+            </Label>
             <Input
               id="confirmPassword"
               type="password"

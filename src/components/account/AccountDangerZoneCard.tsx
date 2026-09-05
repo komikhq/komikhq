@@ -3,6 +3,7 @@ import { Warning, Trash, CircleNotch } from "@phosphor-icons/react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   AlertDialog,
@@ -77,11 +78,11 @@ export function AccountDangerZoneCard() {
                 </AlertDialogHeader>
 
                 <div className="space-y-2 py-2">
-                  <label htmlFor="deleteConfirmInput" className="text-xs font-semibold text-foreground select-none block">
+                  <Label htmlFor="deleteConfirmInput">
                     {hasPassword
                       ? "Masukkan Kata Sandi Saat Ini untuk Mengonfirmasi:"
                       : `Ketik alamat email Anda (${user?.email || "email Anda"}) untuk mengonfirmasi:`}
-                  </label>
+                  </Label>
                   <Input
                     id="deleteConfirmInput"
                     type={hasPassword ? "password" : "text"}
