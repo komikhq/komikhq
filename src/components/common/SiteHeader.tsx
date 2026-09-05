@@ -125,16 +125,16 @@ export function SiteHeader() {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => (window.location.href = "/account")}>
+                  <DropdownMenuItem className="cursor-pointer" onClick={() => (window.location.href = "/account")}>
                     <UserCircle className="mr-2 h-4 w-4 text-primary" />
                     <span>Profil Saya</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => (window.location.href = "/account/settings")}>
+                  <DropdownMenuItem className="cursor-pointer" onClick={() => (window.location.href = "/account/settings")}>
                     <Gear className="mr-2 h-4 w-4 text-muted-foreground" />
                     <span>Pengaturan Akun</span>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive focus:bg-destructive/10">
+                  <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10">
                     <SignOut className="mr-2 h-4 w-4" />
                     <span>Keluar</span>
                   </DropdownMenuItem>
