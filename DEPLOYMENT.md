@@ -1,6 +1,6 @@
 # Cloudflare Workers Deployment Guide (`komikhq-astro`)
 
-This document outlines the deployment workflow for the Astro SSR frontend (`komikhq-astro`) to Cloudflare Workers using the **Cloudflare Dashboard (UI Web)** & **GitHub Integration**, highlighting the distinction between **Build-Time Variables** vs **Runtime Variables/Secrets**, and setting up Service Bindings to the Backend API.
+This document outlines the deployment workflow for the Astro SSR frontend (`komikhq-astro`) to Cloudflare Workers using the **Cloudflare Dashboard (UI Web)** & **GitHub Integration**, highlighting the distinction between **Build-Time Variables** vs **Runtime Variables/Secrets**, and infrastructure configuration via `wrangler.jsonc`.
 
 ---
 
@@ -9,32 +9,35 @@ This document outlines the deployment workflow for the Astro SSR frontend (`komi
 The Cloudflare Workers CI/CD platform segregates environment variables into 2 separate dashboard locations:
 
 1. **Build-Time Variables & Secrets (Workers CI Section)**:
-   - **Dashboard Location**: Worker `komikhq-astro` > **Settings** > **Build** > **Build variables & secrets**.
+   - **Dashboard Location**: Worker `komikhq` > **Settings** > **Build** > **Build variables & secrets**.
    - **Purpose**: Variables prefixed with `PUBLIC_*` required by Astro's bundler during compilation (`pnpm run build`). These values are statically embedded into client-side JavaScript bundles delivered to the browser.
 
 2. **Runtime Variables & Secrets (Runtime Section)**:
-   - **Dashboard Location**: Worker `komikhq-astro` > **Settings** > **Variables and secrets**.
+   - **Dashboard Location**: Worker `komikhq` > **Settings** > **Variables and secrets**.
    - **Purpose**: Server-side variables and secrets read by Astro SSR when processing requests on the Cloudflare Worker runtime.
 
 ---
 
 ## 2. Setup Deployment via Cloudflare Dashboard (GitHub Integration)
 
-When importing the `komikhq-astro` repository for the first time via **Cloudflare Dashboard > Workers & Pages > Create > Import from Git**:
+When importing the GitHub repository `komikhq/komikhq` for the Astro frontend via **Cloudflare Dashboard > Workers & Pages > Create > Import from Git**:
 
 | Dashboard Form Field | Value / Input | Description |
 | --- | --- | --- |
-| **Project Name** | `komikhq-astro` | Worker project name in Cloudflare Dashboard. |
+| **Project Name** | `komikhq` | Worker project name in Cloudflare Dashboard (matches repo name `komikhq/komikhq`). |
 | **Production Branch** | `main` | Primary branch triggering auto-deployments. |
 | **Build Command** | `pnpm run build` *(or `npm run build`)* | Command to execute Astro SSR build bundling. |
 | **Build Output Directory** | `dist` | Output directory generated for Cloudflare Workers. |
-| **Root Directory** | `/` (or leave blank) | Path to the Astro project directory in the GitHub repository. |
+| **Root Directory** | `/` (or leave blank) | Path to the Astro project directory in GitHub repo (`komikhq/komikhq`). |
+
+> [!NOTE]
+> Ensure the `"name"` property in `wrangler.jsonc` matches your Cloudflare Worker project name: `"name": "komikhq"`.
 
 ---
 
-## 3. Configuration Tables (Build-Time & Runtime)
+## 3. Configuration Table (Build-Time Variables)
 
-### Table 1: Build-Time Variables & Secrets (CI Section)
+### Build-Time Variables & Secrets (CI Section)
 > [!IMPORTANT]
 > Configure these variables in **Settings > Build > Build variables & secrets** before clicking **Save and Deploy**.
 
@@ -46,46 +49,43 @@ When importing the `komikhq-astro` repository for the first time via **Cloudflar
 
 ---
 
-### Table 2: Runtime Variables & Secrets (Runtime Section)
-> [!NOTE]
-> Configure these variables/secrets in **Settings > Variables and secrets**.
+## 4. Service Binding & Infrastructure (`wrangler.jsonc`)
 
-| Variable Name | Dashboard Type | Category | Description / Example Value |
-| --- | --- | --- | --- |
-| `SESSION_SECRET` | **Encrypt (Secret)** | Sensitive | Secret key for SSR cookie/authentication encryption |
+> [!IMPORTANT]
+> All bindings (Service Bindings, Assets, Routes) **MUST be declared in `wrangler.jsonc`** as code. Do NOT configure bindings via the Cloudflare Dashboard UI.
 
-> [!TIP]
-> **Preventing Dashboard Overwrites (`keep_vars = true`)**
-> The `wrangler.jsonc` file in this project is configured with `"keep_vars": true`. Variables configured via Cloudflare Dashboard will not be wiped when deploying from terminal (`npx wrangler deploy`).
+To allow `komikhq` to communicate directly with `komikhq-api` over Cloudflare's internal network without public HTTP latency, the Service Binding is configured in `wrangler.jsonc`:
 
----
+```jsonc
+"services": [
+  {
+    "binding": "BACKEND",
+    "service": "komikhq-api"
+  }
+]
+```
 
-## 4. Service Binding to Backend API (`komikhq-api`)
-
-To allow `komikhq-astro` to communicate directly with `komikhq-api` over Cloudflare's internal network without public HTTP latency:
-
-1. Go to Worker `komikhq-astro` > **Settings** > **Bindings**.
-2. Click **Add > Service Binding**.
-3. Configure the following:
-   - **Variable Name (Binding Name)**: `HONO_API`
-   - **Target Service**: `komikhq-api`
-   - **Target Environment**: `production` (or default)
-
----
-
-## 5. Custom Domain Setup
-
-1. Go to Worker `komikhq-astro` > **Settings** > **Domains & Routes**.
-2. Add Custom Domains:
-   - `komikhq.com`
-   - `www.komikhq.com`
+### Custom Domains (`wrangler.jsonc`)
+Custom domains are also declared directly in `wrangler.jsonc`:
+```jsonc
+"routes": [
+  {
+    "pattern": "komikhq.com",
+    "custom_domain": true
+  },
+  {
+    "pattern": "www.komikhq.com",
+    "custom_domain": true
+  }
+]
+```
 
 ---
 
-## 6. Inspection & Maintenance
+## 5. Inspection & Maintenance
 
 - **Inspect Live SSR Logs**:
-  Open Worker `komikhq-astro` > **Observability** > **Logs** or run via CLI:
+  Open Worker `komikhq` > **Observability** > **Logs** or run via CLI:
   ```bash
   npx wrangler tail
   ```

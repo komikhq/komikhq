@@ -1,9 +1,12 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "compatibility_date": "2026-08-31",
-  "compatibility_flags": ["global_fetch_strictly_public"],
-  "name": "komikhq-astro",
+  "compatibility_flags": [
+    "global_fetch_strictly_public"
+  ],
+  "name": "komikhq",
   "workers_dev": true,
+  "preview_urls": false,
   "keep_vars": true,
   "routes": [
     {
@@ -25,7 +28,7 @@
   },
   "services": [
     {
-      "binding": "HONO_API",
+      "binding": "BACKEND",
       "service": "komikhq-api"
     }
   ]
