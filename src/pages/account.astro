@@ -8,7 +8,7 @@ import { UserCircle } from "@phosphor-icons/react";
 ---
 
 <RootLayout title="Profil Saya - KomikHQ">
-  <div class="max-w-4xl mx-auto space-y-6 pb-20 pt-4 px-4">
+  <div class="max-w-4xl mx-auto flex flex-col gap-6 pb-20 pt-4 px-4">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
         <h1 class="text-2xl font-bold tracking-tight flex items-center gap-2">
@@ -24,8 +24,8 @@ import { UserCircle } from "@phosphor-icons/react";
     </div>
 
     <AuthGuard client:only="react">
-      <AccountProfileCard />
-      <AccountIdentityCard />
+      <AccountProfileCard client:load />
+      <AccountIdentityCard client:load />
     </AuthGuard>
   </div>
 </RootLayout>

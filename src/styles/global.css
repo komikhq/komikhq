@@ -133,6 +133,10 @@
     padding-right: 0px !important;
     overflow: hidden !important;
     }
+  astro-island {
+    display: block;
+    width: 100%;
+    }
   button:not(:disabled), [role="button"]:not(:disabled) {
     cursor: pointer;
     }
