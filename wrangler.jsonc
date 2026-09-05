@@ -10,5 +10,11 @@
   },
   "observability": {
     "enabled": true
-  }
+  },
+  "services": [
+    {
+      "binding": "HONO_API",
+      "service": "komikhq-api"
+    }
+  ]
 }

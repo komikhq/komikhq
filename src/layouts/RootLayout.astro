@@ -21,6 +21,9 @@ const { title = SITE_NAME, description = SITE_DESCRIPTION } = Astro.props;
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <script is:inline define:vars={{ apiUrl: import.meta.env.PUBLIC_API_URL || "http://localhost:8787" }}>
+      window.__PUBLIC_API_URL__ = apiUrl;
+    </script>
   </head>
   <body class="min-h-screen bg-background text-foreground antialiased selection:bg-primary selection:text-primary-foreground">
     <div class="relative flex min-h-screen flex-col">
