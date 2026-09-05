@@ -129,9 +129,17 @@
   body {
     @apply bg-background text-foreground;
     }
-  body[data-scroll-locked] {
+  body[data-scroll-locked],
+  body[style*="overflow: hidden"] {
     padding-right: 0px !important;
+    margin-right: 0px !important;
     overflow: hidden !important;
+    --removed-body-scroll-bar-size: 0px !important;
+    }
+  [data-scroll-locked] {
+    padding-right: 0px !important;
+    margin-right: 0px !important;
+    --removed-body-scroll-bar-size: 0px !important;
     }
   astro-island {
     display: block;
