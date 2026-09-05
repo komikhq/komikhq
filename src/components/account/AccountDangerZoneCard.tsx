@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Warning, Trash, CircleNotch } from "@phosphor-icons/react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   AlertDialog,
@@ -16,82 +15,19 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { toast } from "sonner";
-import { useAuth } from "@/hooks/use-auth";
-import { API_ROUTES } from "@/constants/api-routes";
-import { getBaseApiUrl } from "@/lib/api-client";
+import { useDeleteAccount } from "@/hooks/use-delete-account";
 
 export function AccountDangerZoneCard() {
-  const { user, handleSignOut } = useAuth();
-  const [hasPassword, setHasPassword] = useState<boolean | null>(null);
-  const [confirmInput, setConfirmInput] = useState("");
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
-
-  useEffect(() => {
-    async function fetchProfileInfo() {
-      try {
-        const baseUrl = getBaseApiUrl();
-        const res = await fetch(`${baseUrl}${API_ROUTES.USER.PROFILE}`, {
-          credentials: "include",
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setHasPassword(Boolean(data.hasPassword));
-        }
-      } catch (e) {
-        console.error("Gagal memuat profil akun:", e);
-      }
-    }
-    fetchProfileInfo();
-  }, []);
-
-  const handleDeleteAccount = async () => {
-    setIsDeleting(true);
-    setDeleteError(null);
-
-    const payload: { password?: string; email?: string } = {};
-
-    if (hasPassword) {
-      if (!confirmInput) {
-        setDeleteError("Kata sandi konfirmasi wajib diisi.");
-        setIsDeleting(false);
-        return;
-      }
-      payload.password = confirmInput;
-    } else {
-      if (!confirmInput || confirmInput.toLowerCase().trim() !== user?.email?.toLowerCase().trim()) {
-        setDeleteError("Alamat email konfirmasi tidak sesuai.");
-        setIsDeleting(false);
-        return;
-      }
-      payload.email = confirmInput;
-    }
-
-    try {
-      const baseUrl = getBaseApiUrl();
-      const res = await fetch(`${baseUrl}${API_ROUTES.USER.PROFILE}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(payload),
-      });
-
-      const data = (await res.json().catch(() => ({}))) as any;
-
-      if (!res.ok) {
-        throw new Error(data.error || "Gagal menghapus akun.");
-      }
-
-      toast.success("Akun Anda telah berhasil dihapus permanen.");
-      await handleSignOut();
-    } catch (err: any) {
-      setDeleteError(err.message || "Gagal menghapus akun.");
-      setIsDeleting(false);
-    }
-  };
+  const {
+    user,
+    hasPassword,
+    confirmInput,
+    setConfirmInput,
+    isDeleting,
+    deleteError,
+    resetDeleteState,
+    deleteAccount,
+  } = useDeleteAccount();
 
   return (
     <TooltipProvider>
@@ -117,7 +53,7 @@ export function AccountDangerZoneCard() {
               )}
             </div>
 
-            <AlertDialog onOpenChange={() => { setConfirmInput(""); setDeleteError(null); }}>
+            <AlertDialog onOpenChange={() => resetDeleteState()}>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <AlertDialogTrigger asChild>
@@ -141,11 +77,11 @@ export function AccountDangerZoneCard() {
                 </AlertDialogHeader>
 
                 <div className="space-y-2 py-2">
-                  <Label htmlFor="deleteConfirmInput" className="text-xs font-semibold">
+                  <label htmlFor="deleteConfirmInput" className="text-xs font-semibold text-foreground select-none block">
                     {hasPassword
                       ? "Masukkan Kata Sandi Saat Ini untuk Mengonfirmasi:"
                       : `Ketik alamat email Anda (${user?.email || "email Anda"}) untuk mengonfirmasi:`}
-                  </Label>
+                  </label>
                   <Input
                     id="deleteConfirmInput"
                     type={hasPassword ? "password" : "text"}
@@ -165,7 +101,7 @@ export function AccountDangerZoneCard() {
                     variant="destructive"
                     onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                       e.preventDefault();
-                      handleDeleteAccount();
+                      deleteAccount();
                     }}
                     disabled={isDeleting || !confirmInput.trim()}
                   >

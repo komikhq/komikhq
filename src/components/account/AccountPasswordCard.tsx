@@ -1,111 +1,29 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Key, Lock, Eye, EyeSlash, CircleNotch } from "@phosphor-icons/react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
-import { authClient } from "@/lib/auth-client";
-import { getBaseApiUrl } from "@/lib/api-client";
-import { API_ROUTES } from "@/constants/api-routes";
+import { useAccountPassword } from "@/hooks/use-account-password";
 
 export function AccountPasswordCard() {
-  const [hasPassword, setHasPassword] = useState<boolean | null>(null);
-  const [isLoadingProfile, setIsLoadingProfile] = useState<boolean>(true);
-
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-
-  useEffect(() => {
-    async function fetchProfileData() {
-      try {
-        const baseUrl = getBaseApiUrl();
-        const res = await fetch(`${baseUrl}${API_ROUTES.USER.PROFILE}`, {
-          credentials: "include",
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setHasPassword(Boolean(data.hasPassword));
-        }
-      } catch (e) {
-        console.error("Gagal memuat status password user:", e);
-      } finally {
-        setIsLoadingProfile(false);
-      }
-    }
-    fetchProfileData();
-  }, []);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrorMsg(null);
-
-    if (newPassword.length < 8) {
-      setErrorMsg("Kata sandi baru harus memiliki minimal 8 karakter.");
-      return;
-    }
-
-    if (newPassword !== confirmPassword) {
-      setErrorMsg("Konfirmasi kata sandi tidak sesuai dengan kata sandi baru.");
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      if (hasPassword) {
-        if (!currentPassword) {
-          setErrorMsg("Kata sandi saat ini wajib diisi.");
-          setIsSubmitting(false);
-          return;
-        }
-
-        const { error } = await authClient.changePassword({
-          currentPassword,
-          newPassword,
-          revokeOtherSessions: true,
-        });
-
-        if (error) {
-          setErrorMsg(error.message || "Gagal mengubah kata sandi. Periksa kata sandi saat ini Anda.");
-          setIsSubmitting(false);
-          return;
-        }
-
-        toast.success("Kata sandi berhasil diperbarui!");
-        setCurrentPassword("");
-        setNewPassword("");
-        setConfirmPassword("");
-      } else {
-        // First-time set password for OAuth user
-        const { error } = await (authClient as any).setPassword({
-          newPassword,
-        });
-
-        if (error) {
-          setErrorMsg(error.message || "Gagal membuat kata sandi baru.");
-          setIsSubmitting(false);
-          return;
-        }
-
-        toast.success("Kata sandi baru berhasil dibuat! Anda sekarang bisa masuk via email & kata sandi.");
-        setHasPassword(true);
-        setNewPassword("");
-        setConfirmPassword("");
-      }
-    } catch (err: any) {
-      setErrorMsg(err.message || "Terjadi kesalahan saat memproses kata sandi.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const {
+    hasPassword,
+    isLoadingProfile,
+    currentPassword,
+    setCurrentPassword,
+    newPassword,
+    setNewPassword,
+    confirmPassword,
+    setConfirmPassword,
+    showCurrentPassword,
+    setShowCurrentPassword,
+    showNewPassword,
+    setShowNewPassword,
+    isSubmitting,
+    errorMsg,
+    submitPassword,
+  } = useAccountPassword();
 
   if (isLoadingProfile) {
     return (
@@ -136,7 +54,7 @@ export function AccountPasswordCard() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
+        <form onSubmit={submitPassword} className="space-y-4 max-w-md">
           {hasPassword && (
             <div className="space-y-1.5">
               <Label htmlFor="currentPassword">Kata Sandi Saat Ini</Label>
