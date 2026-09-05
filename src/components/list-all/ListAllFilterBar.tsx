@@ -42,17 +42,22 @@ export function ListAllFilterBar({ onLetterSelect }: ListAllFilterBarProps) {
       </CardHeader>
       <CardContent>
         <div className="flex flex-wrap gap-1.5 pt-1">
-          {ALPHABET.map((char) => (
-            <Button
-              key={char}
-              variant={activeLetter === char ? "default" : "outline"}
-              size="sm"
-              className="h-8 px-2.5 text-xs font-semibold"
-              onClick={() => handleSelect(char)}
-            >
-              {char}
-            </Button>
-          ))}
+          {ALPHABET.map((char) => {
+            const isSpecial = char.length > 1;
+            return (
+              <Button
+                key={char}
+                variant={activeLetter === char ? "default" : "outline"}
+                size="sm"
+                className={`h-8 text-xs font-semibold shrink-0 ${
+                  isSpecial ? "px-3" : "w-8 p-0 flex items-center justify-center"
+                }`}
+                onClick={() => handleSelect(char)}
+              >
+                {char}
+              </Button>
+            );
+          })}
         </div>
       </CardContent>
     </Card>
