@@ -1,8 +1,12 @@
 ---
 import RootLayout from "@/layouts/RootLayout.astro";
-import { BookmarkContent } from "@/components/bookmark/BookmarkContent";
+import { BookmarkHeader } from "@/components/bookmark/BookmarkHeader";
+import { BookmarkComicGrid } from "@/components/bookmark/BookmarkComicGrid";
 ---
 
 <RootLayout title="Bookmark Saya - KomikHQ">
-  <BookmarkContent client:load />
+  <div class="space-y-6 pb-20 pt-4 px-4 max-w-screen-2xl mx-auto">
+    <BookmarkHeader client:load />
+    <BookmarkComicGrid client:load />
+  </div>
 </RootLayout>

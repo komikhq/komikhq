@@ -1,9 +1,9 @@
 import React from "react";
-import { CheckCircle, EnvelopeSimple } from "@phosphor-icons/react";
+import { CheckCircle } from "@phosphor-icons/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-export function VerifyEmailContent() {
+export function VerifyEmailCard() {
   return (
     <div className="flex min-h-[calc(100vh-8rem)] items-center justify-center p-4">
       <Card className="w-full sm:w-[85%] md:w-[42%] max-w-lg mx-auto text-center">

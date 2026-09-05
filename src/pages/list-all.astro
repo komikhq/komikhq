@@ -1,8 +1,12 @@
 ---
 import RootLayout from "@/layouts/RootLayout.astro";
-import { ListAllContent } from "@/components/list-all/ListAllContent";
+import { ListAllFilterBar } from "@/components/list-all/ListAllFilterBar";
+import { ListAllComicTable } from "@/components/list-all/ListAllComicTable";
 ---
 
-<RootLayout title="Daftar Lengkap Komik - KomikHQ">
-  <ListAllContent client:load />
+<RootLayout title="Daftar Komik A-Z - KomikHQ">
+  <div class="space-y-6 pb-20 pt-4 px-4 max-w-screen-2xl mx-auto">
+    <ListAllFilterBar client:load />
+    <ListAllComicTable client:load />
+  </div>
 </RootLayout>

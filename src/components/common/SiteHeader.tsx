@@ -15,6 +15,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { HEADER_NAV_ITEMS, SITE_NAME, type NavItem } from "@/constants";
 import { useAuth } from "@/hooks/use-auth";
+import { ThemeToggle } from "@/components/common/ThemeToggle";
+import { Logo } from "@/components/common/Logo";
 
 const HEADER_NAV_ICONS: Record<string, Icon> = {
   House,
@@ -45,10 +47,7 @@ export function SiteHeader() {
                   aria-label={SITE_NAME}
                   className="flex items-center gap-2 font-bold tracking-tight text-primary"
                 >
-                  <span className="flex shrink-0 items-center gap-2">
-                    <img src="/logo-mark-dark.svg" alt="" width={28} height={28} className="block" />
-                    <img src="/logo-wordmark-dark.svg" alt="" width={96} height={48} className="hidden md:block" />
-                  </span>
+                  <Logo size="header" />
                 </a>
               </TooltipTrigger>
               <TooltipContent side="bottom">Go to Homepage</TooltipContent>
@@ -75,8 +74,8 @@ export function SiteHeader() {
             </nav>
           </div>
 
-          <div className="flex items-center gap-3">
-            <form onSubmit={handleSearchSubmit} className="w-48 sm:w-64">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <form onSubmit={handleSearchSubmit} className="w-36 sm:w-64">
               <div className="relative">
                 <MagnifyingGlass className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -88,6 +87,8 @@ export function SiteHeader() {
                 />
               </div>
             </form>
+
+            <ThemeToggle />
 
             {isAuthenticated && user ? (
               <div className="hidden md:flex items-center gap-2">

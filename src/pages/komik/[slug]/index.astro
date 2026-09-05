@@ -1,10 +1,14 @@
 ---
 import RootLayout from "@/layouts/RootLayout.astro";
-import { ComicDetailContent } from "@/components/komik/ComicDetailContent";
+import { ComicHeaderCard } from "@/components/komik/ComicHeaderCard";
+import { ComicChapterList } from "@/components/komik/ComicChapterList";
 
 const { slug } = Astro.params;
 ---
 
 <RootLayout title={`Detail Komik ${slug} - KomikHQ`}>
-  <ComicDetailContent slug={slug} client:load />
+  <div class="space-y-6 pb-20 pt-4 px-4 max-w-screen-2xl mx-auto">
+    <ComicHeaderCard slug={slug} client:load />
+    <ComicChapterList slug={slug} client:load />
+  </div>
 </RootLayout>

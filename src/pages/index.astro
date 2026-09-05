@@ -1,8 +1,14 @@
 ---
 import RootLayout from "@/layouts/RootLayout.astro";
-import { HomeContent } from "@/components/home/HomeContent";
+import { HomeHeroCard } from "@/components/home/HomeHeroCard";
+import { HomeTrendingSection } from "@/components/home/HomeTrendingSection";
+import { HomePopularGenres } from "@/components/home/HomePopularGenres";
 ---
 
-<RootLayout title="KomikHQ - Baca Komik, Manga, Manhua & Manhwa Bahasa Indonesia Gratis">
-  <HomeContent client:load />
+<RootLayout title="KomikHQ - Baca Manga, Manhwa, Manhua Bahasa Indonesia">
+  <div class="space-y-8 pb-20 pt-4 px-4 max-w-screen-2xl mx-auto">
+    <HomeHeroCard client:load />
+    <HomeTrendingSection client:load />
+    <HomePopularGenres client:load />
+  </div>
 </RootLayout>

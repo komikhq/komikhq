@@ -1,8 +1,12 @@
 ---
 import RootLayout from "@/layouts/RootLayout.astro";
-import { HistoryContent } from "@/components/history/HistoryContent";
+import { HistoryHeader } from "@/components/history/HistoryHeader";
+import { HistoryList } from "@/components/history/HistoryList";
 ---
 
 <RootLayout title="Riwayat Baca - KomikHQ">
-  <HistoryContent client:load />
+  <div class="space-y-6 pb-20 pt-4 px-4 max-w-screen-2xl mx-auto">
+    <HistoryHeader client:load />
+    <HistoryList client:load />
+  </div>
 </RootLayout>

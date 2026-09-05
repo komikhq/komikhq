@@ -5,14 +5,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { COMMON_GENRES, type GenreDefinition } from "@/constants";
 
-export function BrowseContent() {
+export function BrowseFilterBar() {
   const [search, setSearch] = useState("");
   const [selectedGenre, setSelectedGenre] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("latest");
 
   return (
-    <div className="space-y-6 pb-20 pt-4 px-4 max-w-screen-2xl mx-auto">
+    <div className="space-y-4">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Browse Comics</h1>
         <p className="text-sm text-muted-foreground">
@@ -20,7 +20,6 @@ export function BrowseContent() {
         </p>
       </div>
 
-      {/* Filter Controls */}
       <Card>
         <CardContent className="p-4 space-y-4">
           <div className="flex flex-col sm:flex-row gap-3">
@@ -70,12 +69,6 @@ export function BrowseContent() {
             </Select>
           </div>
         </CardContent>
-      </Card>
-
-      <Card className="p-8 text-center">
-        <p className="text-sm text-muted-foreground">
-          Filter controls active. Backend API connection ready for Hono Worker bindings.
-        </p>
       </Card>
     </div>
   );

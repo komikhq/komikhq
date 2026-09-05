@@ -13,7 +13,7 @@ const { title = SITE_NAME, description = SITE_DESCRIPTION } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="id" class="dark">
+<html lang="id">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -21,6 +21,21 @@ const { title = SITE_NAME, description = SITE_DESCRIPTION } = Astro.props;
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <meta name="description" content={description} />
+
+    <script is:inline>
+      (function () {
+        try {
+          var stored = localStorage.getItem("theme");
+          var supportDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          if (stored === "dark" || (!stored && supportDark) || (stored === "system" && supportDark)) {
+            document.documentElement.classList.add("dark");
+          } else {
+            document.documentElement.classList.remove("dark");
+          }
+        } catch (e) {}
+      })();
+    </script>
+
     <script is:inline define:vars={{ apiUrl: import.meta.env.PUBLIC_API_URL || "http://localhost:8787" }}>
       window.__PUBLIC_API_URL__ = apiUrl;
     </script>

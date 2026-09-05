@@ -1,8 +1,12 @@
 ---
 import RootLayout from "@/layouts/RootLayout.astro";
-import { BrowseContent } from "@/components/browse/BrowseContent";
+import { BrowseFilterBar } from "@/components/browse/BrowseFilterBar";
+import { BrowseComicGrid } from "@/components/browse/BrowseComicGrid";
 ---
 
 <RootLayout title="Browse Komik & Manga - KomikHQ">
-  <BrowseContent client:load />
+  <div class="space-y-6 pb-20 pt-4 px-4 max-w-screen-2xl mx-auto">
+    <BrowseFilterBar client:load />
+    <BrowseComicGrid client:load />
+  </div>
 </RootLayout>

@@ -1,10 +1,16 @@
 ---
 import RootLayout from "@/layouts/RootLayout.astro";
-import { ChapterReaderContent } from "@/components/reader/ChapterReaderContent";
+import { ReaderHeaderBar } from "@/components/reader/ReaderHeaderBar";
+import { ReaderImageStack } from "@/components/reader/ReaderImageStack";
+import { ReaderFooterNav } from "@/components/reader/ReaderFooterNav";
 
 const { slug, chapterSlug } = Astro.params;
 ---
 
 <RootLayout title={`Baca ${slug} ${chapterSlug} - KomikHQ`}>
-  <ChapterReaderContent comicSlug={slug} chapterSlug={chapterSlug} client:load />
+  <div class="min-h-screen bg-neutral-950 text-neutral-100 pb-20">
+    <ReaderHeaderBar comicSlug={slug} chapterSlug={chapterSlug} client:load />
+    <ReaderImageStack client:load />
+    <ReaderFooterNav client:load />
+  </div>
 </RootLayout>
