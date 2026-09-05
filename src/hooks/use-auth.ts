@@ -6,6 +6,14 @@ export function useAuth() {
   const [authError, setAuthError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  if (typeof window !== "undefined") {
+    console.log("[Auth Session Debug]", {
+      isPending,
+      sessionData,
+      user: sessionData?.user || null,
+    });
+  }
+
   const user = sessionData?.user || null;
   const session = sessionData?.session || null;
   const isAuthenticated = Boolean(user);
