@@ -1,0 +1,10 @@
+---
+import RootLayout from "@/layouts/RootLayout.astro";
+import { ChapterReaderContent } from "@/components/reader/ChapterReaderContent";
+
+const { slug, chapterSlug } = Astro.params;
+---
+
+<RootLayout title={`Baca ${slug} ${chapterSlug} - KomikHQ`}>
+  <ChapterReaderContent comicSlug={slug} chapterSlug={chapterSlug} client:load />
+</RootLayout>
