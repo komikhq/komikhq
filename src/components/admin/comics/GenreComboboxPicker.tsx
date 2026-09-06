@@ -40,8 +40,8 @@ export function GenreComboboxPicker({
           selectedGenres.map((g) => (
             <Badge
               key={g.id}
-              variant="secondary"
-              className="h-7 px-3 text-xs bg-primary/20 text-primary-foreground border border-primary/30 flex items-center gap-1.5 shrink-0"
+              variant="default"
+              className="h-7 px-3 text-xs bg-primary text-primary-foreground border border-primary/20 flex items-center gap-1.5 shrink-0 shadow-2xs"
             >
               <span>{g.name}</span>
               <button
@@ -50,7 +50,7 @@ export function GenreComboboxPicker({
                   e.stopPropagation();
                   onToggleGenre(g.id);
                 }}
-                className="rounded-full p-0.5 hover:bg-primary/30 text-primary-foreground/80 hover:text-primary-foreground transition-colors cursor-pointer"
+                className="rounded-full p-0.5 hover:bg-primary-foreground/20 text-primary-foreground/80 hover:text-primary-foreground transition-colors cursor-pointer"
                 title={`Hapus ${g.name}`}
               >
                 <X className="h-3 w-3" />
