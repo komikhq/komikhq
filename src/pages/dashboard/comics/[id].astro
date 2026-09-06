@@ -16,8 +16,8 @@ const { id } = Astro.params;
 
     <AdminGuard client:only="react">
       <div class="space-y-6">
-        <AdminComicDetailHeader comicId={id || ""} client:load />
-        <ChapterTableSection comicId={id || ""} client:load />
+        <AdminComicDetailHeader comicId={id || ""} />
+        <ChapterTableSection comicId={id || ""} />
       </div>
     </AdminGuard>
   </div>

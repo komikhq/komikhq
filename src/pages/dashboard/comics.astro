@@ -12,7 +12,7 @@ import { ComicTableSection } from "@/components/admin/comics/ComicTableSection";
     <AdminTabNav currentTab="comics" client:load />
 
     <AdminGuard client:only="react">
-      <ComicTableSection client:load />
+      <ComicTableSection />
     </AdminGuard>
   </div>
 </RootLayout>

@@ -12,7 +12,7 @@ import { AdminUserManagementCard } from "@/components/admin/AdminUserManagementC
     <AdminTabNav currentTab="users" client:load />
 
     <AdminGuard client:only="react">
-      <AdminUserManagementCard client:load />
+      <AdminUserManagementCard />
     </AdminGuard>
   </div>
 </RootLayout>

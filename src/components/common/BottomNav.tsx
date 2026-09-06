@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   House,
   BookmarkSimple,
@@ -17,9 +17,13 @@ const NAV_ICONS: Record<string, Icon> = {
 };
 
 export function BottomNav() {
-  const currentPath = typeof window !== "undefined" ? window.location.pathname : "";
+  const [currentPath, setCurrentPath] = useState("");
 
-  if (currentPath.includes("/komik/") && currentPath.split("/").length > 3) {
+  useEffect(() => {
+    setCurrentPath(window.location.pathname);
+  }, []);
+
+  if (currentPath && currentPath.includes("/komik/") && currentPath.split("/").length > 3) {
     return null;
   }
 

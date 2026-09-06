@@ -13,8 +13,8 @@ import { AdminUserManagementCard } from "@/components/admin/AdminUserManagementC
     <AdminTabNav currentTab="overview" client:load />
 
     <AdminGuard client:only="react">
-      <AdminStatsOverviewCard client:load />
-      <AdminUserManagementCard client:load />
+      <AdminStatsOverviewCard />
+      <AdminUserManagementCard />
     </AdminGuard>
   </div>
 </RootLayout>

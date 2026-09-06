@@ -12,7 +12,7 @@ import { GenreTableSection } from "@/components/admin/genres/GenreTableSection";
     <AdminTabNav currentTab="genres" client:load />
 
     <AdminGuard client:only="react">
-      <GenreTableSection client:load />
+      <GenreTableSection />
     </AdminGuard>
   </div>
 </RootLayout>
