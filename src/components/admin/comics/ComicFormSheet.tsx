@@ -22,7 +22,7 @@ export function ComicFormSheet({ open, onOpenChange, comic, onSubmit, submitting
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-full !max-w-full sm:!max-w-[92vw] lg:!max-w-[90vw] xl:!max-w-[1400px] overflow-y-auto p-0">
+      <SheetContent side="right" className="w-full sm:[&[data-slot=sheet-content]]:max-w-[92vw] lg:[&[data-slot=sheet-content]]:max-w-[90vw] xl:[&[data-slot=sheet-content]]:max-w-[1400px] overflow-y-auto p-0">
         <SheetHeader className="p-6 border-b border-border/60 sticky top-0 bg-background/95 backdrop-blur z-10">
           <SheetTitle className="text-lg font-bold">
             {comic ? "Edit Data Komik" : "Tambah Komik Baru"}
