@@ -1,38 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { BookBookmark, ArrowRight } from "@phosphor-icons/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { API_ROUTES } from "@/constants";
-import { apiFetch } from "@/lib/api-client";
+import { useListAllComics } from "@/hooks/use-list-all-comics";
 
 export function ListAllComicTable() {
-  const [comics, setComics] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    let isMounted = true;
-    setIsLoading(true);
-
-    const params = typeof window !== "undefined" ? window.location.search : "";
-    const endpoint = API_ROUTES.COMICS.BROWSE(params.replace(/^\?/, ""));
-
-    apiFetch(endpoint)
-      .then((res) => {
-        if (isMounted) {
-          setComics(res.comics || res.data || []);
-        }
-      })
-      .catch(() => {
-        if (isMounted) setComics([]);
-      })
-      .finally(() => {
-        if (isMounted) setIsLoading(false);
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  const { comics, isLoading } = useListAllComics();
 
   return (
     <Card>
@@ -57,26 +30,26 @@ export function ListAllComicTable() {
                 href={`/komik/${comic.slug}`}
                 className="flex items-center justify-between p-3.5 hover:bg-accent transition-colors group"
               >
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-8 bg-muted rounded overflow-hidden flex-shrink-0">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="h-10 w-8 bg-muted rounded overflow-hidden shrink-0">
                     <img src={comic.coverUrl || comic.cover} alt={comic.title} className="h-full w-full object-cover" />
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-sm group-hover:text-primary transition-colors">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-semibold text-sm group-hover:text-accent-foreground transition-colors truncate">
                       {comic.title}
                     </h3>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-muted-foreground group-hover:text-accent-foreground/80 transition-colors truncate">
                       {Array.isArray(comic.genres) && comic.genres.length > 0
                         ? comic.genres.map((g: any) => g.name).join(", ")
                         : "Komik"}
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <Badge variant="outline" className="text-xs">
+                <div className="flex items-center gap-3 shrink-0 ml-2">
+                  <Badge variant="outline" className="text-xs group-hover:border-accent-foreground/30">
                     {comic.status || "Ongoing"}
                   </Badge>
-                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-transform group-hover:translate-x-1" />
+                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-accent-foreground transition-transform group-hover:translate-x-1" />
                 </div>
               </a>
             ))}

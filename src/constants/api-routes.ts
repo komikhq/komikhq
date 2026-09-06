@@ -19,6 +19,7 @@ export const API_ROUTES = {
       query ? `${API_PREFIX}/comics/browse?${query}` : `${API_PREFIX}/comics/browse`,
     DETAIL: (slug: string) => `${API_PREFIX}/comics/${slug}`,
   },
+  GENRES: `${API_PREFIX}/genres`,
   USER: {
     PROFILE: `${API_PREFIX}/user/profile`,
     AVATAR: `${API_PREFIX}/user/avatar`,
