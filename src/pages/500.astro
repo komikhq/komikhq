@@ -1,0 +1,16 @@
+---
+import RootLayout from "@/layouts/RootLayout.astro";
+import { ErrorViewCard } from "@/components/error/ErrorViewCard";
+
+interface Props {
+  error?: unknown;
+}
+
+const { error } = Astro.props;
+---
+
+<RootLayout title="500 - Kesalahan Internal Server | KomikHQ">
+  <div class="max-w-screen-xl mx-auto px-4 py-8 flex flex-col justify-center min-h-[75vh]">
+    <ErrorViewCard code={500} error={error} client:load />
+  </div>
+</RootLayout>

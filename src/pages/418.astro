@@ -1,0 +1,10 @@
+---
+import RootLayout from "@/layouts/RootLayout.astro";
+import { ErrorViewCard } from "@/components/error/ErrorViewCard";
+---
+
+<RootLayout title="418 - I'm a Teapot | KomikHQ">
+  <div class="max-w-screen-xl mx-auto px-4 py-8 flex flex-col justify-center min-h-[75vh]">
+    <ErrorViewCard code={418} client:load />
+  </div>
+</RootLayout>
