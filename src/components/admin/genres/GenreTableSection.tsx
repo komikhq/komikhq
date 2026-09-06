@@ -1,58 +1,33 @@
-import React, { useState } from "react";
-import { Plus, Tag, PencilSimple, Trash, Check, X, CaretDown, CaretUp, Info, FloppyDisk } from "@phosphor-icons/react";
+import React from "react";
+import { Plus, Tag, PencilSimple, Trash, CaretDown, CaretUp, Info, FloppyDisk } from "@phosphor-icons/react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useAdminGenres, type GenreItem } from "@/hooks/use-admin-genres";
+import { useAdminGenres } from "@/hooks/use-admin-genres";
 
 export function GenreTableSection() {
-  const { genres, loading, submitting, createGenre, updateGenre, deleteGenre } = useAdminGenres();
-
-  const [newName, setNewName] = useState("");
-  const [newDesc, setNewDesc] = useState("");
-
-  const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [editName, setEditName] = useState("");
-  const [editDesc, setEditDesc] = useState("");
-  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
-
-  const handleAdd = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newName.trim()) return;
-    const ok = await createGenre(newName, newDesc);
-    if (ok) {
-      setNewName("");
-      setNewDesc("");
-    }
-  };
-
-  const toggleExpand = (g: GenreItem) => {
-    if (expandedId === g.id) {
-      setExpandedId(null);
-    } else {
-      setExpandedId(g.id);
-      setEditName(g.name);
-      setEditDesc(g.description || "");
-      setConfirmDeleteId(null);
-    }
-  };
-
-  const handleSaveEdit = async (id: string) => {
-    if (!editName.trim()) return;
-    const ok = await updateGenre(id, editName, editDesc);
-    if (ok) {
-      setExpandedId(null);
-    }
-  };
-
-  const handleDeleteConfirm = async (id: string) => {
-    const ok = await deleteGenre(id);
-    if (ok) {
-      setConfirmDeleteId(null);
-      if (expandedId === id) setExpandedId(null);
-    }
-  };
+  const {
+    genres,
+    loading,
+    submitting,
+    newName,
+    setNewName,
+    newDesc,
+    setNewDesc,
+    expandedId,
+    setExpandedId,
+    editName,
+    setEditName,
+    editDesc,
+    setEditDesc,
+    confirmDeleteId,
+    setConfirmDeleteId,
+    handleAdd,
+    toggleExpand,
+    handleSaveEdit,
+    handleDeleteConfirm,
+  } = useAdminGenres();
 
   return (
     <Card className="border-border/60 shadow-xs w-full">

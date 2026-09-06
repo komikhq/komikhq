@@ -14,6 +14,15 @@ export function useAdminGenres() {
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
+  // Form & Accordion State encapsulated inside Hook
+  const [newName, setNewName] = useState("");
+  const [newDesc, setNewDesc] = useState("");
+
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editDesc, setEditDesc] = useState("");
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+
   const getApiUrl = () => (window as any).__PUBLIC_API_URL__ || "http://localhost:8787";
 
   const fetchGenres = useCallback(async () => {
@@ -37,59 +46,70 @@ export function useAdminGenres() {
     fetchGenres();
   }, [fetchGenres]);
 
-  const createGenre = async (name: string, description?: string) => {
+  const handleAdd = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newName.trim()) return;
     setSubmitting(true);
     try {
       const res = await fetch(`${getApiUrl()}/v1/admin/genres`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ name, description }),
+        body: JSON.stringify({ name: newName, description: newDesc }),
       });
       const data: any = await res.json();
       if (res.ok && data.success) {
-        toast.success(`Genre "${name}" berhasil ditambahkan.`);
+        toast.success(`Genre "${newName}" berhasil ditambahkan.`);
+        setNewName("");
+        setNewDesc("");
         fetchGenres();
-        return true;
       } else {
         toast.error(data.error || "Gagal membuat genre baru");
-        return false;
       }
     } catch (err: any) {
       toast.error(err.message || "Gagal membuat genre");
-      return false;
     } finally {
       setSubmitting(false);
     }
   };
 
-  const updateGenre = async (id: string, name: string, description?: string) => {
+  const toggleExpand = (g: GenreItem) => {
+    if (expandedId === g.id) {
+      setExpandedId(null);
+    } else {
+      setExpandedId(g.id);
+      setEditName(g.name);
+      setEditDesc(g.description || "");
+      setConfirmDeleteId(null);
+    }
+  };
+
+  const handleSaveEdit = async (id: string) => {
+    if (!editName.trim()) return;
     setSubmitting(true);
     try {
       const res = await fetch(`${getApiUrl()}/v1/admin/genres/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ name, description }),
+        body: JSON.stringify({ name: editName, description: editDesc }),
       });
       const data: any = await res.json();
       if (res.ok && data.success) {
         toast.success("Genre berhasil diperbarui.");
+        setExpandedId(null);
         fetchGenres();
-        return true;
       } else {
         toast.error(data.error || "Gagal mengedit genre");
-        return false;
       }
     } catch (err: any) {
       toast.error(err.message || "Gagal mengedit genre");
-      return false;
     } finally {
       setSubmitting(false);
     }
   };
 
-  const deleteGenre = async (id: string) => {
+  const handleDeleteConfirm = async (id: string) => {
     try {
       const res = await fetch(`${getApiUrl()}/v1/admin/genres/${id}`, {
         method: "DELETE",
@@ -98,15 +118,14 @@ export function useAdminGenres() {
       const data: any = await res.json();
       if (res.ok && data.success) {
         toast.success(data.message || "Genre berhasil dihapus");
+        setConfirmDeleteId(null);
+        if (expandedId === id) setExpandedId(null);
         fetchGenres();
-        return true;
       } else {
         toast.error(data.error || "Gagal menghapus genre");
-        return false;
       }
     } catch (err: any) {
       toast.error(err.message || "Gagal menghapus genre");
-      return false;
     }
   };
 
@@ -114,9 +133,21 @@ export function useAdminGenres() {
     genres,
     loading,
     submitting,
-    fetchGenres,
-    createGenre,
-    updateGenre,
-    deleteGenre,
+    newName,
+    setNewName,
+    newDesc,
+    setNewDesc,
+    expandedId,
+    setExpandedId,
+    editName,
+    setEditName,
+    editDesc,
+    setEditDesc,
+    confirmDeleteId,
+    setConfirmDeleteId,
+    handleAdd,
+    toggleExpand,
+    handleSaveEdit,
+    handleDeleteConfirm,
   };
 }
