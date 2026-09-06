@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ImageUploadZone } from "@/components/admin/common/ImageUploadZone";
+import { GenreComboboxPicker } from "./GenreComboboxPicker";
 import { useComicForm } from "@/hooks/use-comic-form";
 import type { ComicAdminItem } from "@/hooks/use-admin-comics";
 
@@ -79,22 +80,11 @@ export function ComicFormSheet({ open, onOpenChange, comic, onSubmit, submitting
 
                 <div className="space-y-1.5">
                   <Label className="text-xs font-semibold">Genre Komik</Label>
-                  <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto p-2.5 border rounded-xl bg-muted/20">
-                    {form.genres.map((g) => (
-                      <button
-                        type="button"
-                        key={g.id}
-                        onClick={() => form.toggleGenre(g.id)}
-                        className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-all ${
-                          form.selectedGenreIds.includes(g.id)
-                            ? "bg-primary text-primary-foreground shadow-xs"
-                            : "bg-muted hover:bg-accent text-muted-foreground"
-                        }`}
-                      >
-                        {g.name}
-                      </button>
-                    ))}
-                  </div>
+                  <GenreComboboxPicker
+                    genres={form.genres}
+                    selectedGenreIds={form.selectedGenreIds}
+                    onToggleGenre={form.toggleGenre}
+                  />
                 </div>
 
                 <div className="space-y-1.5">
