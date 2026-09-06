@@ -13,13 +13,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { useAuth } from "@/hooks/use-auth";
+import { useAuthContext } from "@/components/auth/AuthContext";
 import { useUpdateUserName } from "@/hooks/use-update-user-name";
 import { useUploadAvatar } from "@/hooks/use-upload-avatar";
 import { AvatarCropDialog } from "./AvatarCropDialog";
 
 export function AccountProfileCard() {
-  const { user, isPending, handleSignOut, refetch } = useAuth();
+  const { user, isPending, handleSignOut, refetch } = useAuthContext();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [cropDialogOpen, setCropDialogOpen] = useState(false);

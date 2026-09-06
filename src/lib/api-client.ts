@@ -1,10 +1,15 @@
 export function getBaseApiUrl(): string {
   if (typeof window !== "undefined") {
-    return (
-      (window as any).__PUBLIC_API_URL__ ||
-      import.meta.env.PUBLIC_API_URL ||
-      "http://localhost:8787"
-    );
+    const customUrl = (window as any).__PUBLIC_API_URL__ || import.meta.env.PUBLIC_API_URL;
+    if (customUrl && customUrl !== "http://localhost:8787") {
+      return customUrl;
+    }
+
+    const hostname = window.location.hostname;
+    if (hostname !== "localhost" && hostname !== "127.0.0.1") {
+      return `${window.location.protocol}//${hostname}:8787`;
+    }
+    return customUrl || "http://localhost:8787";
   }
   return import.meta.env.PUBLIC_API_URL || "http://localhost:8787";
 }

@@ -2,10 +2,10 @@ import React from "react";
 import { Envelope, ShieldCheck } from "@phosphor-icons/react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { useAuth } from "@/hooks/use-auth";
+import { useAuthContext } from "@/components/auth/AuthContext";
 
 export function AccountIdentityCard() {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuthContext();
 
   if (!isAuthenticated || !user) return null;
 

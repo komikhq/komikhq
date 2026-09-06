@@ -1,6 +1,6 @@
 import React from "react";
 import { useRequireAuth } from "@/hooks/use-require-auth";
-import { Card, CardContent } from "@/components/ui/card";
+import { AuthProvider } from "./AuthContext";
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -8,7 +8,8 @@ interface AuthGuardProps {
 }
 
 export function AuthGuard({ children, redirectTo = "/login" }: AuthGuardProps) {
-  const { isPending, isAuthenticated } = useRequireAuth(redirectTo);
+  const authState = useRequireAuth(redirectTo);
+  const { isPending, isAuthenticated } = authState;
 
   if (isPending || !isAuthenticated) {
     return (
@@ -18,5 +19,10 @@ export function AuthGuard({ children, redirectTo = "/login" }: AuthGuardProps) {
     );
   }
 
-  return <div className="flex flex-col gap-6 w-full">{children}</div>;
+  return (
+    <AuthProvider value={authState}>
+      <div className="flex flex-col gap-6 w-full">{children}</div>
+    </AuthProvider>
+  );
 }
+

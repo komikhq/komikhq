@@ -1,5 +1,6 @@
 import React from "react";
 import { useRequireAdmin } from "@/hooks/use-require-admin";
+import { AuthProvider } from "@/components/auth/AuthContext";
 
 interface AdminGuardProps {
   children: React.ReactNode;
@@ -7,7 +8,8 @@ interface AdminGuardProps {
 }
 
 export function AdminGuard({ children, redirectTo = "/" }: AdminGuardProps) {
-  const { isPending, isAuthenticated, isAdmin } = useRequireAdmin(redirectTo);
+  const authState = useRequireAdmin(redirectTo);
+  const { isPending, isAuthenticated, isAdmin } = authState;
 
   if (isPending || !isAuthenticated || !isAdmin) {
     return (
@@ -18,5 +20,10 @@ export function AdminGuard({ children, redirectTo = "/" }: AdminGuardProps) {
     );
   }
 
-  return <div className="flex flex-col gap-6 w-full">{children}</div>;
+  return (
+    <AuthProvider value={authState}>
+      <div className="flex flex-col gap-6 w-full">{children}</div>
+    </AuthProvider>
+  );
 }
+
