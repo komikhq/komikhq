@@ -31,7 +31,7 @@ export function GenreComboboxPicker({
   return (
     <div className="space-y-2.5">
       {/* Selected Genre Badges with Removable 'x' Button */}
-      <div className="flex flex-wrap gap-1.5 min-h-[36px] p-2 border rounded-xl bg-muted/20 items-center">
+      <div className="flex flex-wrap gap-1.5 min-h-[36px] max-h-28 overflow-y-auto p-2 border rounded-xl bg-muted/20 items-center">
         {selectedGenres.length === 0 ? (
           <span className="text-xs text-muted-foreground italic px-1">
             Belum ada genre dipilih. Pilih genre via tombol di bawah.
@@ -41,7 +41,7 @@ export function GenreComboboxPicker({
             <Badge
               key={g.id}
               variant="default"
-              className="h-7 px-3 text-xs bg-primary text-primary-foreground border border-primary/20 flex items-center gap-1.5 shrink-0 shadow-2xs"
+              className="py-1 px-2.5 text-xs bg-primary text-primary-foreground border border-primary/20 flex items-center gap-1.5 shrink-0 shadow-2xs"
             >
               <span>{g.name}</span>
               <button
