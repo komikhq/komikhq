@@ -1,18 +1,30 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { ArrowLeft } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { API_PREFIX } from "@/constants/api-routes";
+import { apiFetch } from "@/lib/api-client";
 
 interface ReaderHeaderBarProps {
   comicSlug?: string;
   chapterSlug?: string;
-  totalPages?: number;
 }
 
-export function ReaderHeaderBar({ comicSlug, chapterSlug, totalPages = 10 }: ReaderHeaderBarProps) {
-  const comicTitle = comicSlug ? comicSlug.replace(/-/g, " ").toUpperCase() : "Comic Reader";
-  const chapterNumber = chapterSlug ? chapterSlug.replace(/chapter-/i, "") : "1";
+export function ReaderHeaderBar({ comicSlug, chapterSlug }: ReaderHeaderBarProps) {
+  const [data, setData] = useState<any>(null);
+
+  useEffect(() => {
+    if (!comicSlug || !chapterSlug) return;
+
+    apiFetch(`${API_PREFIX}/comics/${comicSlug}/chapters/${chapterSlug}`)
+      .then((res) => setData(res))
+      .catch(() => setData(null));
+  }, [comicSlug, chapterSlug]);
+
+  const comicTitle = data?.comic?.title || (comicSlug ? comicSlug.replace(/-/g, " ").toUpperCase() : "Comic Reader");
+  const chapterNumber = data?.chapter?.chapterNumber || (chapterSlug ? chapterSlug.replace(/chapter-|ch-/i, "") : "1");
+  const totalPages = data?.pages?.length || 0;
 
   return (
     <TooltipProvider>
@@ -24,7 +36,7 @@ export function ReaderHeaderBar({ comicSlug, chapterSlug, totalPages = 10 }: Rea
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent side="bottom">Back to comic detail</TooltipContent>
+            <TooltipContent side="bottom">Kembali ke detail komik</TooltipContent>
           </Tooltip>
           <div>
             <h2 className="text-sm font-bold line-clamp-1">{comicTitle}</h2>
@@ -33,9 +45,10 @@ export function ReaderHeaderBar({ comicSlug, chapterSlug, totalPages = 10 }: Rea
         </div>
 
         <Badge variant="outline" className="border-primary/50 text-primary font-mono text-xs px-2.5 py-1">
-          Page 1/{totalPages}
+          Total {totalPages} Halaman
         </Badge>
       </header>
     </TooltipProvider>
   );
 }
+

@@ -10,7 +10,8 @@ const { slug, chapterSlug } = Astro.params;
 <RootLayout title={`Baca ${slug} ${chapterSlug} - KomikHQ`}>
   <div class="min-h-screen bg-neutral-950 text-neutral-100 pb-20">
     <ReaderHeaderBar comicSlug={slug} chapterSlug={chapterSlug} client:load />
-    <ReaderImageStack client:load />
-    <ReaderFooterNav client:load />
+    <ReaderImageStack comicSlug={slug} chapterSlug={chapterSlug} client:load />
+    <ReaderFooterNav comicSlug={slug} chapterSlug={chapterSlug} client:load />
   </div>
 </RootLayout>
+
