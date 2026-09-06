@@ -1,11 +1,7 @@
 ---
 import RootLayout from "@/layouts/RootLayout.astro";
-import { AuthGuard } from "@/components/auth/AuthGuard";
 import { AccountTabNav } from "@/components/account/AccountTabNav";
-import { AccountThemeCard } from "@/components/account/AccountThemeCard";
-import { AccountPreferencesCard } from "@/components/account/AccountPreferencesCard";
-import { AccountPasswordCard } from "@/components/account/AccountPasswordCard";
-import { AccountDangerZoneCard } from "@/components/account/AccountDangerZoneCard";
+import { AccountSettingsView } from "@/components/account/AccountSettingsView";
 import { UserCircle } from "@phosphor-icons/react";
 ---
 
@@ -25,13 +21,7 @@ import { UserCircle } from "@phosphor-icons/react";
       <AccountTabNav currentTab="settings" client:load />
     </div>
 
-    <AuthGuard client:only="react">
-      <div class="flex flex-col gap-6">
-        <AccountThemeCard />
-        <AccountPreferencesCard />
-        <AccountPasswordCard />
-        <AccountDangerZoneCard />
-      </div>
-    </AuthGuard>
+    <AccountSettingsView client:only="react" />
   </div>
 </RootLayout>
+
