@@ -1,9 +1,8 @@
 ---
 import RootLayout from "@/layouts/RootLayout.astro";
-import { AdminGuard } from "@/components/admin/AdminGuard";
 import { AdminHeader } from "@/components/admin/AdminHeader";
 import { AdminTabNav } from "@/components/admin/AdminTabNav";
-import { ComicTableSection } from "@/components/admin/comics/ComicTableSection";
+import { AdminComicsView } from "@/components/admin/comics/AdminComicsView";
 ---
 
 <RootLayout title="Manajemen Katalog Komik - KomikHQ">
@@ -11,8 +10,6 @@ import { ComicTableSection } from "@/components/admin/comics/ComicTableSection";
     <AdminHeader client:load />
     <AdminTabNav currentTab="comics" client:load />
 
-    <AdminGuard client:only="react">
-      <ComicTableSection />
-    </AdminGuard>
+    <AdminComicsView client:only="react" />
   </div>
 </RootLayout>
