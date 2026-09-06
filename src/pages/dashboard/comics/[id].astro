@@ -3,19 +3,21 @@ import RootLayout from "@/layouts/RootLayout.astro";
 import { AdminGuard } from "@/components/admin/AdminGuard";
 import { AdminHeader } from "@/components/admin/AdminHeader";
 import { AdminTabNav } from "@/components/admin/AdminTabNav";
-import { ComicTableSection } from "@/components/admin/comics/ComicTableSection";
-import { GenreTableSection } from "@/components/admin/genres/GenreTableSection";
+import { AdminComicDetailHeader } from "@/components/admin/chapters/AdminComicDetailHeader";
+import { ChapterTableSection } from "@/components/admin/chapters/ChapterTableSection";
+
+const { id } = Astro.params;
 ---
 
-<RootLayout title="Manajemen Katalog Komik - KomikHQ">
+<RootLayout title="Manajemen Chapter Komik - KomikHQ">
   <div class="w-full flex flex-col gap-6 pb-20 pt-4 px-4 sm:px-6 lg:px-8">
     <AdminHeader client:load />
     <AdminTabNav currentTab="comics" client:load />
 
     <AdminGuard client:only="react">
       <div class="space-y-6">
-        <ComicTableSection client:load />
-        <GenreTableSection client:load />
+        <AdminComicDetailHeader comicId={id || ""} client:load />
+        <ChapterTableSection comicId={id || ""} client:load />
       </div>
     </AdminGuard>
   </div>
