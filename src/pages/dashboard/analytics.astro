@@ -1,0 +1,18 @@
+---
+import RootLayout from "@/layouts/RootLayout.astro";
+import { AdminGuard } from "@/components/admin/AdminGuard";
+import { AdminHeader } from "@/components/admin/AdminHeader";
+import { AdminTabNav } from "@/components/admin/AdminTabNav";
+import { AdminAnalyticsCard } from "@/components/admin/AdminAnalyticsCard";
+---
+
+<RootLayout title="Analitik Platform Admin - KomikHQ">
+  <div class="max-w-6xl mx-auto flex flex-col gap-6 pb-20 pt-4 px-4">
+    <AdminHeader client:load />
+    <AdminTabNav currentTab="analytics" client:load />
+
+    <AdminGuard client:only="react">
+      <AdminAnalyticsCard client:load />
+    </AdminGuard>
+  </div>
+</RootLayout>

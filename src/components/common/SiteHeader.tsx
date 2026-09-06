@@ -8,6 +8,7 @@ import {
   UserCircle,
   Gear,
   SignOut,
+  ShieldCheck,
   type Icon,
 } from "@phosphor-icons/react";
 import { Input } from "@/components/ui/input";
@@ -125,6 +126,12 @@ export function SiteHeader() {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
+                  {user.role === "admin" && (
+                    <DropdownMenuItem className="cursor-pointer font-semibold text-primary focus:bg-primary/10" onClick={() => (window.location.href = "/dashboard")}>
+                      <ShieldCheck className="mr-2 h-4 w-4 text-primary" />
+                      <span>Dashboard Admin</span>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuItem className="cursor-pointer" onClick={() => (window.location.href = "/account")}>
                     <UserCircle className="mr-2 h-4 w-4 text-primary" />
                     <span>Profil Saya</span>
