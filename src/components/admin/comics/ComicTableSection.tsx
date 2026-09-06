@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAdminComics, type ComicAdminItem } from "@/hooks/use-admin-comics";
-import { ComicFormDialog } from "./ComicFormDialog";
+import { ComicFormSheet } from "./ComicFormSheet";
 import { ComicDeleteDialog } from "./ComicDeleteDialog";
 
 export function ComicTableSection() {
@@ -183,11 +183,11 @@ export function ComicTableSection() {
         )}
       </CardContent>
 
-      <ComicFormDialog
+      <ComicFormSheet
         open={formOpen}
         onOpenChange={setFormOpen}
         comic={selectedComic}
-        onSubmit={(fd) => (selectedComic ? updateComic(selectedComic.id, fd) : createComic(fd))}
+        onSubmit={(fd: FormData) => (selectedComic ? updateComic(selectedComic.id, fd) : createComic(fd))}
         submitting={submitting}
       />
 

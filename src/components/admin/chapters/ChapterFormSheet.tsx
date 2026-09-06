@@ -1,19 +1,19 @@
 import React, { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { ImageUploadZone } from "@/components/admin/common/ImageUploadZone";
 import { useImageUpload } from "@/hooks/use-image-upload";
 
-interface ChapterFormDialogProps {
+interface ChapterFormSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (formData: FormData) => Promise<boolean>;
   submitting: boolean;
 }
 
-export function ChapterFormDialog({ open, onOpenChange, onSubmit, submitting }: ChapterFormDialogProps) {
+export function ChapterFormSheet({ open, onOpenChange, onSubmit, submitting }: ChapterFormSheetProps) {
   const pagesUpload = useImageUpload({ multiple: true, maxFiles: 100 });
   const [chapterNumber, setChapterNumber] = useState("");
   const [title, setTitle] = useState("");
@@ -40,17 +40,17 @@ export function ChapterFormDialog({ open, onOpenChange, onSubmit, submitting }: 
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-base font-bold">Tambah Chapter & Upload Gambar Halaman</DialogTitle>
-          <DialogDescription className="text-xs">
-            Unggah gambar-gambar komik sekaligus untuk membuat rilis chapter baru.
-          </DialogDescription>
-        </DialogHeader>
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent side="right" className="sm:max-w-2xl lg:max-w-3xl w-full overflow-y-auto p-0">
+        <SheetHeader className="p-6 border-b border-border/60 sticky top-0 bg-background/95 backdrop-blur z-10">
+          <SheetTitle className="text-lg font-bold">Tambah Chapter & Upload Gambar Halaman</SheetTitle>
+          <SheetDescription className="text-xs">
+            Unggah gambar-gambar komik sekaligus untuk membuat rilis chapter baru dengan spesifikasi webtoon/manga vertical.
+          </SheetDescription>
+        </SheetHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4 pt-2">
-          <div className="grid grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <Label className="text-xs font-semibold">Nomor Chapter *</Label>
               <Input
@@ -75,8 +75,10 @@ export function ChapterFormDialog({ open, onOpenChange, onSubmit, submitting }: 
             </div>
           </div>
 
-          <div className="space-y-1.5">
-            <Label className="text-xs font-semibold">File Gambar Halaman Komik ({pagesUpload.files.length} Terpilih)</Label>
+          <div className="space-y-2">
+            <Label className="text-xs font-semibold">
+              File Gambar Halaman Komik ({pagesUpload.files.length} Terpilih)
+            </Label>
             <ImageUploadZone
               files={pagesUpload.files}
               isDragging={pagesUpload.isDragging}
@@ -86,20 +88,23 @@ export function ChapterFormDialog({ open, onOpenChange, onSubmit, submitting }: 
               onFilesSelected={pagesUpload.addFiles}
               onRemove={pagesUpload.removeFile}
               multiple={true}
-              label="Tarik Banyak File Gambar Halaman Komik"
+              label="Tarik Banyak File Gambar Halaman Komik Sekaligus"
+              aspectRatioHint="Vertical Scroll"
+              recommendedSize="Lebar 720–1080 px"
+              maxSizeHint="Maks 10 MB/file"
             />
           </div>
 
-          <DialogFooter className="pt-3">
+          <SheetFooter className="p-0 pt-4 border-t border-border/60 flex flex-row items-center justify-end gap-2">
             <Button type="button" variant="outline" size="sm" onClick={() => onOpenChange(false)}>
               Batal
             </Button>
             <Button type="submit" size="sm" disabled={submitting || pagesUpload.files.length === 0}>
               {submitting ? "Mengunggah Halaman..." : "Upload & Buat Chapter"}
             </Button>
-          </DialogFooter>
+          </SheetFooter>
         </form>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 }

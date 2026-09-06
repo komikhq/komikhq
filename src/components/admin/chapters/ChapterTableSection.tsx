@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAdminChapters, type ChapterItem } from "@/hooks/use-admin-chapters";
-import { ChapterFormDialog } from "./ChapterFormDialog";
+import { ChapterFormSheet } from "./ChapterFormSheet";
 
 interface ChapterTableSectionProps {
   comicId: string;
@@ -87,7 +87,7 @@ export function ChapterTableSection({ comicId }: ChapterTableSectionProps) {
         </div>
       </CardContent>
 
-      <ChapterFormDialog
+      <ChapterFormSheet
         open={formOpen}
         onOpenChange={setFormOpen}
         onSubmit={createChapter}

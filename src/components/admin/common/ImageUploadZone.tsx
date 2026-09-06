@@ -1,6 +1,7 @@
 import React from "react";
-import { UploadSimple, X, Image as ImageIcon } from "@phosphor-icons/react";
+import { UploadSimple, X, Info } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { FileWithPreview } from "@/hooks/use-image-upload";
 
@@ -15,6 +16,9 @@ interface ImageUploadZoneProps {
   multiple?: boolean;
   label?: string;
   existingPreviewUrl?: string | null;
+  aspectRatioHint?: string;
+  recommendedSize?: string;
+  maxSizeHint?: string;
 }
 
 export function ImageUploadZone({
@@ -28,6 +32,9 @@ export function ImageUploadZone({
   multiple = false,
   label = "Unggah Gambar",
   existingPreviewUrl,
+  aspectRatioHint,
+  recommendedSize,
+  maxSizeHint,
 }: ImageUploadZoneProps) {
   const inputRef = React.useRef<HTMLInputElement>(null);
 
@@ -39,7 +46,7 @@ export function ImageUploadZone({
         onDragLeave={onDragLeave}
         onClick={() => inputRef.current?.click()}
         className={cn(
-          "border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-2 min-h-[120px]",
+          "border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-2 min-h-[130px]",
           isDragging
             ? "border-primary bg-primary/10"
             : "border-border/60 bg-muted/20 hover:border-primary/50 hover:bg-muted/40"
@@ -56,17 +63,36 @@ export function ImageUploadZone({
         <div className="p-2.5 rounded-full bg-primary/10 text-primary">
           <UploadSimple className="h-5 w-5" />
         </div>
-        <div className="space-y-0.5">
+        <div className="space-y-1">
           <p className="text-xs font-semibold text-foreground">{label}</p>
           <p className="text-[11px] text-muted-foreground">
             {multiple ? "Tarik & lepas banyak file atau klik di sini" : "Tarik & lepas file atau klik untuk memilih"}
           </p>
+          {(aspectRatioHint || recommendedSize || maxSizeHint) && (
+            <div className="flex flex-wrap items-center justify-center gap-1.5 pt-1">
+              {aspectRatioHint && (
+                <Badge variant="outline" className="text-[10px] bg-background/60 font-medium text-primary border-primary/30">
+                  {aspectRatioHint}
+                </Badge>
+              )}
+              {recommendedSize && (
+                <Badge variant="outline" className="text-[10px] bg-background/60 text-muted-foreground">
+                  {recommendedSize}
+                </Badge>
+              )}
+              {maxSizeHint && (
+                <Badge variant="outline" className="text-[10px] bg-background/60 text-muted-foreground">
+                  {maxSizeHint}
+                </Badge>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
       {/* Preview single existing / uploaded file */}
       {!multiple && (files[0] || existingPreviewUrl) && (
-        <div className="relative w-24 h-32 rounded-lg overflow-hidden border border-border/60 group">
+        <div className="relative w-24 h-32 rounded-lg overflow-hidden border border-border/60 group bg-muted">
           <img
             src={files[0] ? files[0].previewUrl : existingPreviewUrl!}
             alt="Preview"
