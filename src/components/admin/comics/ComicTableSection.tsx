@@ -33,11 +33,13 @@ export function ComicTableSection() {
   const [deletingComic, setDeletingComic] = useState<ComicAdminItem | null>(null);
 
   const handleOpenAdd = () => {
+    console.log("[DEBUG Sheet] Opening Add Form Sheet");
     setSelectedComic(null);
     setFormOpen(true);
   };
 
   const handleOpenEdit = (c: ComicAdminItem) => {
+    console.log("[DEBUG Sheet] Opening Edit Form Sheet for comic:", c);
     setSelectedComic(c);
     setFormOpen(true);
   };

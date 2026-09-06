@@ -18,6 +18,7 @@ interface ComicFormSheetProps {
 }
 
 export function ComicFormSheet({ open, onOpenChange, comic, onSubmit, submitting }: ComicFormSheetProps) {
+  console.log("[DEBUG Sheet Component] Render ComicFormSheet, open =", open);
   const form = useComicForm({ open, comic, onSubmit, onOpenChange });
 
   return (
