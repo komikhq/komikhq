@@ -65,7 +65,11 @@ export function ListAllComicTable() {
                     <h3 className="font-semibold text-sm group-hover:text-primary transition-colors">
                       {comic.title}
                     </h3>
-                    <p className="text-xs text-muted-foreground">{comic.genre || "Manga"}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {Array.isArray(comic.genres) && comic.genres.length > 0
+                        ? comic.genres.map((g: any) => g.name).join(", ")
+                        : "Komik"}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
