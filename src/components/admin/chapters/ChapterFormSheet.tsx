@@ -41,7 +41,7 @@ export function ChapterFormSheet({ open, onOpenChange, onSubmit, submitting }: C
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-full sm:max-w-[85vw] lg:max-w-[80vw] xl:max-w-[1200px] overflow-y-auto p-0">
+      <SheetContent side="right" className="w-full sm:max-w-[92vw] lg:max-w-[90vw] xl:max-w-[1400px] overflow-y-auto p-0">
         <SheetHeader className="p-6 border-b border-border/60 sticky top-0 bg-background/95 backdrop-blur z-10">
           <SheetTitle className="text-lg font-bold">Tambah Chapter & Upload Gambar Halaman</SheetTitle>
           <SheetDescription className="text-xs">
