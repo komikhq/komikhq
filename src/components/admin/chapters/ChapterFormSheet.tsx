@@ -41,61 +41,63 @@ export function ChapterFormSheet({ open, onOpenChange, onSubmit, submitting }: C
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-full sm:[&[data-slot=sheet-content]]:max-w-[92vw] lg:[&[data-slot=sheet-content]]:max-w-[90vw] xl:[&[data-slot=sheet-content]]:max-w-[1400px] overflow-y-auto p-0">
-        <SheetHeader className="p-6 border-b border-border/60 sticky top-0 bg-background/95 backdrop-blur z-10">
+      <SheetContent side="right" className="w-full sm:[&[data-slot=sheet-content]]:max-w-[92vw] lg:[&[data-slot=sheet-content]]:max-w-[90vw] xl:[&[data-slot=sheet-content]]:max-w-[1400px] flex flex-col h-full overflow-hidden p-0">
+        <SheetHeader className="p-6 border-b border-border/60 sticky top-0 bg-background/95 backdrop-blur z-10 shrink-0">
           <SheetTitle className="text-lg font-bold">Tambah Chapter & Upload Gambar Halaman</SheetTitle>
           <SheetDescription className="text-xs">
             Unggah gambar-gambar komik sekaligus untuk membuat rilis chapter baru dengan spesifikasi webtoon/manga vertical.
           </SheetDescription>
         </SheetHeader>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <Label className="text-xs font-semibold">Nomor Chapter *</Label>
-              <Input
-                required
-                type="number"
-                step="0.1"
-                placeholder="misal: 1 atau 1.5"
-                className="text-xs h-9"
-                value={chapterNumber}
-                onChange={(e) => setChapterNumber(e.target.value)}
-              />
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
+          <div className="flex-1 overflow-y-auto p-6 space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold">Nomor Chapter *</Label>
+                <Input
+                  required
+                  type="number"
+                  step="0.1"
+                  placeholder="misal: 1 atau 1.5"
+                  className="text-xs h-9"
+                  value={chapterNumber}
+                  onChange={(e) => setChapterNumber(e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold">Judul Chapter (Opsional)</Label>
+                <Input
+                  placeholder="misal: Bangkitnya Sang Hunter"
+                  className="text-xs h-9"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                />
+              </div>
             </div>
 
-            <div className="space-y-1.5">
-              <Label className="text-xs font-semibold">Judul Chapter (Opsional)</Label>
-              <Input
-                placeholder="misal: Bangkitnya Sang Hunter"
-                className="text-xs h-9"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
+            <div className="space-y-2">
+              <Label className="text-xs font-semibold">
+                File Gambar Halaman Komik ({pagesUpload.files.length} Terpilih)
+              </Label>
+              <ImageUploadZone
+                files={pagesUpload.files}
+                isDragging={pagesUpload.isDragging}
+                onDrop={pagesUpload.handleDrop}
+                onDragOver={pagesUpload.handleDragOver}
+                onDragLeave={pagesUpload.handleDragLeave}
+                onFilesSelected={pagesUpload.addFiles}
+                onRemove={pagesUpload.removeFile}
+                multiple={true}
+                label="Tarik Banyak File Gambar Halaman Komik Sekaligus"
+                aspectRatioHint="Vertical Scroll"
+                recommendedSize="Lebar 720–1080 px"
+                maxSizeHint="Maks 10 MB/file"
               />
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label className="text-xs font-semibold">
-              File Gambar Halaman Komik ({pagesUpload.files.length} Terpilih)
-            </Label>
-            <ImageUploadZone
-              files={pagesUpload.files}
-              isDragging={pagesUpload.isDragging}
-              onDrop={pagesUpload.handleDrop}
-              onDragOver={pagesUpload.handleDragOver}
-              onDragLeave={pagesUpload.handleDragLeave}
-              onFilesSelected={pagesUpload.addFiles}
-              onRemove={pagesUpload.removeFile}
-              multiple={true}
-              label="Tarik Banyak File Gambar Halaman Komik Sekaligus"
-              aspectRatioHint="Vertical Scroll"
-              recommendedSize="Lebar 720–1080 px"
-              maxSizeHint="Maks 10 MB/file"
-            />
-          </div>
-
-          <SheetFooter className="p-0 pt-4 border-t border-border/60 flex flex-row items-center justify-end gap-2">
+          <SheetFooter className="p-6 sticky bottom-0 bg-background/95 backdrop-blur border-t border-border/60 flex flex-row items-center justify-end gap-2 shrink-0 mt-auto z-10">
             <Button type="button" variant="outline" size="sm" onClick={() => onOpenChange(false)}>
               Batal
             </Button>
