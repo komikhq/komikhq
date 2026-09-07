@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Fire, TrendUp } from "@phosphor-icons/react";
+import { TrendUp } from "@phosphor-icons/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { API_ROUTES } from "@/constants";
@@ -14,7 +14,7 @@ export function HomeTrendingSection() {
     let isMounted = true;
     setIsLoading(true);
 
-    apiFetch(API_ROUTES.COMICS.TRENDING(period))
+    apiFetch(API_ROUTES.COMICS.TRENDING(period, 20))
       .then((data) => {
         if (isMounted) {
           setTrendingComics(data.comics || []);
@@ -33,81 +33,64 @@ export function HomeTrendingSection() {
   }, [period]);
 
   return (
-    <Card className="border border-neutral-800 bg-neutral-900/50">
+    <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-        <CardTitle className="text-xl font-bold flex items-center gap-2 text-neutral-100">
-          <Fire className="h-5 w-5 text-orange-500 animate-pulse" />
-          <span>Komik Trending</span>
+        <CardTitle className="text-xl font-bold flex items-center gap-2">
+          <TrendUp className="h-5 w-5 text-primary" />
+          <span>Trending Comics</span>
         </CardTitle>
         <Tabs
           value={period}
           onValueChange={(val) => setPeriod(val as "daily" | "weekly")}
         >
-          <TabsList className="grid w-44 grid-cols-2 bg-neutral-800">
-            <TabsTrigger value="daily">Harian</TabsTrigger>
-            <TabsTrigger value="weekly">Mingguan</TabsTrigger>
+          <TabsList className="grid w-36 grid-cols-2">
+            <TabsTrigger value="daily">Daily</TabsTrigger>
+            <TabsTrigger value="weekly">Weekly</TabsTrigger>
           </TabsList>
         </Tabs>
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="flex flex-col space-y-2 border border-neutral-800 rounded-lg p-2 bg-neutral-900/60">
-                <div className="aspect-[3/4] overflow-hidden rounded-md bg-neutral-800 animate-pulse" />
-                <div className="h-4 bg-neutral-800 animate-pulse rounded w-3/4" />
-                <div className="h-3 bg-neutral-800 animate-pulse rounded w-1/2" />
+          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8 xl:grid-cols-10 gap-3">
+            {Array.from({ length: 10 }).map((_, i) => (
+              <div key={i} className="flex flex-col space-y-2 border rounded-lg p-2 bg-card">
+                <div className="aspect-[3/4] overflow-hidden rounded-md bg-muted animate-pulse" />
+                <div className="h-4 bg-muted animate-pulse rounded w-3/4" />
+                <div className="h-3 bg-muted animate-pulse rounded w-1/2" />
               </div>
             ))}
           </div>
         ) : trendingComics.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-            {trendingComics.map((comic, index) => (
+          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8 xl:grid-cols-10 gap-3">
+            {trendingComics.slice(0, 20).map((comic) => (
               <a
                 key={comic.id}
                 href={`/komik/${comic.slug}`}
-                className="group relative flex flex-col space-y-2 border border-neutral-800/80 rounded-lg p-2 bg-neutral-900/40 hover:bg-neutral-800/60 hover:border-neutral-700 transition-all duration-200 overflow-hidden"
+                className="group flex flex-col space-y-2 border rounded-lg p-2 bg-card hover:bg-accent transition-colors"
               >
-                {/* Rank Badge */}
-                <div
-                  className={`absolute top-3 left-3 z-10 font-bold text-[10px] px-2 py-0.5 rounded shadow backdrop-blur ${
-                    index === 0
-                      ? "bg-amber-500 text-black font-extrabold"
-                      : index === 1
-                      ? "bg-slate-300 text-black font-bold"
-                      : index === 2
-                      ? "bg-amber-700 text-white font-bold"
-                      : "bg-black/70 text-neutral-300"
-                  }`}
-                >
-                  #{index + 1}
-                </div>
-
-                <div className="aspect-[3/4] overflow-hidden rounded-md bg-neutral-800 relative">
+                <div className="aspect-[3/4] overflow-hidden rounded-md bg-muted">
                   <img
                     src={comic.coverUrl}
                     alt={comic.title}
-                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    className="h-full w-full object-cover transition-transform group-hover:scale-105"
                     loading="lazy"
                   />
                 </div>
-                <h3 className="font-semibold text-sm line-clamp-1 text-neutral-200 group-hover:text-amber-400 transition-colors">
+                <h3 className="font-semibold text-sm line-clamp-1 group-hover:text-accent-foreground transition-colors">
                   {comic.title}
                 </h3>
-                <p className="text-xs text-neutral-400 flex items-center gap-1 font-mono">
-                  <TrendUp className="h-3 w-3 text-orange-400 inline" />
+                <p className="text-xs text-muted-foreground group-hover:text-accent-foreground/80 transition-colors">
                   {(comic.totalViews || 0).toLocaleString("id-ID")} views
                 </p>
               </a>
             ))}
           </div>
         ) : (
-          <p className="text-sm text-neutral-500 py-8 text-center">
-            Belum ada data komik trending untuk periode ini.
+          <p className="text-sm text-muted-foreground py-8 text-center">
+            Belum ada data komik trending.
           </p>
         )}
       </CardContent>
     </Card>
   );
 }
-

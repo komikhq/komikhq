@@ -13,8 +13,8 @@ export const API_ROUTES = {
     SESSION: `${API_PREFIX}/auth/get-session`,
   },
   COMICS: {
-    TRENDING: (period: "daily" | "weekly" | "popular" = "daily") =>
-      `${API_PREFIX}/comics/trending?period=${period}`,
+    TRENDING: (period: "daily" | "weekly" | "popular" = "daily", limit = 20) =>
+      `${API_PREFIX}/comics/trending?period=${period}&limit=${limit}`,
     BROWSE: (query?: string) =>
       query ? `${API_PREFIX}/comics/browse?${query}` : `${API_PREFIX}/comics/browse`,
     DETAIL: (slug: string) => `${API_PREFIX}/comics/${slug}`,
