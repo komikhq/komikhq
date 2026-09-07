@@ -65,6 +65,20 @@ export function ComicFormSheet({ open, onOpenChange, comic, onSubmit, submitting
                 </div>
 
                 <div className="space-y-1.5">
+                  <Label className="text-xs font-semibold">Tipe Komik</Label>
+                  <Select value={form.type} onValueChange={form.setType}>
+                    <SelectTrigger className="h-9 text-xs">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="manga">Manga (Jepang)</SelectItem>
+                      <SelectItem value="manhwa">Manhwa (Korea)</SelectItem>
+                      <SelectItem value="manhua">Manhua (China)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-1.5">
                   <Label className="text-xs font-semibold">Status Publikasi</Label>
                   <Select value={form.status} onValueChange={form.setStatus}>
                     <SelectTrigger className="h-9 text-xs">

@@ -17,6 +17,7 @@ export function useComicForm({ open, comic, onSubmit, onOpenChange }: UseComicFo
 
   const [title, setTitle] = useState("");
   const [synopsis, setSynopsis] = useState("");
+  const [type, setType] = useState("manga");
   const [status, setStatus] = useState("ongoing");
   const [creator, setCreator] = useState("");
   const [selectedGenreIds, setSelectedGenreIds] = useState<string[]>([]);
@@ -25,12 +26,14 @@ export function useComicForm({ open, comic, onSubmit, onOpenChange }: UseComicFo
     if (comic) {
       setTitle(comic.title || "");
       setSynopsis(comic.synopsis || "");
+      setType(comic.type || "manga");
       setStatus(comic.status || "ongoing");
       setCreator(comic.creators ? comic.creators.join(", ") : "");
       setSelectedGenreIds(comic.genres ? comic.genres.map((g) => g.id) : []);
     } else {
       setTitle("");
       setSynopsis("");
+      setType("manga");
       setStatus("ongoing");
       setCreator("");
       setSelectedGenreIds([]);
@@ -50,6 +53,7 @@ export function useComicForm({ open, comic, onSubmit, onOpenChange }: UseComicFo
     const formData = new FormData();
     formData.append("title", title);
     formData.append("synopsis", synopsis);
+    formData.append("type", type);
     formData.append("status", status);
     formData.append("creator", creator);
     formData.append("genreIds", JSON.stringify(selectedGenreIds));
@@ -73,6 +77,8 @@ export function useComicForm({ open, comic, onSubmit, onOpenChange }: UseComicFo
     setTitle,
     synopsis,
     setSynopsis,
+    type,
+    setType,
     status,
     setStatus,
     creator,

@@ -108,6 +108,7 @@ export function ComicTableSection() {
               <tr>
                 <th className="p-3">Cover</th>
                 <th className="p-3">Judul Komik</th>
+                <th className="p-3">Tipe</th>
                 <th className="p-3">Penulis</th>
                 <th className="p-3">Genre</th>
                 <th className="p-3">Chapters</th>
@@ -118,11 +119,11 @@ export function ComicTableSection() {
             <tbody className="divide-y divide-border/40">
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="p-6 text-center text-muted-foreground">Memuat data komik...</td>
+                  <td colSpan={8} className="p-6 text-center text-muted-foreground">Memuat data komik...</td>
                 </tr>
               ) : comics.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="p-6 text-center text-muted-foreground">Tidak ada komik ditemukan.</td>
+                  <td colSpan={8} className="p-6 text-center text-muted-foreground">Tidak ada komik ditemukan.</td>
                 </tr>
               ) : (
                 comics.map((c) => (
@@ -134,6 +135,11 @@ export function ComicTableSection() {
                       <a href={`/dashboard/comics/${c.id}`} className="font-semibold text-foreground hover:text-primary transition-colors">
                         {c.title}
                       </a>
+                    </td>
+                    <td className="p-3">
+                      <Badge variant="outline" className="capitalize text-[10px]">
+                        {c.type || "Manga"}
+                      </Badge>
                     </td>
                     <td className="p-3 text-muted-foreground">{c.creators?.join(", ") || "-"}</td>
                     <td className="p-3">

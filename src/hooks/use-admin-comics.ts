@@ -8,6 +8,7 @@ export interface ComicAdminItem {
   synopsis?: string | null;
   coverUrl: string;
   bannerUrl?: string | null;
+  type?: string | null;
   status: string;
   accessTier: string;
   totalChapters: number;

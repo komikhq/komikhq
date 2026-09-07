@@ -68,6 +68,9 @@ export function ComicHeaderCard({ slug }: ComicHeaderCardProps) {
             <div>
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-2.5">
                 <Badge variant="default" className="capitalize">
+                  {comic.type || "Manga"}
+                </Badge>
+                <Badge variant="outline" className="capitalize">
                   {comic.status || "Ongoing"}
                 </Badge>
                 <Badge variant="secondary" className="capitalize">
