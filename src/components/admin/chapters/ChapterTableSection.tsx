@@ -11,7 +11,7 @@ interface ChapterTableSectionProps {
 }
 
 export function ChapterTableSection({ comicId }: ChapterTableSectionProps) {
-  const { chapters, loading, submitting, createChapter, deleteChapter } = useAdminChapters(comicId);
+  const { chapters, loading, submitting, createChapterBatch, deleteChapter } = useAdminChapters(comicId);
   const [formOpen, setFormOpen] = useState(false);
 
   return (
@@ -90,7 +90,7 @@ export function ChapterTableSection({ comicId }: ChapterTableSectionProps) {
       <ChapterFormSheet
         open={formOpen}
         onOpenChange={setFormOpen}
-        onSubmit={createChapter}
+        onSubmitBatch={createChapterBatch}
         submitting={submitting}
       />
     </Card>

@@ -9,38 +9,53 @@ import { useImageUpload } from "@/hooks/use-image-upload";
 interface ChapterFormSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (formData: FormData) => Promise<boolean>;
+  onSubmitBatch: (
+    input: { chapterNumber: string; title?: string; pages: File[] },
+    onProgress?: (progress: number, stepText: string) => void
+  ) => Promise<boolean>;
   submitting: boolean;
 }
 
-export function ChapterFormSheet({ open, onOpenChange, onSubmit, submitting }: ChapterFormSheetProps) {
+export function ChapterFormSheet({ open, onOpenChange, onSubmitBatch, submitting }: ChapterFormSheetProps) {
   const pagesUpload = useImageUpload({ multiple: true, maxFiles: 100 });
   const [chapterNumber, setChapterNumber] = useState("");
   const [title, setTitle] = useState("");
+  const [progressPercent, setProgressPercent] = useState(0);
+  const [progressText, setProgressText] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!chapterNumber.trim()) return;
+    if (!chapterNumber.trim() || pagesUpload.files.length === 0) return;
 
-    const formData = new FormData();
-    formData.append("chapterNumber", chapterNumber.trim());
-    formData.append("title", title.trim());
+    setProgressPercent(0);
+    setProgressText("Persiapan mengunggah...");
 
-    pagesUpload.files.forEach((item) => {
-      formData.append("pages", item.file);
-    });
+    const files = pagesUpload.files.map((item) => item.file);
 
-    const ok = await onSubmit(formData);
+    const ok = await onSubmitBatch(
+      {
+        chapterNumber: chapterNumber.trim(),
+        title: title.trim(),
+        pages: files,
+      },
+      (percent, stepText) => {
+        setProgressPercent(percent);
+        setProgressText(stepText);
+      }
+    );
+
     if (ok) {
       setChapterNumber("");
       setTitle("");
       pagesUpload.clearFiles();
+      setProgressPercent(0);
+      setProgressText("");
       onOpenChange(false);
     }
   };
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
+    <Sheet open={open} onOpenChange={(val) => !submitting && onOpenChange(val)}>
       <SheetContent side="right" className="w-full sm:[&[data-slot=sheet-content]]:max-w-[92vw] lg:[&[data-slot=sheet-content]]:max-w-[90vw] xl:[&[data-slot=sheet-content]]:max-w-[1400px] flex flex-col h-full overflow-hidden p-0">
         <SheetHeader className="p-6 border-b border-border/60 sticky top-0 bg-background/95 backdrop-blur z-10 shrink-0">
           <SheetTitle className="text-lg font-bold">Tambah Chapter & Upload Gambar Halaman</SheetTitle>
@@ -56,6 +71,7 @@ export function ChapterFormSheet({ open, onOpenChange, onSubmit, submitting }: C
                 <Label className="text-xs font-semibold">Nomor Chapter *</Label>
                 <Input
                   required
+                  disabled={submitting}
                   type="number"
                   step="0.1"
                   placeholder="misal: 1 atau 1.5"
@@ -68,6 +84,7 @@ export function ChapterFormSheet({ open, onOpenChange, onSubmit, submitting }: C
               <div className="space-y-1.5">
                 <Label className="text-xs font-semibold">Judul Chapter (Opsional)</Label>
                 <Input
+                  disabled={submitting}
                   placeholder="misal: Bangkitnya Sang Hunter"
                   className="text-xs h-9"
                   value={title}
@@ -75,6 +92,21 @@ export function ChapterFormSheet({ open, onOpenChange, onSubmit, submitting }: C
                 />
               </div>
             </div>
+
+            {submitting && (
+              <div className="p-4 rounded-xl border border-primary/30 bg-primary/5 space-y-2 animate-in fade-in">
+                <div className="flex items-center justify-between text-xs font-medium">
+                  <span className="text-foreground">{progressText || "Mengunggah..."}</span>
+                  <span className="text-primary font-bold">{progressPercent}%</span>
+                </div>
+                <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
+                  <div
+                    className="bg-primary h-2 rounded-full transition-all duration-300 ease-out"
+                    style={{ width: `${progressPercent}%` }}
+                  />
+                </div>
+              </div>
+            )}
 
             <div className="space-y-2">
               <Label className="text-xs font-semibold">
@@ -98,11 +130,11 @@ export function ChapterFormSheet({ open, onOpenChange, onSubmit, submitting }: C
           </div>
 
           <SheetFooter className="p-6 sticky bottom-0 bg-background/95 backdrop-blur border-t border-border/60 flex flex-row items-center justify-end gap-2 shrink-0 mt-auto z-10">
-            <Button type="button" variant="outline" size="sm" onClick={() => onOpenChange(false)}>
+            <Button type="button" variant="outline" size="sm" disabled={submitting} onClick={() => onOpenChange(false)}>
               Batal
             </Button>
             <Button type="submit" size="sm" disabled={submitting || pagesUpload.files.length === 0}>
-              {submitting ? "Mengunggah Halaman..." : "Upload & Buat Chapter"}
+              {submitting ? `Mengunggah... (${progressPercent}%)` : "Upload & Buat Chapter"}
             </Button>
           </SheetFooter>
         </form>
