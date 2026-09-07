@@ -37,9 +37,9 @@ export function CommentSection({ comicId, chapterId, variant = "reader" }: Comme
       .catch(() => setIsLoggedIn(false));
   }, []);
 
-  const fetchComments = () => {
+  const fetchComments = (showSkeleton = false) => {
     if (!comicId && !chapterId) return;
-    setIsLoading(true);
+    if (showSkeleton) setIsLoading(true);
 
     apiFetch(API_ROUTES.COMMENTS.LIST({ comicId, chapterId }))
       .then((data) => {
@@ -51,7 +51,7 @@ export function CommentSection({ comicId, chapterId, variant = "reader" }: Comme
   };
 
   useEffect(() => {
-    fetchComments();
+    fetchComments(true);
 
     const targetId = chapterId || comicId;
     if (!targetId || typeof window === "undefined") return;
@@ -129,14 +129,14 @@ export function CommentSection({ comicId, chapterId, variant = "reader" }: Comme
         isSpoiler: guestInfo?.isSpoiler ?? false,
       }),
     });
-    fetchComments();
+    fetchComments(false);
   };
 
   const handleDeleteComment = async (commentId: string) => {
     await apiFetch(API_ROUTES.COMMENTS.DELETE(commentId), {
       method: "DELETE",
     });
-    fetchComments();
+    fetchComments(false);
   };
 
   const handleReportSubmit = async (

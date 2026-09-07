@@ -46,6 +46,8 @@ interface CommentTreeItemProps {
   isAdmin?: boolean;
 }
 
+import { CommentDeleteDialog } from "./CommentDeleteDialog";
+
 export function CommentTreeItem({
   comment,
   onSubmitReply,
@@ -59,6 +61,7 @@ export function CommentTreeItem({
   const [likeCount, setLikeCount] = useState(comment.likeCount || 0);
   const [isLiked, setIsLiked] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const isOwnerOrAdmin = isAdmin || (currentUserId && comment.author?.id === currentUserId);
 
@@ -76,9 +79,8 @@ export function CommentTreeItem({
     }
   };
 
-  const handleDelete = async () => {
+  const handleConfirmDelete = async () => {
     if (!onDeleteComment || isDeleting) return;
-    if (!confirm("Apakah Anda yakin ingin menghapus komentar ini?")) return;
 
     try {
       setIsDeleting(true);
@@ -166,7 +168,7 @@ export function CommentTreeItem({
 
             {isOwnerOrAdmin && !comment.isDeleted && onDeleteComment && (
               <button
-                onClick={handleDelete}
+                onClick={() => setShowDeleteDialog(true)}
                 disabled={isDeleting}
                 className="text-neutral-500 hover:text-rose-400 transition-colors text-[11px]"
               >
@@ -176,6 +178,13 @@ export function CommentTreeItem({
           </div>
         </div>
       </div>
+
+      <CommentDeleteDialog
+        isOpen={showDeleteDialog}
+        onClose={() => setShowDeleteDialog(false)}
+        onConfirm={handleConfirmDelete}
+        isDeleting={isDeleting}
+      />
 
       {isReplying && (
         <div className="ml-11 mt-2">
