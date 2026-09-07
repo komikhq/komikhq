@@ -1,9 +1,8 @@
 ---
 import RootLayout from "@/layouts/RootLayout.astro";
-import { AdminGuard } from "@/components/admin/AdminGuard";
 import { AdminHeader } from "@/components/admin/AdminHeader";
 import { AdminTabNav } from "@/components/admin/AdminTabNav";
-import { AdminUserManagementCard } from "@/components/admin/AdminUserManagementCard";
+import { AdminUsersView } from "@/components/admin/AdminUsersView";
 ---
 
 <RootLayout title="Manajemen Pengguna Admin - KomikHQ">
@@ -11,8 +10,6 @@ import { AdminUserManagementCard } from "@/components/admin/AdminUserManagementC
     <AdminHeader client:load />
     <AdminTabNav currentTab="users" client:load />
 
-    <AdminGuard client:only="react">
-      <AdminUserManagementCard />
-    </AdminGuard>
+    <AdminUsersView client:only="react" />
   </div>
 </RootLayout>
