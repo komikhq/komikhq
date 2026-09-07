@@ -12,28 +12,27 @@ interface LazyChapterPageProps {
   page: any;
   pageIndex: number;
   totalPages: number;
+  onPageVisible?: (pageIndex: number) => void;
 }
 
-function LazyChapterPage({ page, pageIndex, totalPages }: LazyChapterPageProps) {
+function LazyChapterPage({ page, pageIndex, totalPages, onPageVisible }: LazyChapterPageProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(pageIndex === 0);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    if (isVisible) return;
-
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setIsVisible(true);
-            observer.disconnect();
+            if (!isVisible) setIsVisible(true);
+            if (onPageVisible) onPageVisible(pageIndex);
           }
         });
       },
       {
-        rootMargin: "400px 0px 400px 0px",
-        threshold: 0.01,
+        rootMargin: "100px 0px 100px 0px",
+        threshold: 0.3,
       }
     );
 
@@ -44,7 +43,7 @@ function LazyChapterPage({ page, pageIndex, totalPages }: LazyChapterPageProps) 
     return () => {
       observer.disconnect();
     };
-  }, [isVisible]);
+  }, [isVisible, pageIndex, onPageVisible]);
 
   return (
     <div
@@ -88,6 +87,8 @@ export function ReaderImageStack({ comicSlug, chapterSlug }: ReaderImageStackPro
   const [pages, setPages] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [chapterMeta, setChapterMeta] = useState<{ comicId: string; chapterId: string } | null>(null);
+  const debounceTimerRef = useRef<any>(null);
 
   useEffect(() => {
     if (!comicSlug || !chapterSlug) return;
@@ -100,17 +101,8 @@ export function ReaderImageStack({ comicSlug, chapterSlug }: ReaderImageStackPro
         if (isMounted) {
           setPages(res.pages || []);
           if (res.comic?.id && res.chapter?.id) {
-            apiFetch(API_ROUTES.HISTORY.RECORD, {
-              method: "POST",
-              body: JSON.stringify({
-                comicId: res.comic.id,
-                chapterId: res.chapter.id,
-                lastReadPage: 1,
-                snapshotTotalPages: res.pages?.length || 1,
-              }),
-            }).catch(() => {
-              // Fail silently for history recording
-            });
+            setChapterMeta({ comicId: res.comic.id, chapterId: res.chapter.id });
+            recordHistory(res.comic.id, res.chapter.id, 1, res.pages?.length || 1);
           }
         }
       })
@@ -127,6 +119,31 @@ export function ReaderImageStack({ comicSlug, chapterSlug }: ReaderImageStackPro
       isMounted = false;
     };
   }, [comicSlug, chapterSlug]);
+
+  const recordHistory = (comicId: string, chapterId: string, pageNum: number, totalPagesCount: number) => {
+    apiFetch(API_ROUTES.HISTORY.RECORD, {
+      method: "POST",
+      body: JSON.stringify({
+        comicId,
+        chapterId,
+        lastReadPage: pageNum,
+        snapshotTotalPages: totalPagesCount,
+      }),
+    }).catch(() => {});
+  };
+
+  const handlePageVisible = (pageIndex: number) => {
+    if (!chapterMeta || pages.length === 0) return;
+    const pageNum = pageIndex + 1;
+
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    debounceTimerRef.current = setTimeout(() => {
+      recordHistory(chapterMeta.comicId, chapterMeta.chapterId, pageNum, pages.length);
+    }, 1500);
+  };
 
   if (isLoading) {
     return (
@@ -158,6 +175,7 @@ export function ReaderImageStack({ comicSlug, chapterSlug }: ReaderImageStackPro
           page={page}
           pageIndex={idx}
           totalPages={pages.length}
+          onPageVisible={handlePageVisible}
         />
       ))}
     </main>
