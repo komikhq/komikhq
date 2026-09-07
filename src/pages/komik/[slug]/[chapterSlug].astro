@@ -7,7 +7,7 @@ import { ReaderFooterNav } from "@/components/reader/ReaderFooterNav";
 const { slug, chapterSlug } = Astro.params;
 ---
 
-<RootLayout title={`Baca ${slug} ${chapterSlug} - KomikHQ`}>
+<RootLayout title={`Baca ${slug} ${chapterSlug} - KomikHQ`} isReaderMode={true}>
   <div class="min-h-screen bg-neutral-950 text-neutral-100 pb-20">
     <ReaderHeaderBar comicSlug={slug} chapterSlug={chapterSlug} client:load />
     <ReaderImageStack comicSlug={slug} chapterSlug={chapterSlug} client:load />

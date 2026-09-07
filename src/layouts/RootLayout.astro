@@ -10,9 +10,10 @@ import { SITE_NAME, SITE_DESCRIPTION } from "@/constants";
 interface Props {
   title?: string;
   description?: string;
+  isReaderMode?: boolean;
 }
 
-const { title = SITE_NAME, description = SITE_DESCRIPTION } = Astro.props;
+const { title = SITE_NAME, description = SITE_DESCRIPTION, isReaderMode = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -67,14 +68,14 @@ const { title = SITE_NAME, description = SITE_DESCRIPTION } = Astro.props;
       window.__PUBLIC_API_URL__ = apiUrl;
     </script>
   </head>
-  <body class="min-h-screen bg-background text-foreground antialiased selection:bg-primary selection:text-primary-foreground">
+  <body class={isReaderMode ? "min-h-screen bg-neutral-950 text-neutral-100 antialiased selection:bg-primary selection:text-primary-foreground" : "min-h-screen bg-background text-foreground antialiased selection:bg-primary selection:text-primary-foreground"}>
     <GlobalPresenceListener client:only="react" />
     <div class="relative flex min-h-screen flex-col">
-      <SiteHeader client:load />
-      <main class="flex-1 pb-16 md:pb-0">
+      {!isReaderMode && <SiteHeader client:load />}
+      <main class={isReaderMode ? "flex-1" : "flex-1 pb-16 md:pb-0"}>
         <slot />
       </main>
-      <BottomNav client:load />
+      {!isReaderMode && <BottomNav client:load />}
       <Toaster client:load position="top-right" richColors />
     </div>
   </body>
