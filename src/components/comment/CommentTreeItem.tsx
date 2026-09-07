@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ThumbsUp, ChatCircleText, User } from "@phosphor-icons/react";
 import { CommentInput } from "./CommentInput";
+import { SpoilerText } from "./SpoilerText";
 import { API_ROUTES } from "@/constants";
 import { apiFetch } from "@/lib/api-client";
 
@@ -12,15 +13,17 @@ export interface CommentData {
   parentId?: string | null;
   depth: number;
   content: string;
+  isSpoiler?: boolean;
   likeCount: number;
   replyCount: number;
   isEdited: boolean;
   isDeleted: boolean;
   createdAt: string;
   author: {
-    id: string;
+    id?: string | null;
     name: string;
     image?: string | null;
+    isGuest?: boolean;
   };
   replyToUser?: {
     id: string;
@@ -31,10 +34,15 @@ export interface CommentData {
 
 interface CommentTreeItemProps {
   comment: CommentData;
-  onSubmitReply: (content: string, parentId?: string | null) => Promise<void>;
+  onSubmitReply: (
+    content: string,
+    parentId?: string | null,
+    guestInfo?: { guestName?: string; guestEmail?: string; isSpoiler?: boolean }
+  ) => Promise<void>;
+  isLoggedIn?: boolean;
 }
 
-export function CommentTreeItem({ comment, onSubmitReply }: CommentTreeItemProps) {
+export function CommentTreeItem({ comment, onSubmitReply, isLoggedIn = false }: CommentTreeItemProps) {
   const [isReplying, setIsReplying] = useState(false);
   const [likeCount, setLikeCount] = useState(comment.likeCount || 0);
   const [isLiked, setIsLiked] = useState(false);
@@ -75,6 +83,11 @@ export function CommentTreeItem({ comment, onSubmitReply }: CommentTreeItemProps
         <div className="flex-1 min-w-0 space-y-1">
           <div className="flex items-center gap-2 flex-wrap text-xs">
             <span className="font-semibold text-neutral-200">{comment.author.name}</span>
+            {comment.author.isGuest && (
+              <span className="bg-neutral-800 text-neutral-400 text-[10px] px-1.5 py-0.5 rounded border border-neutral-700">
+                Guest
+              </span>
+            )}
             {comment.replyToUser?.name && (
               <span className="text-primary font-medium flex items-center gap-1">
                 <span>Replying to</span>
@@ -84,13 +97,13 @@ export function CommentTreeItem({ comment, onSubmitReply }: CommentTreeItemProps
             <span className="text-[11px] text-neutral-500">{formattedDate}</span>
           </div>
 
-          <p className="text-sm text-neutral-300 leading-relaxed break-words">
+          <div className="text-sm text-neutral-300 leading-relaxed break-words">
             {comment.isDeleted ? (
               <span className="italic text-neutral-500">[Komentar ini telah dihapus]</span>
             ) : (
-              comment.content
+              <SpoilerText text={comment.content} isSpoilerComment={comment.isSpoiler} />
             )}
-          </p>
+          </div>
 
           <div className="flex items-center gap-4 pt-1 text-xs">
             <button
@@ -135,6 +148,7 @@ export function CommentTreeItem({ comment, onSubmitReply }: CommentTreeItemProps
               key={reply.id}
               comment={reply}
               onSubmitReply={onSubmitReply}
+              isLoggedIn={isLoggedIn}
             />
           ))}
         </div>

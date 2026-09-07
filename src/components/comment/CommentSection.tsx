@@ -14,6 +14,16 @@ interface CommentSectionProps {
 export function CommentSection({ comicId, chapterId }: CommentSectionProps) {
   const [comments, setComments] = useState<CommentData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    // Check if user is logged in
+    apiFetch(API_ROUTES.AUTH.SESSION)
+      .then((res) => {
+        if (res && (res.user || res.id)) setIsLoggedIn(true);
+      })
+      .catch(() => setIsLoggedIn(false));
+  }, []);
 
   const fetchComments = () => {
     if (!comicId && !chapterId) return;
@@ -81,7 +91,11 @@ export function CommentSection({ comicId, chapterId }: CommentSectionProps) {
     return roots;
   };
 
-  const handlePostComment = async (content: string, parentId?: string | null) => {
+  const handlePostComment = async (
+    content: string,
+    parentId?: string | null,
+    guestInfo?: { guestName?: string; guestEmail?: string; isSpoiler?: boolean }
+  ) => {
     await apiFetch(API_ROUTES.COMMENTS.ADD, {
       method: "POST",
       body: JSON.stringify({
@@ -89,6 +103,9 @@ export function CommentSection({ comicId, chapterId }: CommentSectionProps) {
         chapterId: chapterId || null,
         parentId: parentId || null,
         content,
+        guestName: guestInfo?.guestName,
+        guestEmail: guestInfo?.guestEmail,
+        isSpoiler: guestInfo?.isSpoiler ?? false,
       }),
     });
     fetchComments();
@@ -103,7 +120,7 @@ export function CommentSection({ comicId, chapterId }: CommentSectionProps) {
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4 space-y-6">
-        <CommentInput onSubmit={handlePostComment} />
+        <CommentInput onSubmit={handlePostComment} isLoggedIn={isLoggedIn} />
 
         {isLoading ? (
           <div className="space-y-4 pt-2">
@@ -128,6 +145,7 @@ export function CommentSection({ comicId, chapterId }: CommentSectionProps) {
                 key={comment.id}
                 comment={comment}
                 onSubmitReply={handlePostComment}
+                isLoggedIn={isLoggedIn}
               />
             ))}
           </div>
