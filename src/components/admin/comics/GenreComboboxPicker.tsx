@@ -79,12 +79,17 @@ export function GenreComboboxPicker({
       </div>
 
       {/* Default shadcn Combobox for Instant Genre Search & Quick Toggle */}
-      <Combobox
+      <Combobox<GenreItem, true>
+        multiple
         items={genres}
-        onValueChange={(item: GenreItem | null) => {
-          if (item) {
-            onToggleGenre(item.id);
-          }
+        value={selectedGenres}
+        isItemEqualToValue={(a, b) => a?.id === b?.id}
+        onValueChange={(val: GenreItem[]) => {
+          const newIds = val.map((g) => g.id);
+          // Find difference to notify parent via onToggleGenre or update selected genres
+          const added = newIds.filter((id) => !selectedGenreIds.includes(id));
+          const removed = selectedGenreIds.filter((id) => !newIds.includes(id));
+          [...added, ...removed].forEach((id) => onToggleGenre(id));
         }}
         itemToStringLabel={(item: GenreItem) => item?.name || ""}
       >
