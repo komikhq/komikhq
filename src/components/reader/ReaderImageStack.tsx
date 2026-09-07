@@ -132,6 +132,7 @@ export function ReaderImageStack({ comicSlug, chapterSlug }: ReaderImageStackPro
           setPages(res.pages || []);
           if (res.comic?.id && res.chapter?.id) {
             setChapterMeta({ comicId: res.comic.id, chapterId: res.chapter.id });
+            recordView(res.comic.id, res.chapter.id);
             recordHistory(res.comic.id, res.chapter.id, 1, res.pages?.length || 1);
           }
         }
@@ -149,6 +150,13 @@ export function ReaderImageStack({ comicSlug, chapterSlug }: ReaderImageStackPro
       isMounted = false;
     };
   }, [comicSlug, chapterSlug]);
+
+  const recordView = (comicId: string, chapterId: string) => {
+    apiFetch(`${API_PREFIX}/view`, {
+      method: "POST",
+      body: JSON.stringify({ comicId, chapterId }),
+    }).catch(() => {});
+  };
 
   const recordHistory = (comicId: string, chapterId: string, pageNum: number, totalPagesCount: number) => {
     apiFetch(API_ROUTES.HISTORY.RECORD, {
