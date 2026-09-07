@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Clock, ArrowRight, Sparkle, BookOpen } from "@phosphor-icons/react";
+import { Clock, ArrowRight, BookOpen } from "@phosphor-icons/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -9,11 +9,16 @@ import { apiFetch } from "@/lib/api-client";
 export function HomeLatestAddedSection() {
   const [selectedType, setSelectedType] = useState<string>("all");
   const [latestComics, setLatestComics] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isInitialLoading, setIsInitialLoading] = useState<boolean>(true);
+  const [isFetching, setIsFetching] = useState<boolean>(false);
 
   useEffect(() => {
     let isMounted = true;
-    setIsLoading(true);
+    if (latestComics.length === 0) {
+      setIsInitialLoading(true);
+    } else {
+      setIsFetching(true);
+    }
 
     const typeQuery = selectedType !== "all" ? `&type=${selectedType}` : "";
     const endpoint = API_ROUTES.COMICS.BROWSE(`limit=12&sort=latest${typeQuery}`);
@@ -28,7 +33,10 @@ export function HomeLatestAddedSection() {
         if (isMounted) setLatestComics([]);
       })
       .finally(() => {
-        if (isMounted) setIsLoading(false);
+        if (isMounted) {
+          setIsInitialLoading(false);
+          setIsFetching(false);
+        }
       });
 
     return () => {
@@ -64,17 +72,29 @@ export function HomeLatestAddedSection() {
             onValueChange={(val) => setSelectedType(val)}
             className="w-auto"
           >
-            <TabsList className="grid grid-cols-4 h-9 p-1 bg-muted/60">
-              <TabsTrigger value="all" className="text-xs px-2.5 py-1">
+            <TabsList className="grid grid-cols-4 h-9 p-1 bg-muted/60 rounded-lg">
+              <TabsTrigger
+                value="all"
+                className="text-xs px-2.5 py-1 transition-all duration-200 ease-out data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm data-[state=active]:scale-[1.02]"
+              >
                 Semua
               </TabsTrigger>
-              <TabsTrigger value="manga" className="text-xs px-2.5 py-1">
+              <TabsTrigger
+                value="manga"
+                className="text-xs px-2.5 py-1 transition-all duration-200 ease-out data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm data-[state=active]:scale-[1.02]"
+              >
                 Manga
               </TabsTrigger>
-              <TabsTrigger value="manhwa" className="text-xs px-2.5 py-1">
+              <TabsTrigger
+                value="manhwa"
+                className="text-xs px-2.5 py-1 transition-all duration-200 ease-out data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm data-[state=active]:scale-[1.02]"
+              >
                 Manhwa
               </TabsTrigger>
-              <TabsTrigger value="manhua" className="text-xs px-2.5 py-1">
+              <TabsTrigger
+                value="manhua"
+                className="text-xs px-2.5 py-1 transition-all duration-200 ease-out data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm data-[state=active]:scale-[1.02]"
+              >
                 Manhua
               </TabsTrigger>
             </TabsList>
@@ -91,7 +111,7 @@ export function HomeLatestAddedSection() {
       </CardHeader>
 
       <CardContent>
-        {isLoading ? (
+        {isInitialLoading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3.5">
             {Array.from({ length: 12 }).map((_, i) => (
               <div
@@ -104,68 +124,76 @@ export function HomeLatestAddedSection() {
               </div>
             ))}
           </div>
-        ) : latestComics.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3.5">
-            {latestComics.map((comic) => {
-              const latestCh = comic.latestChapter;
-              const chNumber = latestCh
-                ? `Ch. ${parseFloat(latestCh.chapterNumber).toString()}`
-                : `Ch. ${comic.totalChapters || 1}`;
-
-              return (
-                <a
-                  key={comic.id || comic.slug}
-                  href={`/komik/${comic.slug}`}
-                  className="group flex flex-col border border-border/50 rounded-xl p-2 bg-card hover:bg-accent/40 hover:border-primary/30 transition-all duration-200 shadow-sm hover:shadow-md"
-                >
-                  <div className="aspect-[3/4] overflow-hidden rounded-lg bg-muted relative">
-                    <img
-                      src={comic.coverUrl}
-                      alt={comic.title}
-                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                      loading="lazy"
-                    />
-                    <div className="absolute top-2 left-2 flex flex-col gap-1">
-                      <Badge
-                        variant="outline"
-                        className={`text-[10px] px-1.5 py-0.5 font-semibold backdrop-blur-md ${getTypeBadgeColor(
-                          comic.type
-                        )}`}
-                      >
-                        {comic.type ? comic.type.toUpperCase() : "MANGA"}
-                      </Badge>
-                    </div>
-
-                    <div className="absolute bottom-2 right-2">
-                      <Badge className="bg-black/75 hover:bg-black/90 text-white backdrop-blur-md text-[10px] px-2 py-0.5 font-bold border border-white/10">
-                        {chNumber}
-                      </Badge>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col flex-1 justify-between pt-2 px-1 pb-0.5">
-                    <h3 className="font-semibold text-xs leading-snug line-clamp-1 group-hover:text-primary transition-colors">
-                      {comic.title}
-                    </h3>
-                    <div className="flex items-center justify-between mt-1 text-[11px] text-muted-foreground">
-                      <span className="capitalize text-muted-foreground/80">
-                        {comic.status || "Ongoing"}
-                      </span>
-                      <span>
-                        {(comic.totalViews || 0).toLocaleString("id-ID")} views
-                      </span>
-                    </div>
-                  </div>
-                </a>
-              );
-            })}
-          </div>
         ) : (
-          <div className="text-center py-10 space-y-2">
-            <BookOpen className="h-10 w-10 text-muted-foreground/40 mx-auto" />
-            <p className="text-sm font-medium text-muted-foreground">
-              Belum ada komik baru ditambahkan untuk kategori ini.
-            </p>
+          <div
+            className={`transition-opacity duration-300 ease-in-out ${
+              isFetching ? "opacity-40 animate-pulse pointer-events-none" : "opacity-100"
+            }`}
+          >
+            {latestComics.length > 0 ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3.5">
+                {latestComics.map((comic) => {
+                  const latestCh = comic.latestChapter;
+                  const chNumber = latestCh
+                    ? `Ch. ${parseFloat(latestCh.chapterNumber).toString()}`
+                    : `Ch. ${comic.totalChapters || 1}`;
+
+                  return (
+                    <a
+                      key={comic.id || comic.slug}
+                      href={`/komik/${comic.slug}`}
+                      className="group flex flex-col border border-border/50 rounded-xl p-2 bg-card hover:bg-accent/40 hover:border-primary/30 transition-all duration-200 shadow-sm hover:shadow-md"
+                    >
+                      <div className="aspect-[3/4] overflow-hidden rounded-lg bg-muted relative">
+                        <img
+                          src={comic.coverUrl}
+                          alt={comic.title}
+                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                          loading="lazy"
+                        />
+                        <div className="absolute top-2 left-2 flex flex-col gap-1">
+                          <Badge
+                            variant="outline"
+                            className={`text-[10px] px-1.5 py-0.5 font-semibold backdrop-blur-md ${getTypeBadgeColor(
+                              comic.type
+                            )}`}
+                          >
+                            {comic.type ? comic.type.toUpperCase() : "MANGA"}
+                          </Badge>
+                        </div>
+
+                        <div className="absolute bottom-2 right-2">
+                          <Badge className="bg-black/75 hover:bg-black/90 text-white backdrop-blur-md text-[10px] px-2 py-0.5 font-bold border border-white/10">
+                            {chNumber}
+                          </Badge>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col flex-1 justify-between pt-2 px-1 pb-0.5">
+                        <h3 className="font-semibold text-xs leading-snug line-clamp-1 group-hover:text-primary transition-colors">
+                          {comic.title}
+                        </h3>
+                        <div className="flex items-center justify-between mt-1 text-[11px] text-muted-foreground">
+                          <span className="capitalize text-muted-foreground/80">
+                            {comic.status || "Ongoing"}
+                          </span>
+                          <span>
+                            {(comic.totalViews || 0).toLocaleString("id-ID")} views
+                          </span>
+                        </div>
+                      </div>
+                    </a>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="text-center py-10 space-y-2">
+                <BookOpen className="h-10 w-10 text-muted-foreground/40 mx-auto" />
+                <p className="text-sm font-medium text-muted-foreground">
+                  Belum ada komik baru ditambahkan untuk kategori ini.
+                </p>
+              </div>
+            )}
           </div>
         )}
       </CardContent>
