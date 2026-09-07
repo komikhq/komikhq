@@ -8,11 +8,18 @@ import { toast } from "sonner";
 
 export function AdminPlatformSettingsCard() {
   const [purging, setPurging] = useState(false);
+  const [lastResult, setLastResult] = useState<{
+    purgedCount: number;
+    totalSizeMB: string;
+    timestamp: string;
+  } | null>(null);
 
   const getApiUrl = () => (window as any).__PUBLIC_API_URL__ || "http://localhost:8787";
 
   const handlePurgeOrphans = async () => {
     setPurging(true);
+    const toastId = toast.loading("Memindai Cloudflare R2 bucket & membandingkan dengan database...");
+
     try {
       const res = await fetch(`${getApiUrl()}/v1/admin/storage/purge-orphans`, {
         method: "POST",
@@ -21,12 +28,22 @@ export function AdminPlatformSettingsCard() {
 
       const data: any = await res.json();
       if (res.ok && data.success) {
-        toast.success(data.message || `Berhasil membersihkan ${data.purgedCount} file sampah (${data.totalSizeMB} MB).`);
+        const resultObj = {
+          purgedCount: data.purgedCount || 0,
+          totalSizeMB: data.totalSizeMB || "0.00",
+          timestamp: new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" }),
+        };
+        setLastResult(resultObj);
+
+        toast.success(
+          data.message || `Berhasil membersihkan ${resultObj.purgedCount} file sampah (${resultObj.totalSizeMB} MB).`,
+          { id: toastId }
+        );
       } else {
-        toast.error(data.error || "Gagal melakukan pembersihan storage R2.");
+        toast.error(data.error || "Gagal melakukan pembersihan storage R2.", { id: toastId });
       }
     } catch (err: any) {
-      toast.error(err.message || "Terjadi kesalahan jaringan saat memproses pembersihan.");
+      toast.error(err.message || "Terjadi kesalahan jaringan saat memproses pembersihan.", { id: toastId });
     } finally {
       setPurging(false);
     }
@@ -99,10 +116,29 @@ export function AdminPlatformSettingsCard() {
               <p className="text-xs text-muted-foreground leading-relaxed">
                 Hapus file gambar terisolasi/sampah di Cloudflare R2 yang tidak lagi terhubung ke database akibat pengunggahan yang terputus atau chapter yang dihapus.
               </p>
-              <div className="pt-1">
-                <span className="inline-flex items-center text-[11px] font-medium text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-md">
+              <div className="pt-1 flex flex-col gap-2">
+                <span className="inline-flex items-center text-[11px] font-medium text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-md w-fit">
                   Pembersihan Manual (Hemat Kuota R2 Class A Operations)
                 </span>
+
+                {purging && (
+                  <div className="p-3 rounded-xl border border-amber-500/40 bg-amber-500/10 flex items-center gap-2 text-amber-600 dark:text-amber-400 text-xs font-medium animate-pulse">
+                    <CircleNotch className="h-4 w-4 animate-spin shrink-0 text-amber-500" />
+                    <span>Memindai R2 bucket & membandingkan dengan 100+ record database...</span>
+                  </div>
+                )}
+
+                {!purging && lastResult && (
+                  <div className="p-3 rounded-xl border border-emerald-500/40 bg-emerald-500/10 flex flex-wrap items-center justify-between gap-2 text-xs">
+                    <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-semibold">
+                      <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-ping shrink-0" />
+                      <span>
+                        Pembersihan Selesai: {lastResult.purgedCount} file sampah terhapus ({lastResult.totalSizeMB} MB dibebaskan)
+                      </span>
+                    </div>
+                    <span className="text-[10px] text-muted-foreground font-mono">Pukul {lastResult.timestamp}</span>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -110,7 +146,7 @@ export function AdminPlatformSettingsCard() {
               <Button
                 variant="destructive"
                 size="sm"
-                className="gap-2 text-xs w-full md:w-auto shrink-0 whitespace-nowrap h-10 px-4"
+                className="gap-2 text-xs w-full md:w-auto shrink-0 whitespace-nowrap h-10 px-4 cursor-pointer"
                 disabled={purging}
                 onClick={handlePurgeOrphans}
               >
