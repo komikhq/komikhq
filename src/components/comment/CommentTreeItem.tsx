@@ -69,12 +69,16 @@ export function CommentTreeItem({ comment, onSubmitReply, isLoggedIn = false }: 
     minute: "2-digit",
   });
 
+  const authorName = comment.author?.name || "Guest";
+  const authorImage = comment.author?.image || null;
+  const isGuestAuthor = comment.author?.isGuest ?? (!comment.author?.id);
+
   return (
     <div className="group/item relative space-y-3">
       <div className="flex gap-3 items-start">
         <div className="w-8 h-8 rounded-full bg-neutral-800 border border-neutral-700 flex items-center justify-center text-neutral-300 shrink-0 overflow-hidden">
-          {comment.author.image ? (
-            <img src={comment.author.image} alt={comment.author.name} className="w-full h-full object-cover" />
+          {authorImage ? (
+            <img src={authorImage} alt={authorName} className="w-full h-full object-cover" />
           ) : (
             <User className="h-4 w-4 text-neutral-400" />
           )}
@@ -82,8 +86,8 @@ export function CommentTreeItem({ comment, onSubmitReply, isLoggedIn = false }: 
 
         <div className="flex-1 min-w-0 space-y-1">
           <div className="flex items-center gap-2 flex-wrap text-xs">
-            <span className="font-semibold text-neutral-200">{comment.author.name}</span>
-            {comment.author.isGuest && (
+            <span className="font-semibold text-neutral-200">{authorName}</span>
+            {isGuestAuthor && (
               <span className="bg-neutral-800 text-neutral-400 text-[10px] px-1.5 py-0.5 rounded border border-neutral-700">
                 Guest
               </span>

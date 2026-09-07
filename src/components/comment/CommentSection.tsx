@@ -72,23 +72,32 @@ export function CommentSection({ comicId, chapterId }: CommentSectionProps) {
   }, [comicId, chapterId]);
 
   const buildCommentTree = (flatList: CommentData[]): CommentData[] => {
-    const map = new Map<string, CommentData>();
-    const roots: CommentData[] = [];
+    try {
+      const map = new Map<string, CommentData>();
+      const roots: CommentData[] = [];
 
-    flatList.forEach((item) => {
-      map.set(item.id, { ...item, replies: [] });
-    });
+      flatList.forEach((item) => {
+        if (item && item.id) {
+          map.set(item.id, { ...item, replies: [] });
+        }
+      });
 
-    flatList.forEach((item) => {
-      const node = map.get(item.id)!;
-      if (item.parentId && map.has(item.parentId)) {
-        map.get(item.parentId)!.replies!.push(node);
-      } else {
-        roots.push(node);
-      }
-    });
+      flatList.forEach((item) => {
+        if (!item || !item.id) return;
+        const node = map.get(item.id);
+        if (!node) return;
 
-    return roots;
+        if (item.parentId && map.has(item.parentId)) {
+          map.get(item.parentId)!.replies!.push(node);
+        } else {
+          roots.push(node);
+        }
+      });
+
+      return roots;
+    } catch {
+      return flatList || [];
+    }
   };
 
   const handlePostComment = async (
