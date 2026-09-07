@@ -15,7 +15,7 @@ export function ComicCommentSection({ slug }: ComicCommentSectionProps) {
 
   return (
     <section className="mt-2">
-      <CommentSection comicId={comicData.comic.id} />
+      <CommentSection comicId={comicData.comic.id} variant="default" />
     </section>
   );
 }

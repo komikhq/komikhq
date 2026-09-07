@@ -42,14 +42,14 @@ export function ReaderFooterNav({ comicSlug, chapterSlug }: ReaderFooterNavProps
         {navData.prevSlug ? (
           <Button
             variant="outline"
-            className="border-neutral-800 text-neutral-200"
+            className="border-neutral-700 bg-neutral-900 text-neutral-100 hover:bg-neutral-800 hover:text-white"
             onClick={() => (window.location.href = `/komik/${comicSlug}/${navData.prevSlug}`)}
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Chapter Sebelumnya
           </Button>
         ) : (
-          <Button variant="outline" disabled className="border-neutral-800 text-neutral-500">
+          <Button variant="outline" disabled className="border-neutral-800 bg-neutral-900/50 text-neutral-500">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Chapter Pertama
           </Button>
@@ -57,14 +57,14 @@ export function ReaderFooterNav({ comicSlug, chapterSlug }: ReaderFooterNavProps
 
         {navData.nextSlug ? (
           <Button
-            className="bg-primary text-primary-foreground"
+            className="bg-primary text-primary-foreground hover:bg-primary/90"
             onClick={() => (window.location.href = `/komik/${comicSlug}/${navData.nextSlug}`)}
           >
             Chapter Selanjutnya
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         ) : (
-          <Button disabled variant="secondary">
+          <Button disabled className="border-neutral-800 bg-neutral-900/50 text-neutral-500">
             Chapter Terakhir
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
