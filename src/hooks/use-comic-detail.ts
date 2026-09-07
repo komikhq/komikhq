@@ -25,6 +25,16 @@ export function useComicDetail(slug?: string) {
       .then((data) => {
         if (isMounted) {
           setComicData(data);
+          if (data.comic?.id) {
+            apiFetch(API_ROUTES.BOOKMARKS.LIST)
+              .then((res) => {
+                if (isMounted && res.bookmarks) {
+                  const isSaved = res.bookmarks.some((b: any) => b.comic.id === data.comic.id);
+                  setBookmarked(isSaved);
+                }
+              })
+              .catch(() => {});
+          }
         }
       })
       .catch((err) => {
@@ -41,8 +51,27 @@ export function useComicDetail(slug?: string) {
     };
   }, [slug]);
 
-  const toggleBookmark = () => {
-    setBookmarked((prev) => !prev);
+  const toggleBookmark = async () => {
+    if (!comicData?.comic?.id) return;
+    const targetComicId = comicData.comic.id;
+    const nextState = !bookmarked;
+    setBookmarked(nextState);
+
+    try {
+      if (nextState) {
+        await apiFetch(API_ROUTES.BOOKMARKS.ADD, {
+          method: "POST",
+          body: JSON.stringify({ comicId: targetComicId, status: "reading" }),
+        });
+      } else {
+        await apiFetch(API_ROUTES.BOOKMARKS.REMOVE(targetComicId), {
+          method: "DELETE",
+        });
+      }
+    } catch (err) {
+      // Rollback on failure
+      setBookmarked(!nextState);
+    }
   };
 
   const handleReadFirstChapter = () => {

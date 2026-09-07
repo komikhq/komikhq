@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { API_PREFIX } from "@/constants/api-routes";
+import { API_PREFIX, API_ROUTES } from "@/constants/api-routes";
 import { apiFetch } from "@/lib/api-client";
 import { Image, CircleNotch } from "@phosphor-icons/react";
 
@@ -99,6 +99,19 @@ export function ReaderImageStack({ comicSlug, chapterSlug }: ReaderImageStackPro
       .then((res) => {
         if (isMounted) {
           setPages(res.pages || []);
+          if (res.comic?.id && res.chapter?.id) {
+            apiFetch(API_ROUTES.HISTORY.RECORD, {
+              method: "POST",
+              body: JSON.stringify({
+                comicId: res.comic.id,
+                chapterId: res.chapter.id,
+                lastReadPage: 1,
+                snapshotTotalPages: res.pages?.length || 1,
+              }),
+            }).catch(() => {
+              // Fail silently for history recording
+            });
+          }
         }
       })
       .catch((err) => {
