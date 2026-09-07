@@ -44,6 +44,7 @@ interface CommentTreeItemProps {
   isLoggedIn?: boolean;
   currentUserId?: string | null;
   isAdmin?: boolean;
+  variant?: "reader" | "default";
 }
 
 import { CommentDeleteDialog } from "./CommentDeleteDialog";
@@ -56,6 +57,7 @@ export function CommentTreeItem({
   isLoggedIn = false,
   currentUserId = null,
   isAdmin = false,
+  variant = "reader",
 }: CommentTreeItemProps) {
   const [isReplying, setIsReplying] = useState(false);
   const [likeCount, setLikeCount] = useState(comment.likeCount || 0);
@@ -102,22 +104,37 @@ export function CommentTreeItem({
   const authorImage = comment.author?.image || null;
   const isGuestAuthor = comment.author?.isGuest ?? (!comment.author?.id);
 
+  const nameColor = variant === "reader" ? "text-neutral-200" : "text-foreground font-semibold";
+  const textColor = variant === "reader" ? "text-neutral-300" : "text-foreground/90";
+  const dateColor = variant === "reader" ? "text-neutral-500" : "text-muted-foreground";
+  const guestBadgeClass =
+    variant === "reader"
+      ? "bg-neutral-800 text-neutral-400 border-neutral-700"
+      : "bg-muted text-muted-foreground border-border";
+  const actionBtnClass =
+    variant === "reader"
+      ? "text-neutral-400 hover:text-neutral-200"
+      : "text-muted-foreground hover:text-foreground";
+  const avatarBorderClass =
+    variant === "reader" ? "bg-neutral-800 border-neutral-700" : "bg-muted border-border";
+  const treeLineClass = variant === "reader" ? "border-neutral-800" : "border-border";
+
   return (
     <div className="group/item relative space-y-3">
       <div className="flex gap-3 items-start">
-        <div className="w-8 h-8 rounded-full bg-neutral-800 border border-neutral-700 flex items-center justify-center text-neutral-300 shrink-0 overflow-hidden">
+        <div className={`w-8 h-8 rounded-full border flex items-center justify-center shrink-0 overflow-hidden ${avatarBorderClass}`}>
           {authorImage ? (
             <img src={authorImage} alt={authorName} className="w-full h-full object-cover" />
           ) : (
-            <User className="h-4 w-4 text-neutral-400" />
+            <User className="h-4 w-4 text-muted-foreground" />
           )}
         </div>
 
         <div className="flex-1 min-w-0 space-y-1">
           <div className="flex items-center gap-2 flex-wrap text-xs">
-            <span className="font-semibold text-neutral-200">{authorName}</span>
+            <span className={nameColor}>{authorName}</span>
             {isGuestAuthor && (
-              <span className="bg-neutral-800 text-neutral-400 text-[10px] px-1.5 py-0.5 rounded border border-neutral-700">
+              <span className={`text-[10px] px-1.5 py-0.5 rounded border ${guestBadgeClass}`}>
                 Guest
               </span>
             )}
@@ -127,12 +144,12 @@ export function CommentTreeItem({
                 <span className="underline">@{comment.replyToUser.name}</span>
               </span>
             )}
-            <span className="text-[11px] text-neutral-500">{formattedDate}</span>
+            <span className={`text-[11px] ${dateColor}`}>{formattedDate}</span>
           </div>
 
-          <div className="text-sm text-neutral-300 leading-relaxed break-words">
+          <div className={`text-sm leading-relaxed break-words ${textColor}`}>
             {comment.isDeleted ? (
-              <span className="italic text-neutral-500">[Komentar ini telah dihapus]</span>
+              <span className={`italic ${dateColor}`}>[Komentar ini telah dihapus]</span>
             ) : (
               <SpoilerText text={comment.content} isSpoilerComment={comment.isSpoiler} />
             )}
@@ -142,16 +159,16 @@ export function CommentTreeItem({
             <button
               onClick={handleToggleLike}
               className={`flex items-center gap-1 transition-colors ${
-                isLiked ? "text-primary font-semibold" : "text-neutral-400 hover:text-neutral-200"
+                isLiked ? "text-primary font-semibold" : actionBtnClass
               }`}
             >
-              <ThumbsUp className={`h-3.5 w-3.5 ${isLiked ? "fill-current" : ""}`} />
+              <ThumbsUp className="h-3.5 w-3.5" weight={isLiked ? "fill" : "regular"} />
               <span>{likeCount}</span>
             </button>
 
             <button
               onClick={() => setIsReplying((prev) => !prev)}
-              className="flex items-center gap-1 text-neutral-400 hover:text-neutral-200 transition-colors"
+              className={`flex items-center gap-1 transition-colors ${actionBtnClass}`}
             >
               <ChatCircleText className="h-3.5 w-3.5" />
               <span>Balas</span>
@@ -160,7 +177,7 @@ export function CommentTreeItem({
             {onOpenReportModal && !comment.isDeleted && (
               <button
                 onClick={() => onOpenReportModal(comment.id)}
-                className="text-neutral-500 hover:text-amber-400 transition-colors text-[11px]"
+                className="text-muted-foreground hover:text-amber-500 transition-colors text-[11px]"
               >
                 Laporkan
               </button>
@@ -170,7 +187,7 @@ export function CommentTreeItem({
               <button
                 onClick={() => setShowDeleteDialog(true)}
                 disabled={isDeleting}
-                className="text-neutral-500 hover:text-rose-400 transition-colors text-[11px]"
+                className="text-muted-foreground hover:text-rose-500 transition-colors text-[11px]"
               >
                 {isDeleting ? "Menghapus..." : "Hapus"}
               </button>
@@ -196,13 +213,14 @@ export function CommentTreeItem({
             onCancelReply={() => setIsReplying(false)}
             autoFocus
             isLoggedIn={isLoggedIn}
+            variant={variant}
           />
         </div>
       )}
 
       {/* Visual Tree Line for Replies */}
       {comment.replies && comment.replies.length > 0 && (
-        <div className="ml-4 pl-4 border-l-2 border-neutral-800 space-y-4 pt-2">
+        <div className={`ml-4 pl-4 border-l-2 space-y-4 pt-2 ${treeLineClass}`}>
           {comment.replies.map((reply) => (
             <CommentTreeItem
               key={reply.id}
@@ -213,6 +231,7 @@ export function CommentTreeItem({
               isLoggedIn={isLoggedIn}
               currentUserId={currentUserId}
               isAdmin={isAdmin}
+              variant={variant}
             />
           ))}
         </div>

@@ -206,6 +206,7 @@ export function CommentSection({ comicId, chapterId, variant = "reader" }: Comme
                 isLoggedIn={isLoggedIn}
                 currentUserId={currentUserId}
                 isAdmin={isAdmin}
+                variant={variant}
               />
             ))}
           </div>
