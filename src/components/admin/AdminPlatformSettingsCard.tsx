@@ -85,48 +85,48 @@ export function AdminPlatformSettingsCard() {
         </CardContent>
       </Card>
 
-      {/* Manual Storage Purge Card */}
+      {/* Manual Storage Purge Card (Cloudflare Style Layout) */}
       <Card className="border-border/60 shadow-xs">
-        <CardHeader>
-          <CardTitle className="text-base font-bold flex items-center gap-2 text-foreground">
-            <Broom className="h-5 w-5 text-amber-500" />
-            <span>Pembersihan Manual Storage R2 (Purge Orphan Images)</span>
-          </CardTitle>
-          <CardDescription className="text-xs">
-            Hapus file gambar terisolasi/sampah di Cloudflare R2 yang tidak lagi terhubung ke database akibat pengunggahan yang terputus atau chapter yang dihapus.
-          </CardDescription>
-        </CardHeader>
+        <CardContent className="p-6">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="space-y-1.5 max-w-2xl">
+              <div className="flex items-center gap-2">
+                <Broom className="h-5 w-5 text-amber-500 shrink-0" />
+                <h3 className="text-base font-bold text-foreground">
+                  Pembersihan Manual Storage R2 (Purge Orphan Images)
+                </h3>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Hapus file gambar terisolasi/sampah di Cloudflare R2 yang tidak lagi terhubung ke database akibat pengunggahan yang terputus atau chapter yang dihapus.
+              </p>
+              <div className="pt-1">
+                <span className="inline-flex items-center text-[11px] font-medium text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-md">
+                  Pembersihan Manual (Hemat Kuota R2 Class A Operations)
+                </span>
+              </div>
+            </div>
 
-        <CardContent className="space-y-4 text-xs">
-          <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/5 space-y-1.5">
-            <p className="font-semibold text-amber-600 dark:text-amber-400">
-              💡 Pembersihan Hemat Kuota (Manual Trigger Only)
-            </p>
-            <p className="text-[11px] text-muted-foreground leading-relaxed">
-              Fungsi ini tidak berjalan secara otomatis via Cron agar tidak menguras kuota R2 Class A Operations Anda. Eksekusi hanya ketika Anda baru saja mengalami masalah koneksi saat mengunggah komik.
-            </p>
-          </div>
-
-          <div className="flex justify-end pt-2">
-            <Button
-              variant="destructive"
-              size="sm"
-              className="gap-2 text-xs"
-              disabled={purging}
-              onClick={handlePurgeOrphans}
-            >
-              {purging ? (
-                <>
-                  <CircleNotch className="h-4 w-4 animate-spin" />
-                  <span>Memindai & Membersihkan...</span>
-                </>
-              ) : (
-                <>
-                  <Broom className="h-4 w-4" />
-                  <span>Purge File Gambar Sampah</span>
-                </>
-              )}
-            </Button>
+            <div className="shrink-0 w-full md:w-auto">
+              <Button
+                variant="destructive"
+                size="sm"
+                className="gap-2 text-xs w-full md:w-auto shrink-0 whitespace-nowrap h-10 px-4"
+                disabled={purging}
+                onClick={handlePurgeOrphans}
+              >
+                {purging ? (
+                  <>
+                    <CircleNotch className="h-4 w-4 animate-spin" />
+                    <span>Memindai & Membersihkan...</span>
+                  </>
+                ) : (
+                  <>
+                    <Broom className="h-4 w-4" />
+                    <span>Purge File Gambar Sampah</span>
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
