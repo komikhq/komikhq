@@ -20,30 +20,60 @@ function LazyChapterPage({ page, pageIndex, totalPages, onPageVisible }: LazyCha
   const [isVisible, setIsVisible] = useState(pageIndex === 0);
   const [isLoaded, setIsLoaded] = useState(false);
 
+  // 1. Strict Lazy Loading Observer (Loads image only when 400px near viewport)
   useEffect(() => {
-    const observer = new IntersectionObserver(
+    if (isVisible) return;
+
+    const lazyObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            if (!isVisible) setIsVisible(true);
-            if (onPageVisible) onPageVisible(pageIndex);
+            setIsVisible(true);
+            lazyObserver.disconnect();
           }
         });
       },
       {
-        rootMargin: "100px 0px 100px 0px",
-        threshold: 0.3,
+        rootMargin: "400px 0px 400px 0px",
+        threshold: 0.01,
       }
     );
 
     if (containerRef.current) {
-      observer.observe(containerRef.current);
+      lazyObserver.observe(containerRef.current);
     }
 
     return () => {
-      observer.disconnect();
+      lazyObserver.disconnect();
     };
-  }, [isVisible, pageIndex, onPageVisible]);
+  }, [isVisible]);
+
+  // 2. Active Page Tracking Observer for Reading History
+  useEffect(() => {
+    if (!onPageVisible) return;
+
+    const trackingObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            onPageVisible(pageIndex);
+          }
+        });
+      },
+      {
+        rootMargin: "0px 0px 0px 0px",
+        threshold: 0.4,
+      }
+    );
+
+    if (containerRef.current) {
+      trackingObserver.observe(containerRef.current);
+    }
+
+    return () => {
+      trackingObserver.disconnect();
+    };
+  }, [pageIndex, onPageVisible]);
 
   return (
     <div
