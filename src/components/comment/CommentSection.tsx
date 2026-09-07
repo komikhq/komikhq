@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CommentInput } from "./CommentInput";
 import { CommentTreeItem, type CommentData } from "./CommentTreeItem";
 import { API_ROUTES } from "@/constants";
-import { apiFetch } from "@/lib/api-client";
+import { apiFetch, getBaseApiUrl } from "@/lib/api-client";
 
 interface CommentSectionProps {
   comicId?: string;
@@ -30,6 +30,35 @@ export function CommentSection({ comicId, chapterId }: CommentSectionProps) {
 
   useEffect(() => {
     fetchComments();
+
+    const targetId = chapterId || comicId;
+    if (!targetId || typeof window === "undefined") return;
+
+    const baseUrl = getBaseApiUrl();
+    const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const wsHost = baseUrl.replace(/^https?:\/\//, "");
+    const wsUrl = `${wsProtocol}//${wsHost}/v1/realtime/ws?channel=comment_stream:${targetId}`;
+
+    let ws: WebSocket | null = null;
+    try {
+      ws = new WebSocket(wsUrl);
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.event === "new_comment") {
+            fetchComments();
+          }
+        } catch {
+          // Ignore
+        }
+      };
+    } catch {
+      // Ignore WS fail
+    }
+
+    return () => {
+      if (ws) ws.close();
+    };
   }, [comicId, chapterId]);
 
   const buildCommentTree = (flatList: CommentData[]): CommentData[] => {

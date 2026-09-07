@@ -16,50 +16,79 @@ export function useRealtimeViewers(options: UseRealtimeViewersOptions = {}) {
   const channelName = options.channelName || "presence-global";
 
   useEffect(() => {
-    if (!key || typeof window === "undefined") return;
+    if (typeof window === "undefined") return;
 
     const baseUrl = getBaseApiUrl();
-    const authEndpoint = `${baseUrl}${API_ROUTES.REALTIME.AUTH}`;
+    const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const wsHost = baseUrl.replace(/^https?:\/\//, "");
+    const wsUrl = `${wsProtocol}//${wsHost}/v1/realtime/ws?channel=global_presence`;
 
-    const pusher = new Pusher(key, {
-      cluster,
-      forceTLS: true,
-      userAuthentication: {
-        endpoint: authEndpoint,
-        transport: "ajax",
-      },
-      channelAuthorization: {
-        endpoint: authEndpoint,
-        transport: "ajax",
-      },
-    });
+    let ws: WebSocket | null = null;
+    let pusher: Pusher | null = null;
 
-    const channel = pusher.subscribe(channelName);
+    try {
+      ws = new WebSocket(wsUrl);
 
-    channel.bind("pusher:subscription_succeeded", (members: any) => {
-      if (members && typeof members.count === "number") {
-        setOnlineCount(members.count);
-      }
-    });
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.event === "online_count" && typeof data.count === "number") {
+            setOnlineCount(data.count);
+          }
+        } catch {
+          // Ignore
+        }
+      };
 
-    channel.bind("pusher:member_added", () => {
-      setOnlineCount((prev) => prev + 1);
-    });
+      ws.onerror = () => {
+        // Fallback to Pusher on WS error
+        connectPusher();
+      };
+    } catch {
+      connectPusher();
+    }
 
-    channel.bind("pusher:member_removed", () => {
-      setOnlineCount((prev) => Math.max(1, prev - 1));
-    });
+    function connectPusher() {
+      if (!key) return;
+      const authEndpoint = `${baseUrl}${API_ROUTES.REALTIME.AUTH}`;
 
-    channel.bind("viewer_count_update", (data: { count: number }) => {
-      if (typeof data.count === "number") {
-        setOnlineCount(data.count);
-      }
-    });
+      pusher = new Pusher(key, {
+        cluster,
+        forceTLS: true,
+        userAuthentication: {
+          endpoint: authEndpoint,
+          transport: "ajax",
+        },
+        channelAuthorization: {
+          endpoint: authEndpoint,
+          transport: "ajax",
+        },
+      });
+
+      const channel = pusher.subscribe(channelName);
+
+      channel.bind("pusher:subscription_succeeded", (members: any) => {
+        if (members && typeof members.count === "number") {
+          setOnlineCount(members.count);
+        }
+      });
+
+      channel.bind("pusher:member_added", () => {
+        setOnlineCount((prev) => prev + 1);
+      });
+
+      channel.bind("pusher:member_removed", () => {
+        setOnlineCount((prev) => Math.max(1, prev - 1));
+      });
+    }
 
     return () => {
-      channel.unbind_all();
-      pusher.unsubscribe(channelName);
-      pusher.disconnect();
+      if (ws) {
+        ws.close();
+      }
+      if (pusher) {
+        pusher.disconnect();
+      }
     };
   }, [key, cluster, channelName]);
 
