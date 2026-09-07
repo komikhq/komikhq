@@ -16,6 +16,7 @@ interface CommentInputProps {
   onCancelReply?: () => void;
   autoFocus?: boolean;
   isLoggedIn?: boolean;
+  variant?: "reader" | "default";
 }
 
 export function CommentInput({
@@ -26,6 +27,7 @@ export function CommentInput({
   onCancelReply,
   autoFocus = false,
   isLoggedIn = false,
+  variant = "reader",
 }: CommentInputProps) {
   const [content, setContent] = useState("");
   const [guestName, setGuestName] = useState("");
@@ -60,7 +62,7 @@ export function CommentInput({
 
     try {
       setIsSubmitting(true);
-      
+
       // Save guest info to localStorage for future comments
       if (!isLoggedIn && typeof window !== "undefined") {
         try {
@@ -89,6 +91,16 @@ export function CommentInput({
     }
   };
 
+  const inputBgClass =
+    variant === "reader"
+      ? "bg-neutral-950 border-neutral-800 text-neutral-100 placeholder:text-neutral-500"
+      : "bg-background border-input text-foreground placeholder:text-muted-foreground";
+
+  const labelClass =
+    variant === "reader"
+      ? "text-neutral-400 hover:text-neutral-300"
+      : "text-muted-foreground hover:text-foreground";
+
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
       {replyToName && (
@@ -114,7 +126,7 @@ export function CommentInput({
             value={guestName}
             onChange={(e) => setGuestName(e.target.value)}
             required
-            className="bg-neutral-950 border-neutral-800 text-neutral-100 placeholder:text-neutral-500 text-xs h-9 focus:border-primary"
+            className={`${inputBgClass} text-xs h-9 focus:border-primary`}
           />
           <Input
             type="email"
@@ -122,7 +134,7 @@ export function CommentInput({
             value={guestEmail}
             onChange={(e) => setGuestEmail(e.target.value)}
             required
-            className="bg-neutral-950 border-neutral-800 text-neutral-100 placeholder:text-neutral-500 text-xs h-9 focus:border-primary"
+            className={`${inputBgClass} text-xs h-9 focus:border-primary`}
           />
         </div>
       )}
@@ -132,11 +144,11 @@ export function CommentInput({
         value={content}
         onChange={(e) => setContent(e.target.value)}
         autoFocus={autoFocus}
-        className="bg-neutral-950 border-neutral-800 text-neutral-100 placeholder:text-neutral-500 min-h-[80px] text-sm focus:border-primary"
+        className={`${inputBgClass} min-h-[80px] text-sm focus:border-primary`}
       />
 
       <div className="flex items-center justify-between flex-wrap gap-2">
-        <label className="flex items-center gap-1.5 text-xs text-neutral-400 cursor-pointer select-none hover:text-neutral-300 transition-colors">
+        <label className={`flex items-center gap-1.5 text-xs cursor-pointer select-none transition-colors ${labelClass}`}>
           <input
             type="checkbox"
             checked={isSpoiler}
@@ -155,7 +167,7 @@ export function CommentInput({
               size="sm"
               onClick={onCancelReply}
               disabled={isSubmitting}
-              className="text-xs text-neutral-400"
+              className="text-xs"
             >
               Batal
             </Button>

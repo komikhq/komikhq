@@ -174,7 +174,7 @@ export function CommentSection({ comicId, chapterId, variant = "reader" }: Comme
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4 space-y-6">
-        <CommentInput onSubmit={handlePostComment} isLoggedIn={isLoggedIn} />
+        <CommentInput onSubmit={handlePostComment} isLoggedIn={isLoggedIn} variant={variant} />
 
         {isLoading ? (
           <div className="space-y-4 pt-2">
