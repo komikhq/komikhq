@@ -35,9 +35,9 @@ export const API_ROUTES = {
   },
   COMMENTS: {
     LIST: (params: { comicId?: string; chapterId?: string }) => {
-      const query = params.comicId
-        ? `comicId=${params.comicId}`
-        : `chapterId=${params.chapterId}`;
+      const query = params.chapterId
+        ? `chapterId=${params.chapterId}`
+        : `comicId=${params.comicId}`;
       return `${API_PREFIX}/comments?${query}`;
     },
     ADD: `${API_PREFIX}/comments`,
