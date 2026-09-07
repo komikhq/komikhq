@@ -96,7 +96,9 @@ export function ChapterFormSheet({ open, onOpenChange, onSubmitBatch, submitting
             {submitting && (
               <div className="p-4 rounded-xl border border-primary/30 bg-primary/5 space-y-2 animate-in fade-in">
                 <div className="flex items-center justify-between text-xs font-medium">
-                  <span className="text-foreground">{progressText || "Mengunggah..."}</span>
+                  <span className="shimmer shimmer-color-primary text-foreground font-semibold">
+                    {progressText || "Mengunggah Halaman..."}
+                  </span>
                   <span className="text-primary font-bold">{progressPercent}%</span>
                 </div>
                 <div className="w-full bg-muted rounded-full h-2 overflow-hidden">

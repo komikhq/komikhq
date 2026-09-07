@@ -122,9 +122,11 @@ export function AdminPlatformSettingsCard() {
                 </span>
 
                 {purging && (
-                  <div className="p-3 rounded-xl border border-amber-500/40 bg-amber-500/10 flex items-center gap-2 text-amber-600 dark:text-amber-400 text-xs font-medium animate-pulse">
+                  <div className="p-3 rounded-xl border border-amber-500/40 bg-amber-500/10 flex items-center gap-2 text-amber-600 dark:text-amber-400 text-xs font-medium">
                     <CircleNotch className="h-4 w-4 animate-spin shrink-0 text-amber-500" />
-                    <span>Memindai R2 bucket & membandingkan dengan 100+ record database...</span>
+                    <span className="shimmer shimmer-color-amber-500">
+                      Memindai R2 bucket & membandingkan dengan 100+ record database...
+                    </span>
                   </div>
                 )}
 
