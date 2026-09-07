@@ -42,6 +42,15 @@ export const API_ROUTES = {
     },
     ADD: `${API_PREFIX}/comments`,
     LIKE: (commentId: string) => `${API_PREFIX}/comments/${commentId}/like`,
+    DELETE: (commentId: string) => `${API_PREFIX}/comments/${commentId}`,
+    REPORT: (commentId: string) => `${API_PREFIX}/comments/${commentId}/report`,
+  },
+  ADMIN: {
+    REPORTS: (page = 1, limit = 20, status?: string) => {
+      const q = status ? `&status=${status}` : "";
+      return `${API_PREFIX}/admin/reports?page=${page}&limit=${limit}${q}`;
+    },
+    RESOLVE_REPORT: (reportId: string) => `${API_PREFIX}/admin/reports/${reportId}/action`,
   },
   RATINGS: {
     SUBMIT: `${API_PREFIX}/ratings`,

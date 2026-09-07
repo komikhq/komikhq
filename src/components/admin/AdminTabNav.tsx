@@ -1,9 +1,9 @@
 import React from "react";
-import { Users, BookOpen, Tag, ChartBar, Gear, ShieldCheck } from "@phosphor-icons/react";
+import { Users, BookOpen, Tag, ChartBar, Gear, ShieldCheck, ChatDots } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
 export interface AdminTabNavProps {
-  currentTab: "overview" | "users" | "comics" | "genres" | "analytics" | "settings";
+  currentTab: "overview" | "users" | "comics" | "genres" | "moderation" | "analytics" | "settings";
 }
 
 export function AdminTabNav({ currentTab }: AdminTabNavProps) {
@@ -12,6 +12,7 @@ export function AdminTabNav({ currentTab }: AdminTabNavProps) {
     { id: "users", label: "Pengguna", href: "/dashboard/users", icon: Users },
     { id: "comics", label: "Komik", href: "/dashboard/comics", icon: BookOpen },
     { id: "genres", label: "Genre", href: "/dashboard/genres", icon: Tag },
+    { id: "moderation", label: "Moderasi", href: "/dashboard/moderation", icon: ChatDots },
     { id: "analytics", label: "Analitik", href: "/dashboard/analytics", icon: ChartBar },
     { id: "settings", label: "Pengaturan Platform", href: "/dashboard/settings", icon: Gear },
   ];

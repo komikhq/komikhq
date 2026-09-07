@@ -39,13 +39,28 @@ interface CommentTreeItemProps {
     parentId?: string | null,
     guestInfo?: { guestName?: string; guestEmail?: string; isSpoiler?: boolean }
   ) => Promise<void>;
+  onDeleteComment?: (commentId: string) => Promise<void>;
+  onOpenReportModal?: (commentId: string) => void;
   isLoggedIn?: boolean;
+  currentUserId?: string | null;
+  isAdmin?: boolean;
 }
 
-export function CommentTreeItem({ comment, onSubmitReply, isLoggedIn = false }: CommentTreeItemProps) {
+export function CommentTreeItem({
+  comment,
+  onSubmitReply,
+  onDeleteComment,
+  onOpenReportModal,
+  isLoggedIn = false,
+  currentUserId = null,
+  isAdmin = false,
+}: CommentTreeItemProps) {
   const [isReplying, setIsReplying] = useState(false);
   const [likeCount, setLikeCount] = useState(comment.likeCount || 0);
   const [isLiked, setIsLiked] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const isOwnerOrAdmin = isAdmin || (currentUserId && comment.author?.id === currentUserId);
 
   const handleToggleLike = async () => {
     const nextState = !isLiked;
@@ -58,6 +73,18 @@ export function CommentTreeItem({ comment, onSubmitReply, isLoggedIn = false }: 
       // Rollback on failure
       setIsLiked(!nextState);
       setLikeCount((prev) => (nextState ? prev - 1 : prev + 1));
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!onDeleteComment || isDeleting) return;
+    if (!confirm("Apakah Anda yakin ingin menghapus komentar ini?")) return;
+
+    try {
+      setIsDeleting(true);
+      await onDeleteComment(comment.id);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -127,6 +154,25 @@ export function CommentTreeItem({ comment, onSubmitReply, isLoggedIn = false }: 
               <ChatCircleText className="h-3.5 w-3.5" />
               <span>Balas</span>
             </button>
+
+            {onOpenReportModal && !comment.isDeleted && (
+              <button
+                onClick={() => onOpenReportModal(comment.id)}
+                className="text-neutral-500 hover:text-amber-400 transition-colors text-[11px]"
+              >
+                Laporkan
+              </button>
+            )}
+
+            {isOwnerOrAdmin && !comment.isDeleted && onDeleteComment && (
+              <button
+                onClick={handleDelete}
+                disabled={isDeleting}
+                className="text-neutral-500 hover:text-rose-400 transition-colors text-[11px]"
+              >
+                {isDeleting ? "Menghapus..." : "Hapus"}
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -153,7 +199,11 @@ export function CommentTreeItem({ comment, onSubmitReply, isLoggedIn = false }: 
               key={reply.id}
               comment={reply}
               onSubmitReply={onSubmitReply}
+              onDeleteComment={onDeleteComment}
+              onOpenReportModal={onOpenReportModal}
               isLoggedIn={isLoggedIn}
+              currentUserId={currentUserId}
+              isAdmin={isAdmin}
             />
           ))}
         </div>

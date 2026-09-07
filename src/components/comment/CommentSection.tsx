@@ -3,6 +3,7 @@ import { ChatCircleText } from "@phosphor-icons/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CommentInput } from "./CommentInput";
 import { CommentTreeItem, type CommentData } from "./CommentTreeItem";
+import { CommentReportModal } from "./CommentReportModal";
 import { API_ROUTES } from "@/constants";
 import { apiFetch, getBaseApiUrl } from "@/lib/api-client";
 
@@ -15,12 +16,20 @@ export function CommentSection({ comicId, chapterId }: CommentSectionProps) {
   const [comments, setComments] = useState<CommentData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [reportingCommentId, setReportingCommentId] = useState<string | null>(null);
 
   useEffect(() => {
     // Check if user is logged in
     apiFetch(API_ROUTES.AUTH.SESSION)
       .then((res) => {
-        if (res && (res.user || res.id)) setIsLoggedIn(true);
+        if (res && (res.user || res.id)) {
+          setIsLoggedIn(true);
+          const u = res.user || res;
+          setCurrentUserId(u.id || u.userId || null);
+          if (u.role === "admin") setIsAdmin(true);
+        }
       })
       .catch(() => setIsLoggedIn(false));
   }, []);
@@ -120,6 +129,33 @@ export function CommentSection({ comicId, chapterId }: CommentSectionProps) {
     fetchComments();
   };
 
+  const handleDeleteComment = async (commentId: string) => {
+    await apiFetch(API_ROUTES.COMMENTS.DELETE(commentId), {
+      method: "DELETE",
+    });
+    fetchComments();
+  };
+
+  const handleReportSubmit = async (
+    reason: string,
+    details?: string,
+    guestInfo?: { guestName?: string; guestEmail?: string }
+  ) => {
+    if (!reportingCommentId) return;
+
+    await apiFetch(API_ROUTES.COMMENTS.REPORT(reportingCommentId), {
+      method: "POST",
+      body: JSON.stringify({
+        reason,
+        details,
+        guestName: guestInfo?.guestName,
+        guestEmail: guestInfo?.guestEmail,
+      }),
+    });
+
+    alert("Laporan Anda telah terkirim. Terima kasih!");
+  };
+
   return (
     <Card className="border-neutral-800 bg-neutral-900 text-neutral-100">
       <CardHeader className="border-b border-neutral-800">
@@ -154,11 +190,23 @@ export function CommentSection({ comicId, chapterId }: CommentSectionProps) {
                 key={comment.id}
                 comment={comment}
                 onSubmitReply={handlePostComment}
+                onDeleteComment={handleDeleteComment}
+                onOpenReportModal={(id) => setReportingCommentId(id)}
                 isLoggedIn={isLoggedIn}
+                currentUserId={currentUserId}
+                isAdmin={isAdmin}
               />
             ))}
           </div>
         )}
+
+        <CommentReportModal
+          commentId={reportingCommentId || ""}
+          isOpen={!!reportingCommentId}
+          onClose={() => setReportingCommentId(null)}
+          onSubmit={handleReportSubmit}
+          isLoggedIn={isLoggedIn}
+        />
       </CardContent>
     </Card>
   );
