@@ -117,9 +117,6 @@ export function AdminPlatformSettingsCard() {
                 Hapus file gambar terisolasi/sampah di Cloudflare R2 yang tidak lagi terhubung ke database akibat pengunggahan yang terputus atau chapter yang dihapus.
               </p>
               <div className="pt-1 flex flex-col gap-2">
-                <span className="inline-flex items-center text-[11px] font-medium text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-md w-fit">
-                  Pembersihan Manual (Hemat Kuota R2 Class A Operations)
-                </span>
 
                 {purging && (
                   <div className="p-3 rounded-xl border border-amber-500/40 bg-amber-500/10 flex items-center gap-2 text-amber-600 dark:text-amber-400 text-xs font-medium">
