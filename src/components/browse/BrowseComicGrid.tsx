@@ -75,10 +75,10 @@ export function BrowseComicGrid() {
                     </Badge>
                   )}
                 </div>
-                <h3 className="font-semibold text-sm line-clamp-1 group-hover:text-primary pt-1">
+                <h3 className="font-semibold text-sm line-clamp-1 group-hover:text-accent-foreground transition-colors pt-1">
                   {comic.title}
                 </h3>
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <div className="flex items-center justify-between text-xs text-muted-foreground group-hover:text-accent-foreground/80 transition-colors">
                   <span className="capitalize">{comic.type || "Manga"}</span>
                   <span>{comic.status || "Ongoing"}</span>
                 </div>

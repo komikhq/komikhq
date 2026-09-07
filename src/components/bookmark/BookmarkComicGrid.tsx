@@ -91,10 +91,10 @@ export function BookmarkComicGrid() {
                   <Trash className="h-3.5 w-3.5" />
                 </button>
               </div>
-              <h3 className="font-semibold text-sm line-clamp-1 group-hover:text-primary">
+              <h3 className="font-semibold text-sm line-clamp-1 group-hover:text-accent-foreground transition-colors">
                 {item.comic.title}
               </h3>
-              <span className="text-[11px] px-2 py-0.5 rounded-full bg-primary/10 text-primary w-fit font-medium capitalize">
+              <span className="text-[11px] px-2 py-0.5 rounded-full bg-primary/10 text-primary group-hover:bg-accent-foreground/20 group-hover:text-accent-foreground w-fit font-medium capitalize transition-colors">
                 {item.status.replace(/_/g, " ")}
               </span>
             </a>

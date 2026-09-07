@@ -76,10 +76,10 @@ export function HomeTrendingSection() {
                     loading="lazy"
                   />
                 </div>
-                <h3 className="font-semibold text-sm line-clamp-1 group-hover:text-primary">
+                <h3 className="font-semibold text-sm line-clamp-1 group-hover:text-accent-foreground transition-colors">
                   {comic.title}
                 </h3>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-muted-foreground group-hover:text-accent-foreground/80 transition-colors">
                   {comic.totalViews || 0} views
                 </p>
               </a>

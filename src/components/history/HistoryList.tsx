@@ -74,17 +74,17 @@ export function HistoryList() {
             />
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-sm line-clamp-1 group-hover:text-primary">
+            <h3 className="font-semibold text-sm line-clamp-1 group-hover:text-accent-foreground transition-colors">
               {item.comic.title}
             </h3>
-            <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
+            <p className="text-xs text-muted-foreground group-hover:text-accent-foreground/80 transition-colors flex items-center gap-1 mt-1">
               <BookOpen className="h-3.5 w-3.5 shrink-0" />
               <span className="truncate">
                 Chapter {item.chapter?.chapterNumber || "Terakhir"}
               </span>
             </p>
             {item.lastReadPage && (
-              <p className="text-[11px] text-muted-foreground/70 mt-0.5">
+              <p className="text-[11px] text-muted-foreground/70 group-hover:text-accent-foreground/70 transition-colors mt-0.5">
                 Halaman {item.lastReadPage} / {item.snapshotTotalPages || 1}
               </p>
             )}
