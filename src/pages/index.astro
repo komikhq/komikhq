@@ -2,6 +2,7 @@
 import RootLayout from "@/layouts/RootLayout.astro";
 import { HomeHeroCard } from "@/components/home/HomeHeroCard";
 import { HomeTrendingSection } from "@/components/home/HomeTrendingSection";
+import { HomePopularSection } from "@/components/home/HomePopularSection";
 import { HomeTopGenresCard } from "@/components/home/HomeTopGenresCard";
 import { HomeAllGenresCard } from "@/components/home/HomeAllGenresCard";
 ---
@@ -10,6 +11,7 @@ import { HomeAllGenresCard } from "@/components/home/HomeAllGenresCard";
   <div class="max-w-screen-2xl mx-auto flex flex-col gap-6 pb-20 pt-4 px-4">
     <HomeHeroCard client:load />
     <HomeTrendingSection client:load />
+    <HomePopularSection client:load />
     <HomeTopGenresCard client:load />
     <HomeAllGenresCard client:load />
   </div>

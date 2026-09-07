@@ -1,27 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { Fire, TrendUp } from "@phosphor-icons/react";
+import { Crown, Eye, Star } from "@phosphor-icons/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { API_ROUTES } from "@/constants";
 import { apiFetch } from "@/lib/api-client";
 
-export function HomeTrendingSection() {
-  const [period, setPeriod] = useState<"daily" | "weekly">("daily");
-  const [trendingComics, setTrendingComics] = useState<any[]>([]);
+export function HomePopularSection() {
+  const [popularComics, setPopularComics] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     let isMounted = true;
     setIsLoading(true);
 
-    apiFetch(API_ROUTES.COMICS.TRENDING(period))
+    apiFetch(API_ROUTES.COMICS.TRENDING("popular"))
       .then((data) => {
         if (isMounted) {
-          setTrendingComics(data.comics || []);
+          setPopularComics(data.comics || []);
         }
       })
       .catch(() => {
-        if (isMounted) setTrendingComics([]);
+        if (isMounted) setPopularComics([]);
       })
       .finally(() => {
         if (isMounted) setIsLoading(false);
@@ -30,24 +28,18 @@ export function HomeTrendingSection() {
     return () => {
       isMounted = false;
     };
-  }, [period]);
+  }, []);
 
   return (
     <Card className="border border-neutral-800 bg-neutral-900/50">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
         <CardTitle className="text-xl font-bold flex items-center gap-2 text-neutral-100">
-          <Fire className="h-5 w-5 text-orange-500 animate-pulse" />
-          <span>Komik Trending</span>
+          <Crown className="h-5 w-5 text-amber-400" />
+          <span>Komik Populer Sepanjang Masa</span>
         </CardTitle>
-        <Tabs
-          value={period}
-          onValueChange={(val) => setPeriod(val as "daily" | "weekly")}
-        >
-          <TabsList className="grid w-44 grid-cols-2 bg-neutral-800">
-            <TabsTrigger value="daily">Harian</TabsTrigger>
-            <TabsTrigger value="weekly">Mingguan</TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <span className="text-xs text-neutral-400 font-mono bg-neutral-800/80 px-2.5 py-1 rounded border border-neutral-700/50">
+          All-Time Popular
+        </span>
       </CardHeader>
       <CardContent>
         {isLoading ? (
@@ -60,28 +52,21 @@ export function HomeTrendingSection() {
               </div>
             ))}
           </div>
-        ) : trendingComics.length > 0 ? (
+        ) : popularComics.length > 0 ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-            {trendingComics.map((comic, index) => (
+            {popularComics.map((comic, index) => (
               <a
                 key={comic.id}
                 href={`/komik/${comic.slug}`}
-                className="group relative flex flex-col space-y-2 border border-neutral-800/80 rounded-lg p-2 bg-neutral-900/40 hover:bg-neutral-800/60 hover:border-neutral-700 transition-all duration-200 overflow-hidden"
+                className="group relative flex flex-col space-y-2 border border-neutral-800/80 rounded-lg p-2 bg-neutral-900/40 hover:bg-neutral-800/60 hover:border-amber-500/50 transition-all duration-200 overflow-hidden"
               >
-                {/* Rank Badge */}
-                <div
-                  className={`absolute top-3 left-3 z-10 font-bold text-[10px] px-2 py-0.5 rounded shadow backdrop-blur ${
-                    index === 0
-                      ? "bg-amber-500 text-black font-extrabold"
-                      : index === 1
-                      ? "bg-slate-300 text-black font-bold"
-                      : index === 2
-                      ? "bg-amber-700 text-white font-bold"
-                      : "bg-black/70 text-neutral-300"
-                  }`}
-                >
-                  #{index + 1}
-                </div>
+                {/* Popular Crown Badge for Top 3 */}
+                {index < 3 && (
+                  <div className="absolute top-3 left-3 z-10 bg-amber-500 text-black font-extrabold text-[10px] px-2 py-0.5 rounded shadow backdrop-blur flex items-center gap-1">
+                    <Star className="h-3 w-3 fill-black inline" />
+                    Top #{index + 1}
+                  </div>
+                )}
 
                 <div className="aspect-[3/4] overflow-hidden rounded-md bg-neutral-800 relative">
                   <img
@@ -94,20 +79,24 @@ export function HomeTrendingSection() {
                 <h3 className="font-semibold text-sm line-clamp-1 text-neutral-200 group-hover:text-amber-400 transition-colors">
                   {comic.title}
                 </h3>
-                <p className="text-xs text-neutral-400 flex items-center gap-1 font-mono">
-                  <TrendUp className="h-3 w-3 text-orange-400 inline" />
-                  {(comic.totalViews || 0).toLocaleString("id-ID")} views
-                </p>
+                <div className="flex items-center justify-between text-xs text-neutral-400 font-mono">
+                  <span className="flex items-center gap-1 text-amber-400 font-bold">
+                    <Eye className="h-3 w-3 inline text-amber-400" />
+                    {(comic.totalViews || 0).toLocaleString("id-ID")}
+                  </span>
+                  <span className="capitalize text-[10px] bg-neutral-800 px-1.5 py-0.5 rounded text-neutral-300">
+                    {comic.status || "ongoing"}
+                  </span>
+                </div>
               </a>
             ))}
           </div>
         ) : (
           <p className="text-sm text-neutral-500 py-8 text-center">
-            Belum ada data komik trending untuk periode ini.
+            Belum ada data komik populer.
           </p>
         )}
       </CardContent>
     </Card>
   );
 }
-
