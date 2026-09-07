@@ -60,13 +60,13 @@ export function CommentReportModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-xs p-4">
-      <div className="w-full max-w-md bg-neutral-900 border border-neutral-800 rounded-xl p-5 shadow-2xl text-neutral-100 space-y-4">
-        <div className="flex items-center justify-between border-b border-neutral-800 pb-3">
-          <div className="flex items-center gap-2 text-amber-400 font-bold text-base">
+      <div className="w-full max-w-md bg-card border border-border rounded-xl p-5 shadow-2xl text-card-foreground space-y-4">
+        <div className="flex items-center justify-between border-b border-border pb-3">
+          <div className="flex items-center gap-2 text-amber-500 font-bold text-base">
             <Warning className="h-5 w-5 shrink-0" />
             <span>Laporkan Komentar</span>
           </div>
-          <button onClick={onClose} className="text-neutral-400 hover:text-neutral-200">
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -74,7 +74,7 @@ export function CommentReportModal({
         <form onSubmit={handleSubmit} className="space-y-4 text-xs">
           {!isLoggedIn && (
             <div className="space-y-2">
-              <p className="font-semibold text-neutral-300">Identitas Pelapor (Guest)</p>
+              <p className="font-semibold text-foreground">Identitas Pelapor (Guest)</p>
               <div className="grid grid-cols-2 gap-2">
                 <Input
                   type="text"
@@ -82,7 +82,7 @@ export function CommentReportModal({
                   value={guestName}
                   onChange={(e) => setGuestName(e.target.value)}
                   required
-                  className="bg-neutral-950 border-neutral-800 text-xs h-8"
+                  className="bg-muted/40 border-border text-foreground placeholder:text-muted-foreground text-xs h-8"
                 />
                 <Input
                   type="email"
@@ -90,19 +90,19 @@ export function CommentReportModal({
                   value={guestEmail}
                   onChange={(e) => setGuestEmail(e.target.value)}
                   required
-                  className="bg-neutral-950 border-neutral-800 text-xs h-8"
+                  className="bg-muted/40 border-border text-foreground placeholder:text-muted-foreground text-xs h-8"
                 />
               </div>
             </div>
           )}
 
           <div className="space-y-2">
-            <p className="font-semibold text-neutral-300">Pilih Alasan Pelaporan:</p>
+            <p className="font-semibold text-foreground">Pilih Alasan Pelaporan:</p>
             <div className="space-y-1.5">
               {REPORT_REASONS.map((r) => (
                 <label
                   key={r.id}
-                  className="flex items-center gap-2 p-2 rounded-lg border border-neutral-800 hover:bg-neutral-850 cursor-pointer transition-colors"
+                  className="flex items-center gap-2 p-2 rounded-lg border border-border hover:bg-muted/50 cursor-pointer transition-colors"
                 >
                   <input
                     type="radio"
@@ -119,12 +119,12 @@ export function CommentReportModal({
           </div>
 
           <div className="space-y-1">
-            <label className="font-semibold text-neutral-300">Penjelasan Tambahan (Opsional):</label>
+            <label className="font-semibold text-foreground">Penjelasan Tambahan (Opsional):</label>
             <Textarea
               placeholder="Berikan keterangan detail jika diperlukan..."
               value={details}
               onChange={(e) => setDetails(e.target.value)}
-              className="bg-neutral-950 border-neutral-800 text-xs min-h-[60px]"
+              className="bg-muted/40 border-border text-foreground placeholder:text-muted-foreground text-xs min-h-[60px]"
             />
           </div>
 
