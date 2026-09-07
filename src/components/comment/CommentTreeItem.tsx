@@ -134,12 +134,13 @@ export function CommentTreeItem({ comment, onSubmitReply, isLoggedIn = false }: 
       {isReplying && (
         <div className="ml-11 mt-2">
           <CommentInput
-            placeholder={`Balas @${comment.author.name}...`}
+            placeholder={`Balas @${authorName}...`}
             parentId={comment.id}
-            replyToName={comment.author.name}
+            replyToName={authorName}
             onSubmit={onSubmitReply}
             onCancelReply={() => setIsReplying(false)}
             autoFocus
+            isLoggedIn={isLoggedIn}
           />
         </div>
       )}

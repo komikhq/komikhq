@@ -33,6 +33,22 @@ export function CommentInput({
   const [isSpoiler, setIsSpoiler] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Load guest info from localStorage if not logged in
+  React.useEffect(() => {
+    if (!isLoggedIn && typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("komikhq_guest_info");
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed.guestName) setGuestName(parsed.guestName);
+          if (parsed.guestEmail) setGuestEmail(parsed.guestEmail);
+        }
+      } catch {
+        // Ignore parsing errors
+      }
+    }
+  }, [isLoggedIn]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!content.trim() || isSubmitting) return;
@@ -44,6 +60,22 @@ export function CommentInput({
 
     try {
       setIsSubmitting(true);
+      
+      // Save guest info to localStorage for future comments
+      if (!isLoggedIn && typeof window !== "undefined") {
+        try {
+          localStorage.setItem(
+            "komikhq_guest_info",
+            JSON.stringify({
+              guestName: guestName.trim(),
+              guestEmail: guestEmail.trim(),
+            })
+          );
+        } catch {
+          // Ignore localStorage errors
+        }
+      }
+
       await onSubmit(content.trim(), parentId, {
         guestName: !isLoggedIn ? guestName.trim() : undefined,
         guestEmail: !isLoggedIn ? guestEmail.trim() : undefined,
