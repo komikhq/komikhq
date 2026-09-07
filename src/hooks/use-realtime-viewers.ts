@@ -9,6 +9,20 @@ export interface UseRealtimeViewersOptions {
   channelName?: string;
 }
 
+function getVisitorId(): string {
+  if (typeof window === "undefined") return "";
+  try {
+    let id = localStorage.getItem("komikhq_visitor_id");
+    if (!id) {
+      id = `visitor_${Date.now()}_${crypto.randomUUID()}`;
+      localStorage.setItem("komikhq_visitor_id", id);
+    }
+    return id;
+  } catch {
+    return `visitor_${Date.now()}_${crypto.randomUUID()}`;
+  }
+}
+
 export function useRealtimeViewers(options: UseRealtimeViewersOptions = {}) {
   const [onlineCount, setOnlineCount] = useState<number>(1);
   const key = options.pusherKey || import.meta.env.PUBLIC_PUSHER_KEY;
@@ -18,10 +32,11 @@ export function useRealtimeViewers(options: UseRealtimeViewersOptions = {}) {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
+    const visitorId = getVisitorId();
     const baseUrl = getBaseApiUrl();
     const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const wsHost = baseUrl.replace(/^https?:\/\//, "");
-    const wsUrl = `${wsProtocol}//${wsHost}/v1/realtime/ws?channel=global_presence`;
+    const wsUrl = `${wsProtocol}//${wsHost}/v1/realtime/ws?channel=global_presence&visitorId=${encodeURIComponent(visitorId)}`;
 
     let ws: WebSocket | null = null;
     let pusher: Pusher | null = null;
