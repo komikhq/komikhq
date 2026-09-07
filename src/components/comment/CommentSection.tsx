@@ -22,7 +22,7 @@ export function CommentSection({ comicId, chapterId, variant = "reader" }: Comme
   const [reportingCommentId, setReportingCommentId] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check if user is logged in
+    // Check if user is logged in via session endpoint
     apiFetch(API_ROUTES.AUTH.SESSION)
       .then((res) => {
         if (res && (res.user || res.id)) {
@@ -30,6 +30,8 @@ export function CommentSection({ comicId, chapterId, variant = "reader" }: Comme
           const u = res.user || res;
           setCurrentUserId(u.id || u.userId || null);
           if (u.role === "admin") setIsAdmin(true);
+        } else {
+          setIsLoggedIn(false);
         }
       })
       .catch(() => setIsLoggedIn(false));
