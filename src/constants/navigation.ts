@@ -23,4 +23,6 @@ export const HEADER_NAV_ITEMS: readonly NavItem[] = [
   { label: "Home", href: "/", iconName: "House" },
   { label: "Browse", href: "/browse", iconName: "Compass" },
   { label: "List All", href: "/list-all", iconName: "ListBullets" },
+  { label: "Bookmark", href: "/bookmark", iconName: "BookmarkSimple" },
+  { label: "History", href: "/history", iconName: "ClockCounterClockwise" },
 ] as const;

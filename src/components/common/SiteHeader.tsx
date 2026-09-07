@@ -9,6 +9,8 @@ import {
   Gear,
   SignOut,
   ShieldCheck,
+  BookmarkSimple,
+  ClockCounterClockwise,
   type Icon,
 } from "@phosphor-icons/react";
 import { Input } from "@/components/ui/input";
@@ -32,6 +34,8 @@ const HEADER_NAV_ICONS: Record<string, Icon> = {
   House,
   Compass,
   ListBullets,
+  BookmarkSimple,
+  ClockCounterClockwise,
 };
 
 export function SiteHeader() {
@@ -135,6 +139,14 @@ export function SiteHeader() {
                   <DropdownMenuItem className="cursor-pointer" onClick={() => (window.location.href = "/account")}>
                     <UserCircle className="mr-2 h-4 w-4 text-primary" />
                     <span>Profil Saya</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer" onClick={() => (window.location.href = "/bookmark")}>
+                    <BookmarkSimple className="mr-2 h-4 w-4 text-primary" />
+                    <span>Bookmark Saya</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer" onClick={() => (window.location.href = "/history")}>
+                    <ClockCounterClockwise className="mr-2 h-4 w-4 text-primary" />
+                    <span>Riwayat Baca</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem className="cursor-pointer" onClick={() => (window.location.href = "/account/settings")}>
                     <Gear className="mr-2 h-4 w-4 text-muted-foreground" />

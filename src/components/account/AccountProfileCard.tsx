@@ -124,7 +124,22 @@ export function AccountProfileCard() {
             <span>Keluar</span>
           </Button>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
+          {user.role === "admin" && (
+            <div className="flex md:hidden items-center justify-between p-3.5 border border-primary/30 rounded-lg bg-primary/5">
+              <div className="flex items-center gap-2.5">
+                <ShieldCheck className="h-5 w-5 text-primary" />
+                <div>
+                  <p className="text-xs font-semibold text-primary">Akses Administrator</p>
+                  <p className="text-[11px] text-muted-foreground">Kelola komik & sistem di Dashboard</p>
+                </div>
+              </div>
+              <Button size="sm" onClick={() => (window.location.href = "/dashboard")} className="h-8 text-xs font-semibold">
+                Dashboard Admin
+              </Button>
+            </div>
+          )}
+
           <div className="flex flex-col sm:flex-row items-center gap-6 p-4 border rounded-lg bg-card/50">
             {/* Avatar with Crop Trigger Overlay */}
             <div
