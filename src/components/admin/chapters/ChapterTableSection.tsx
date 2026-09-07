@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAdminChapters, type ChapterItem } from "@/hooks/use-admin-chapters";
 import { ChapterFormSheet } from "./ChapterFormSheet";
+import { ChapterDeleteDialog } from "./ChapterDeleteDialog";
 
 interface ChapterTableSectionProps {
   comicId: string;
@@ -13,6 +14,22 @@ interface ChapterTableSectionProps {
 export function ChapterTableSection({ comicId }: ChapterTableSectionProps) {
   const { chapters, loading, submitting, createChapterBatch, deleteChapter } = useAdminChapters(comicId);
   const [formOpen, setFormOpen] = useState(false);
+
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deletingChapter, setDeletingChapter] = useState<ChapterItem | null>(null);
+
+  const handleOpenDelete = (ch: ChapterItem) => {
+    setDeletingChapter(ch);
+    setDeleteOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (deletingChapter) {
+      await deleteChapter(deletingChapter.id);
+      setDeleteOpen(false);
+      setDeletingChapter(null);
+    }
+  };
 
   return (
     <Card className="border-border/60 shadow-xs w-full">
@@ -75,7 +92,13 @@ export function ChapterTableSection({ comicId }: ChapterTableSectionProps) {
                       {new Date(ch.publishedAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
                     </td>
                     <td className="p-3 text-right">
-                      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:bg-destructive/10" onClick={() => deleteChapter(ch.id)}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7 text-destructive hover:bg-destructive/10 cursor-pointer"
+                        title="Hapus Chapter"
+                        onClick={() => handleOpenDelete(ch)}
+                      >
                         <Trash className="h-3.5 w-3.5" />
                       </Button>
                     </td>
@@ -92,6 +115,13 @@ export function ChapterTableSection({ comicId }: ChapterTableSectionProps) {
         onOpenChange={setFormOpen}
         onSubmitBatch={createChapterBatch}
         submitting={submitting}
+      />
+
+      <ChapterDeleteDialog
+        chapter={deletingChapter}
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        onConfirm={handleConfirmDelete}
       />
     </Card>
   );

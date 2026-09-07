@@ -1,14 +1,9 @@
 import React, { useState } from "react";
-import { X, CaretDown, CaretUp } from "@phosphor-icons/react";
+import { X, CaretDown, CaretUp, Check, MagnifyingGlass } from "@phosphor-icons/react";
 import { Badge } from "@/components/ui/badge";
-import {
-  Combobox,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxList,
-} from "@/components/ui/combobox";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { GenreItem } from "@/hooks/use-admin-genres";
 
 interface GenreComboboxPickerProps {
@@ -23,8 +18,14 @@ export function GenreComboboxPicker({
   onToggleGenre,
 }: GenreComboboxPickerProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const selectedGenres = genres.filter((g) => selectedGenreIds.includes(g.id));
+
+  const filteredGenres = genres.filter((g) =>
+    g.name.toLowerCase().includes(searchQuery.toLowerCase().trim())
+  );
 
   return (
     <div className="space-y-2.5">
@@ -39,7 +40,7 @@ export function GenreComboboxPicker({
         >
           {selectedGenres.length === 0 ? (
             <span className="text-xs text-muted-foreground italic px-1">
-              Belum ada genre dipilih. Pilih genre via combobox di bawah.
+              Belum ada genre dipilih. Klik pemilih genre di bawah.
             </span>
           ) : (
             selectedGenres.map((g) => (
@@ -78,50 +79,69 @@ export function GenreComboboxPicker({
         )}
       </div>
 
-      {/* Default shadcn Combobox for Instant Genre Search & Quick Toggle */}
-      <Combobox<GenreItem, true>
-        multiple
-        items={genres}
-        value={selectedGenres}
-        isItemEqualToValue={(a, b) => a?.id === b?.id}
-        onValueChange={(val: GenreItem[]) => {
-          const newIds = val.map((g) => g.id);
-          // Find difference to notify parent via onToggleGenre or update selected genres
-          const added = newIds.filter((id) => !selectedGenreIds.includes(id));
-          const removed = selectedGenreIds.filter((id) => !newIds.includes(id));
-          [...added, ...removed].forEach((id) => onToggleGenre(id));
-        }}
-        itemToStringLabel={(item: GenreItem) => item?.name || ""}
-      >
-        <ComboboxInput
-          placeholder={`Pilih atau Cari Genre Komik (${selectedGenreIds.length} terpilih)...`}
-          className="w-full text-xs h-9"
-        />
-        <ComboboxContent>
-          <ComboboxEmpty>Genre tidak ditemukan.</ComboboxEmpty>
-          <ComboboxList>
-            {genres.map((g) => {
-              const isSelected = selectedGenreIds.includes(g.id);
-              return (
-                <ComboboxItem
-                  key={g.id}
-                  value={g}
-                  className="text-xs flex items-center justify-between py-1.5 px-2 cursor-pointer"
-                >
-                  <span className={isSelected ? "font-semibold text-primary" : "text-foreground"}>
-                    {g.name}
-                  </span>
-                  {isSelected && (
-                    <Badge variant="secondary" className="text-[10px] h-4 px-1 font-mono">
-                      Terpilih
-                    </Badge>
-                  )}
-                </ComboboxItem>
-              );
-            })}
-          </ComboboxList>
-        </ComboboxContent>
-      </Combobox>
+      {/* Popover Dropdown Picker */}
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            type="button"
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className="w-full justify-between h-9 text-xs font-normal border-input bg-transparent hover:bg-accent hover:text-accent-foreground text-left"
+          >
+            <span className="truncate">
+              {selectedGenreIds.length > 0
+                ? `${selectedGenreIds.length} Genre Terpilih`
+                : "Pilih / Cari Genre Komik..."}
+            </span>
+            <CaretDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+
+        <PopoverContent
+          className="w-[--radix-popover-trigger-width] p-2 space-y-2 bg-popover border border-border shadow-md rounded-2xl z-[100]"
+          align="start"
+        >
+          <div className="relative">
+            <MagnifyingGlass className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
+            <Input
+              placeholder="Cari nama genre..."
+              className="pl-8 text-xs h-8"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+
+          <div className="max-h-48 overflow-y-auto space-y-0.5 pr-1 text-xs">
+            {filteredGenres.length === 0 ? (
+              <div className="p-3 text-center text-muted-foreground text-xs italic">
+                Genre tidak ditemukan.
+              </div>
+            ) : (
+              filteredGenres.map((g) => {
+                const isSelected = selectedGenreIds.includes(g.id);
+                return (
+                  <button
+                    key={g.id}
+                    type="button"
+                    onClick={() => {
+                      onToggleGenre(g.id);
+                    }}
+                    className={`w-full flex items-center justify-between py-1.5 px-2.5 rounded-lg text-left transition-colors cursor-pointer ${
+                      isSelected
+                        ? "bg-primary/10 text-primary font-semibold"
+                        : "hover:bg-accent text-foreground"
+                    }`}
+                  >
+                    <span>{g.name}</span>
+                    {isSelected && <Check className="h-3.5 w-3.5 text-primary shrink-0" />}
+                  </button>
+                );
+              })
+            )}
+          </div>
+        </PopoverContent>
+      </Popover>
     </div>
   );
 }
