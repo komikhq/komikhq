@@ -58,16 +58,17 @@ export function BrowseFilterBar({ onFilterChange }: BrowseFilterBarProps) {
               items={genreItems}
               value={selectedGenreItem}
               onValueChange={handleSelectGenreItem}
+              itemToStringLabel={(item: any) => item?.name || ""}
             >
               <ComboboxInput placeholder="Semua Genre" />
               <ComboboxContent>
                 <ComboboxEmpty>Genre tidak ditemukan.</ComboboxEmpty>
                 <ComboboxList>
-                  {(item) => (
+                  {genreItems.map((item) => (
                     <ComboboxItem key={item.slug} value={item}>
                       {item.name}
                     </ComboboxItem>
-                  )}
+                  ))}
                 </ComboboxList>
               </ComboboxContent>
             </Combobox>
