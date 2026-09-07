@@ -66,8 +66,9 @@ export function AdminUserManagementCard() {
         credentials: "include",
       });
       if (!res.ok) throw new Error("Gagal mengambil daftar pengguna");
-      const data = (await res.json()) as any;
-      setUsers(data.users || []);
+      const resJson = (await res.json()) as any;
+      const userList = resJson.data?.users || resJson.users || [];
+      setUsers(userList);
     } catch (err: any) {
       toast.error(err.message || "Gagal memuat pengguna.");
     } finally {
