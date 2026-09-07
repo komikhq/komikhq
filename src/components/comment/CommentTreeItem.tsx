@@ -103,19 +103,19 @@ export function CommentTreeItem({
   return (
     <div className="group/item relative space-y-3">
       <div className="flex gap-3 items-start">
-        <div className="w-8 h-8 rounded-full bg-muted border border-border flex items-center justify-center text-muted-foreground shrink-0 overflow-hidden">
+        <div className="w-8 h-8 rounded-full bg-neutral-800 border border-neutral-700 flex items-center justify-center text-neutral-300 shrink-0 overflow-hidden">
           {authorImage ? (
             <img src={authorImage} alt={authorName} className="w-full h-full object-cover" />
           ) : (
-            <User className="h-4 w-4 text-muted-foreground" />
+            <User className="h-4 w-4 text-neutral-400" />
           )}
         </div>
 
         <div className="flex-1 min-w-0 space-y-1">
           <div className="flex items-center gap-2 flex-wrap text-xs">
-            <span className="font-semibold text-foreground">{authorName}</span>
+            <span className="font-semibold text-neutral-200">{authorName}</span>
             {isGuestAuthor && (
-              <span className="bg-muted text-muted-foreground text-[10px] px-1.5 py-0.5 rounded border border-border font-medium">
+              <span className="bg-neutral-800 text-neutral-400 text-[10px] px-1.5 py-0.5 rounded border border-neutral-700">
                 Guest
               </span>
             )}
@@ -125,12 +125,12 @@ export function CommentTreeItem({
                 <span className="underline">@{comment.replyToUser.name}</span>
               </span>
             )}
-            <span className="text-[11px] text-muted-foreground">{formattedDate}</span>
+            <span className="text-[11px] text-neutral-500">{formattedDate}</span>
           </div>
 
-          <div className="text-sm text-foreground/90 leading-relaxed break-words">
+          <div className="text-sm text-neutral-300 leading-relaxed break-words">
             {comment.isDeleted ? (
-              <span className="italic text-muted-foreground">[Komentar ini telah dihapus]</span>
+              <span className="italic text-neutral-500">[Komentar ini telah dihapus]</span>
             ) : (
               <SpoilerText text={comment.content} isSpoilerComment={comment.isSpoiler} />
             )}
@@ -140,7 +140,7 @@ export function CommentTreeItem({
             <button
               onClick={handleToggleLike}
               className={`flex items-center gap-1 transition-colors ${
-                isLiked ? "text-primary font-semibold" : "text-muted-foreground hover:text-foreground"
+                isLiked ? "text-primary font-semibold" : "text-neutral-400 hover:text-neutral-200"
               }`}
             >
               <ThumbsUp className={`h-3.5 w-3.5 ${isLiked ? "fill-current" : ""}`} />
@@ -149,7 +149,7 @@ export function CommentTreeItem({
 
             <button
               onClick={() => setIsReplying((prev) => !prev)}
-              className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
+              className="flex items-center gap-1 text-neutral-400 hover:text-neutral-200 transition-colors"
             >
               <ChatCircleText className="h-3.5 w-3.5" />
               <span>Balas</span>
@@ -158,7 +158,7 @@ export function CommentTreeItem({
             {onOpenReportModal && !comment.isDeleted && (
               <button
                 onClick={() => onOpenReportModal(comment.id)}
-                className="text-muted-foreground/70 hover:text-amber-500 transition-colors text-[11px]"
+                className="text-neutral-500 hover:text-amber-400 transition-colors text-[11px]"
               >
                 Laporkan
               </button>
@@ -168,7 +168,7 @@ export function CommentTreeItem({
               <button
                 onClick={handleDelete}
                 disabled={isDeleting}
-                className="text-muted-foreground/70 hover:text-rose-500 transition-colors text-[11px]"
+                className="text-neutral-500 hover:text-rose-400 transition-colors text-[11px]"
               >
                 {isDeleting ? "Menghapus..." : "Hapus"}
               </button>
@@ -193,7 +193,7 @@ export function CommentTreeItem({
 
       {/* Visual Tree Line for Replies */}
       {comment.replies && comment.replies.length > 0 && (
-        <div className="ml-4 pl-4 border-l-2 border-border space-y-4 pt-2">
+        <div className="ml-4 pl-4 border-l-2 border-neutral-800 space-y-4 pt-2">
           {comment.replies.map((reply) => (
             <CommentTreeItem
               key={reply.id}

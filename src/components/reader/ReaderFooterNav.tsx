@@ -41,14 +41,15 @@ export function ReaderFooterNav({ comicSlug, chapterSlug }: ReaderFooterNavProps
       <div className="max-w-3xl mx-auto px-4 my-8 flex items-center justify-between gap-4">
         {navData.prevSlug ? (
           <Button
-            className="border border-neutral-700 bg-neutral-900 text-neutral-100 hover:bg-neutral-800 hover:text-white hover:border-neutral-500 active:scale-95 transition-all shadow-sm cursor-pointer"
+            variant="outline"
+            className="border-neutral-800 text-neutral-200"
             onClick={() => (window.location.href = `/komik/${comicSlug}/${navData.prevSlug}`)}
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Chapter Sebelumnya
           </Button>
         ) : (
-          <Button disabled className="border border-neutral-800/60 bg-neutral-900/40 text-neutral-600 opacity-50 cursor-not-allowed">
+          <Button variant="outline" disabled className="border-neutral-800 text-neutral-500">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Chapter Pertama
           </Button>
@@ -56,14 +57,14 @@ export function ReaderFooterNav({ comicSlug, chapterSlug }: ReaderFooterNavProps
 
         {navData.nextSlug ? (
           <Button
-            className="bg-primary text-primary-foreground hover:bg-primary/85 hover:shadow-lg hover:shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all font-semibold cursor-pointer shadow-md"
+            className="bg-primary text-primary-foreground"
             onClick={() => (window.location.href = `/komik/${comicSlug}/${navData.nextSlug}`)}
           >
             Chapter Selanjutnya
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         ) : (
-          <Button disabled className="bg-neutral-900/50 border border-neutral-800 text-neutral-600 opacity-50 cursor-not-allowed">
+          <Button disabled variant="secondary">
             Chapter Terakhir
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
@@ -71,7 +72,7 @@ export function ReaderFooterNav({ comicSlug, chapterSlug }: ReaderFooterNavProps
       </div>
 
       <section className="max-w-3xl mx-auto px-4 mt-12">
-        <CommentSection comicId={data?.comic?.id} chapterId={data?.chapter?.id} variant="dark" />
+        <CommentSection comicId={data?.comic?.id} chapterId={data?.chapter?.id} />
       </section>
     </>
   );

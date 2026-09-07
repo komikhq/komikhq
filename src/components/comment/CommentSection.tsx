@@ -10,10 +10,9 @@ import { apiFetch, getBaseApiUrl } from "@/lib/api-client";
 interface CommentSectionProps {
   comicId?: string;
   chapterId?: string;
-  variant?: "default" | "dark";
 }
 
-export function CommentSection({ comicId, chapterId, variant = "default" }: CommentSectionProps) {
+export function CommentSection({ comicId, chapterId }: CommentSectionProps) {
   const [comments, setComments] = useState<CommentData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -157,17 +156,9 @@ export function CommentSection({ comicId, chapterId, variant = "default" }: Comm
     alert("Laporan Anda telah terkirim. Terima kasih!");
   };
 
-  const cardClasses =
-    variant === "dark"
-      ? "border-neutral-800 bg-neutral-900 text-neutral-100"
-      : "border-border bg-card text-card-foreground shadow-xs";
-
-  const headerClasses =
-    variant === "dark" ? "border-b border-neutral-800" : "border-b border-border";
-
   return (
-    <Card className={cardClasses}>
-      <CardHeader className={headerClasses}>
+    <Card className="border-neutral-800 bg-neutral-900 text-neutral-100">
+      <CardHeader className="border-b border-neutral-800">
         <CardTitle className="text-lg font-bold flex items-center gap-2">
           <ChatCircleText className="h-5 w-5 text-primary" />
           <span>Komentar</span>
