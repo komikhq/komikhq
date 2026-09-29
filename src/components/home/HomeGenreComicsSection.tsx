@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Tag, ArrowRight, BookOpen } from "@phosphor-icons/react";
+import { Tag, ArrowRight } from "@phosphor-icons/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { COMMON_GENRES, type GenreDefinition, API_ROUTES } from "@/constants";
@@ -7,7 +7,6 @@ import { apiFetch } from "@/lib/api-client";
 
 export function HomeGenreComicsSection() {
   const [comicsByGenre, setComicsByGenre] = useState<Record<string, any[]>>({});
-  const [allComics, setAllComics] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -19,8 +18,6 @@ export function HomeGenreComicsSection() {
       .then((data) => {
         if (!isMounted) return;
         const comics: any[] = data.comics || [];
-        setAllComics(comics);
-
         const map: Record<string, any[]> = {};
         COMMON_GENRES.forEach((g) => {
           map[g.slug] = [];

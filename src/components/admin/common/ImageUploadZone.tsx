@@ -1,5 +1,5 @@
 import React from "react";
-import { UploadSimple, X, Info } from "@phosphor-icons/react";
+import { UploadSimple, X } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";

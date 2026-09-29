@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ArrowLeft, BookOpen, Eye, CheckCircle } from "@phosphor-icons/react";
+import { ArrowLeft, BookOpen, Eye } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 

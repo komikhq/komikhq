@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Clock, BookOpen } from "@phosphor-icons/react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { API_ROUTES } from "@/constants";
 import { apiFetch } from "@/lib/api-client";
 

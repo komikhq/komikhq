@@ -1,29 +1,16 @@
-import React, { createContext, useContext } from "react";
-import { useAuth, type UseAuthReturn } from "@/hooks/use-auth";
-
-const AuthContext = createContext<UseAuthReturn | null>(null);
+import React from "react";
+import type { UseAuthReturn } from "@/hooks/use-auth";
+import { AuthContext } from "./auth-context";
 
 interface AuthProviderProps {
   children: React.ReactNode;
-  value?: UseAuthReturn;
+  value: UseAuthReturn;
 }
 
 export function AuthProvider({ children, value }: AuthProviderProps) {
-  const authState = useAuth();
-  const contextValue = value || authState;
-
   return (
-    <AuthContext.Provider value={contextValue}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
-}
-
-export function useAuthContext(): UseAuthReturn {
-  const context = useContext(AuthContext);
-  if (!context) {
-    // Fallback to calling useAuth directly if outside provider
-    return useAuth();
-  }
-  return context;
 }

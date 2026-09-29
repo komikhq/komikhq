@@ -68,7 +68,7 @@ export function useComicDetail(slug?: string) {
           method: "DELETE",
         });
       }
-    } catch (err) {
+    } catch {
       // Rollback on failure
       setBookmarked(!nextState);
     }

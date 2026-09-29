@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Bookmark, BookmarkSimple, Trash } from "@phosphor-icons/react";
+import { BookmarkSimple, Trash } from "@phosphor-icons/react";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { API_ROUTES } from "@/constants";

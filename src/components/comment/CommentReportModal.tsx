@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
 interface CommentReportModalProps {
-  commentId: string;
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (reason: string, details?: string, guestInfo?: { guestName?: string; guestEmail?: string }) => Promise<void>;
@@ -21,7 +20,6 @@ const REPORT_REASONS = [
 ];
 
 export function CommentReportModal({
-  commentId,
   isOpen,
   onClose,
   onSubmit,

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useId, useState } from "react";
 import { MagnifyingGlass, House, ArrowClockwise, Copy, Check, Bug, ShieldWarning } from "@phosphor-icons/react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -61,6 +61,7 @@ export function ErrorViewCard({
   const [searchQuery, setSearchQuery] = useState("");
   const [copied, setCopied] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
+  const generatedErrorId = useId().replaceAll(":", "").toUpperCase();
 
   const config = ERROR_CONFIG[code] || ERROR_CONFIG[500];
   const displayTitle = title || config.defaultTitle;
@@ -69,7 +70,7 @@ export function ErrorViewCard({
   // Generate fallback unique error ID
   const errorId =
     providedErrorId ||
-    `ERR-${code}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+    `ERR-${code}-${generatedErrorId}`;
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

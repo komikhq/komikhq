@@ -1,4 +1,3 @@
-import React from "react";
 import { useRealtimeViewers } from "@/hooks/use-realtime-viewers";
 
 export function GlobalPresenceListener() {

@@ -1,5 +1,5 @@
 import React from "react";
-import { ChartBar, Eye, TrendUp, Users, Lightning } from "@phosphor-icons/react";
+import { TrendUp, Lightning } from "@phosphor-icons/react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
 export function AdminAnalyticsCard() {

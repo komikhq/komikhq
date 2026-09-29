@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { useAuthContext } from "@/components/auth/AuthContext";
+import { useAuthContext } from "@/components/auth/auth-context";
 import { useUpdateUserName } from "@/hooks/use-update-user-name";
 import { useUploadAvatar } from "@/hooks/use-upload-avatar";
 import { AvatarCropDialog } from "./AvatarCropDialog";
