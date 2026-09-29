@@ -106,7 +106,7 @@ export function HomeTrendingSection() {
                       {comic.title}
                     </h3>
                     <p className="text-xs text-muted-foreground group-hover:text-accent-foreground/80 transition-colors">
-                      {(comic.totalViews || 0).toLocaleString("id-ID")} views
+                      {(comic.periodViews || 0).toLocaleString("id-ID")} views
                     </p>
                   </a>
                 ))}
