@@ -85,9 +85,9 @@ export function ComicHeaderCard({ slug }: ComicHeaderCardProps) {
               <div className="h-4 bg-muted rounded w-5/6" />
               <div className="h-4 bg-muted rounded w-2/3 sm:hidden" />
             </div>
-            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 pt-2">
-              <div className="h-10 w-40 bg-muted rounded-md" />
-              <div className="h-10 w-44 bg-muted rounded-md" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+              <div className="h-10 w-full bg-muted rounded-md" />
+              <div className="h-10 w-full bg-muted rounded-md" />
             </div>
           </div>
         </div>
@@ -210,11 +210,11 @@ export function ComicHeaderCard({ slug }: ComicHeaderCardProps) {
               )}
             </div>
 
-            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 pt-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
               {firstChapter ? (
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button onClick={handleReadFirstChapter}>
+                    <Button className="w-full" onClick={handleReadFirstChapter}>
                       <BookOpen className="mr-2 h-4 w-4" />
                       Read Chapter 1
                     </Button>
@@ -222,7 +222,7 @@ export function ComicHeaderCard({ slug }: ComicHeaderCardProps) {
                   <TooltipContent side="top">Start reading from the first chapter</TooltipContent>
                 </Tooltip>
               ) : (
-                <Button disabled variant="secondary">
+                <Button className="w-full" disabled variant="secondary">
                   <BookOpen className="mr-2 h-4 w-4" />
                   No Chapters Yet
                 </Button>
@@ -231,6 +231,7 @@ export function ComicHeaderCard({ slug }: ComicHeaderCardProps) {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
+                    className="w-full"
                     variant={bookmarked ? "secondary" : "outline"}
                     onClick={toggleBookmark}
                   >
