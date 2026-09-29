@@ -82,6 +82,13 @@ export function ComicHeaderCard({ slug }: ComicHeaderCardProps) {
       return;
     }
 
+    let collapsedHeight = 0;
+    if (!nextExpanded) {
+      paragraph.classList.add("line-clamp-5", "sm:line-clamp-4");
+      collapsedHeight = paragraph.getBoundingClientRect().height;
+      paragraph.classList.remove("line-clamp-5", "sm:line-clamp-4");
+    }
+
     synopsisAnimationRef.current = true;
     synopsisNextExpandedRef.current = nextExpanded;
     container.style.height = `${container.getBoundingClientRect().height}px`;
@@ -89,11 +96,7 @@ export function ComicHeaderCard({ slug }: ComicHeaderCardProps) {
     if (nextExpanded) setSynopsisExpanded(true);
 
     requestAnimationFrame(() => {
-      const collapsedLines = window.matchMedia("(min-width: 640px)").matches ? 4 : 5;
-      const lineHeight = Number.parseFloat(window.getComputedStyle(paragraph).lineHeight);
-      const targetHeight = nextExpanded
-        ? paragraph.scrollHeight
-        : Math.ceil(lineHeight * collapsedLines);
+      const targetHeight = nextExpanded ? paragraph.scrollHeight : collapsedHeight;
       container.style.height = `${targetHeight}px`;
     });
   };
