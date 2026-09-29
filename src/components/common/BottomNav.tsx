@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
   House,
+  Compass,
   BookmarkSimple,
   ClockCounterClockwise,
   UserCircle,
@@ -11,6 +12,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 
 const NAV_ICONS: Record<string, Icon> = {
   House,
+  Compass,
   BookmarkSimple,
   ClockCounterClockwise,
   UserCircle,

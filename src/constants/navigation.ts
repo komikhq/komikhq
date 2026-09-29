@@ -15,6 +15,7 @@ export interface NavItem {
 export const BOTTOM_NAV_ITEMS: readonly NavItem[] = [
   { label: "Home", href: "/", iconName: "House" },
   { label: "Bookmark", href: "/bookmark", iconName: "BookmarkSimple" },
+  { label: "Browse", href: "/browse", iconName: "Compass" },
   { label: "History", href: "/history", iconName: "ClockCounterClockwise" },
   { label: "Account", href: "/account", iconName: "UserCircle" },
 ] as const;

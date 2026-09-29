@@ -13,10 +13,23 @@ export function BrowseComicGrid() {
     let isMounted = true;
     setIsLoading(true);
 
-    const params = typeof window !== "undefined" ? window.location.search : "";
-    const endpoint = API_ROUTES.COMICS.BROWSE(params.replace(/^\?/, ""));
+    const loadComics = async () => {
+      const params = new URLSearchParams(window.location.search);
+      const genre = params.get("genre");
 
-    apiFetch(endpoint)
+      if (genre) {
+        const { genres = [] } = await apiFetch<{
+          genres: Array<{ id: string; slug: string }>;
+        }>(API_ROUTES.GENRES);
+        const matchedGenre = genres.find((item) => item.slug === genre || item.id === genre);
+        if (matchedGenre) params.set("genre", matchedGenre.id);
+      }
+
+      const endpoint = API_ROUTES.COMICS.BROWSE(params.toString());
+      return apiFetch(endpoint);
+    };
+
+    loadComics()
       .then((res) => {
         if (isMounted) {
           setComics(res.comics || res.data || []);
