@@ -78,7 +78,7 @@ function LazyChapterPage({ page, pageIndex, totalPages, onPageVisible }: LazyCha
   return (
     <div
       ref={containerRef}
-      className="relative w-full min-h-[400px] bg-neutral-900 overflow-hidden flex flex-col items-center justify-center border border-neutral-800 rounded-md transition-colors"
+      className="relative w-full overflow-hidden bg-neutral-950 transition-colors"
     >
       {isVisible ? (
         <>
@@ -91,7 +91,7 @@ function LazyChapterPage({ page, pageIndex, totalPages, onPageVisible }: LazyCha
           <img
             src={page.imageUrl}
             alt={`Halaman ${page.pageNumber || pageIndex + 1}`}
-            className={`w-full h-auto object-contain transition-opacity duration-300 ${
+            className={`block w-full h-auto object-contain transition-opacity duration-300 ${
               isLoaded ? "opacity-100" : "opacity-0"
             }`}
             onLoad={() => setIsLoaded(true)}
@@ -100,7 +100,7 @@ function LazyChapterPage({ page, pageIndex, totalPages, onPageVisible }: LazyCha
           />
         </>
       ) : (
-        <div className="flex flex-col items-center justify-center gap-2 text-neutral-600">
+        <div className="flex min-h-[220px] flex-col items-center justify-center gap-2 text-neutral-600 bg-neutral-900/80">
           <Image className="h-8 w-8 opacity-40" />
           <span className="text-xs font-mono opacity-50">Halaman {page.pageNumber || pageIndex + 1}</span>
         </div>
@@ -206,7 +206,7 @@ export function ReaderImageStack({ comicSlug, chapterSlug }: ReaderImageStackPro
   }
 
   return (
-    <main className="max-w-3xl mx-auto py-4 px-2 space-y-3">
+    <main className="mx-auto max-w-3xl py-0 px-0">
       {pages.map((page, idx) => (
         <LazyChapterPage
           key={page.id || idx}
