@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { API_ROUTES } from "@/constants";
 import { apiFetch } from "@/lib/api-client";
+import { BROWSE_FILTERS_CHANGE_EVENT } from "@/hooks/use-browse-filters";
 
 export function BrowseComicGrid() {
   const [comics, setComics] = useState<any[]>([]);
@@ -11,39 +12,52 @@ export function BrowseComicGrid() {
 
   useEffect(() => {
     let isMounted = true;
-    setIsLoading(true);
+    let requestId = 0;
+    let reloadTimeout = 0;
+    let genreCache: Array<{ id: string; slug: string }> | null = null;
 
-    const loadComics = async () => {
-      const params = new URLSearchParams(window.location.search);
-      const genre = params.get("genre");
+    const loadComics = async (currentRequestId: number) => {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const genre = params.get("genre");
 
-      if (genre) {
-        const { genres = [] } = await apiFetch<{
-          genres: Array<{ id: string; slug: string }>;
-        }>(API_ROUTES.GENRES);
-        const matchedGenre = genres.find((item) => item.slug === genre || item.id === genre);
-        if (matchedGenre) params.set("genre", matchedGenre.id);
+        if (genre) {
+          if (!genreCache) {
+            const response = await apiFetch<{
+              genres: Array<{ id: string; slug: string }>;
+            }>(API_ROUTES.GENRES);
+            genreCache = response.genres || [];
+          }
+          const matchedGenre = genreCache.find((item) => item.slug === genre || item.id === genre);
+          if (matchedGenre) params.set("genre", matchedGenre.id);
+        }
+
+        const endpoint = API_ROUTES.COMICS.BROWSE(params.toString());
+        const response = await apiFetch(endpoint);
+        if (isMounted && currentRequestId === requestId) {
+          setComics(response.comics || response.data || []);
+        }
+      } catch {
+        if (isMounted && currentRequestId === requestId) setComics([]);
+      } finally {
+        if (isMounted && currentRequestId === requestId) setIsLoading(false);
       }
-
-      const endpoint = API_ROUTES.COMICS.BROWSE(params.toString());
-      return apiFetch(endpoint);
     };
 
-    loadComics()
-      .then((res) => {
-        if (isMounted) {
-          setComics(res.comics || res.data || []);
-        }
-      })
-      .catch(() => {
-        if (isMounted) setComics([]);
-      })
-      .finally(() => {
-        if (isMounted) setIsLoading(false);
-      });
+    const reloadComics = () => {
+      requestId += 1;
+      const currentRequestId = requestId;
+      window.clearTimeout(reloadTimeout);
+      reloadTimeout = window.setTimeout(() => void loadComics(currentRequestId), 250);
+    };
+
+    void loadComics(++requestId);
+    window.addEventListener(BROWSE_FILTERS_CHANGE_EVENT, reloadComics);
 
     return () => {
       isMounted = false;
+      window.clearTimeout(reloadTimeout);
+      window.removeEventListener(BROWSE_FILTERS_CHANGE_EVENT, reloadComics);
     };
   }, []);
 

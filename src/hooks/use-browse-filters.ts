@@ -8,6 +8,8 @@ export interface GenreOption {
   name: string;
 }
 
+export const BROWSE_FILTERS_CHANGE_EVENT = "browse:filters-change";
+
 export function useBrowseFilters(
   onFilterChange?: (filters: { search: string; genre: string; status: string; sort: string }) => void
 ) {
@@ -61,6 +63,7 @@ export function useBrowseFilters(
     const queryString = params.toString();
     const newUrl = queryString ? `${window.location.pathname}?${queryString}` : window.location.pathname;
     window.history.replaceState(null, "", newUrl);
+    window.dispatchEvent(new Event(BROWSE_FILTERS_CHANGE_EVENT));
 
     if (onFilterChange) {
       onFilterChange(updated);
