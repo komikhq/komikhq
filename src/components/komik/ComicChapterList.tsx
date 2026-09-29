@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { BookOpen, Clock, MagnifyingGlass } from "@phosphor-icons/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +15,7 @@ export function ComicChapterList({ slug }: ComicChapterListProps) {
   const [chapters, setChapters] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const chapterListRef = useRef<HTMLDivElement>(null);
 
   const normalizedSearch = searchQuery.trim().toLowerCase();
   const filteredChapters = chapters.filter((chapter) =>
@@ -22,6 +23,9 @@ export function ComicChapterList({ slug }: ComicChapterListProps) {
       .toLowerCase()
       .includes(normalizedSearch),
   );
+  useEffect(() => {
+    chapterListRef.current?.scrollTo({ top: 0 });
+  }, [normalizedSearch]);
 
   useEffect(() => {
     if (!slug) return;
@@ -93,40 +97,43 @@ export function ComicChapterList({ slug }: ComicChapterListProps) {
               </p>
             )}
             {filteredChapters.length > 0 ? (
-              <div
-                className="max-h-[60vh] overflow-y-auto overscroll-contain rounded-md border sm:max-h-96"
-                role="region"
-                aria-label="Chapter list"
-                tabIndex={0}
-              >
-                <div className="divide-y">
-                  {filteredChapters.map((chapter) => (
-                    <a
-                      key={chapter.id}
-                      href={`/komik/${slug}/${chapter.slug}`}
-                      className="flex items-center justify-between py-3.5 px-2 transition-colors hover:bg-accent/50 font-semibold"
-                    >
-                      <div className="flex items-center gap-3">
-                        <BookOpen className="h-5 w-5 text-primary flex-shrink-0" />
-                        <div>
-                          <h4 className="text-sm">
-                            Chapter {chapter.chapterNumber}
-                            {chapter.title && ` - ${chapter.title}`}
-                          </h4>
-                          <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5 font-normal">
-                            <Clock className="h-3 w-3" />
-                            {formatDate(chapter.publishedAt || chapter.createdAt)}
-                          </p>
+              <>
+                <div
+                  ref={chapterListRef}
+                  className={`rounded-md border ${filteredChapters.length > 25 ? "max-h-[60vh] overflow-y-auto overscroll-contain sm:max-h-96" : ""}`}
+                  role="region"
+                  aria-label="Chapter list"
+                  tabIndex={filteredChapters.length > 25 ? 0 : undefined}
+                >
+                  <div className="divide-y">
+                    {filteredChapters.map((chapter) => (
+                      <a
+                        key={chapter.id}
+                        href={`/komik/${slug}/${chapter.slug}`}
+                        className="flex items-center justify-between py-3.5 px-2 transition-colors hover:bg-accent/50 font-semibold"
+                      >
+                        <div className="flex items-center gap-3">
+                          <BookOpen className="h-5 w-5 text-primary flex-shrink-0" />
+                          <div>
+                            <h4 className="text-sm">
+                              Chapter {chapter.chapterNumber}
+                              {chapter.title && ` - ${chapter.title}`}
+                            </h4>
+                            <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5 font-normal">
+                              <Clock className="h-3 w-3" />
+                              {formatDate(chapter.publishedAt || chapter.createdAt)}
+                            </p>
+                          </div>
                         </div>
-                      </div>
 
-                      <Badge variant="secondary" className="text-xs">
-                        Read
-                      </Badge>
-                    </a>
-                  ))}
+                        <Badge variant="secondary" className="text-xs">
+                          Read
+                        </Badge>
+                      </a>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              </>
             ) : (
               <div className="py-8 text-center text-sm text-muted-foreground">
                 No chapters match your search.

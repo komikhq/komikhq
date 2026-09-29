@@ -192,7 +192,7 @@ export function ComicHeaderCard({ slug }: ComicHeaderCardProps) {
             <div>
               <p
                 ref={synopsisRef}
-                className={`text-sm text-muted-foreground leading-relaxed ${synopsisExpanded ? "" : "line-clamp-5 sm:line-clamp-4"}`}
+                className={`text-left text-sm text-muted-foreground leading-relaxed whitespace-pre-line ${synopsisExpanded ? "" : "line-clamp-5 sm:line-clamp-4"}`}
               >
                 {comicSynopsis}
               </p>
