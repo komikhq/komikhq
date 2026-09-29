@@ -27,5 +27,3 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 
-# temporary external repos for investigation
-.submodules/
