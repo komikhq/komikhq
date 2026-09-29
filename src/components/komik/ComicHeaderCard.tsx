@@ -48,6 +48,9 @@ export function ComicHeaderCard({ slug }: ComicHeaderCardProps) {
   const comicSynopsis = comicData?.comic?.synopsis || "No synopsis available for this comic.";
   const [titleExpanded, setTitleExpanded] = useState(false);
   const [synopsisExpanded, setSynopsisExpanded] = useState(false);
+  const synopsisContainerRef = useRef<HTMLDivElement>(null);
+  const synopsisAnimationRef = useRef(false);
+  const synopsisNextExpandedRef = useRef<boolean | null>(null);
   const { elementRef: titleRef, isClamped: isTitleClamped } = useClampedText<HTMLHeadingElement>(
     comicTitle,
     titleExpanded,
@@ -58,7 +61,42 @@ export function ComicHeaderCard({ slug }: ComicHeaderCardProps) {
   );
 
   useEffect(() => setTitleExpanded(false), [comicTitle]);
-  useEffect(() => setSynopsisExpanded(false), [comicSynopsis]);
+  useEffect(() => {
+    setSynopsisExpanded(false);
+    synopsisAnimationRef.current = false;
+    synopsisNextExpandedRef.current = null;
+    if (synopsisContainerRef.current) {
+      synopsisContainerRef.current.style.height = "auto";
+    }
+  }, [comicSynopsis]);
+
+  const toggleSynopsis = () => {
+    const container = synopsisContainerRef.current;
+    const paragraph = synopsisRef.current;
+    if (!container || !paragraph || synopsisAnimationRef.current) return;
+
+    const nextExpanded = !synopsisExpanded;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setSynopsisExpanded(nextExpanded);
+      container.style.height = "auto";
+      return;
+    }
+
+    synopsisAnimationRef.current = true;
+    synopsisNextExpandedRef.current = nextExpanded;
+    container.style.height = `${container.getBoundingClientRect().height}px`;
+    void container.offsetHeight;
+    if (nextExpanded) setSynopsisExpanded(true);
+
+    requestAnimationFrame(() => {
+      const collapsedLines = window.matchMedia("(min-width: 640px)").matches ? 4 : 5;
+      const lineHeight = Number.parseFloat(window.getComputedStyle(paragraph).lineHeight);
+      const targetHeight = nextExpanded
+        ? paragraph.scrollHeight
+        : Math.ceil(lineHeight * collapsedLines);
+      container.style.height = `${targetHeight}px`;
+    });
+  };
 
   if (isLoading) {
     return (
@@ -189,26 +227,37 @@ export function ComicHeaderCard({ slug }: ComicHeaderCardProps) {
               )}
             </div>
 
-            <div>
+            <div
+              ref={synopsisContainerRef}
+              className="overflow-hidden transition-[height] duration-300 ease-in-out motion-reduce:transition-none"
+              onTransitionEnd={(event) => {
+                if (event.propertyName !== "height" || synopsisNextExpandedRef.current === null) return;
+
+                if (!synopsisNextExpandedRef.current) setSynopsisExpanded(false);
+                synopsisNextExpandedRef.current = null;
+                synopsisAnimationRef.current = false;
+                event.currentTarget.style.height = "auto";
+              }}
+            >
               <p
                 ref={synopsisRef}
                 className={`text-justify text-sm text-muted-foreground leading-relaxed whitespace-pre-line ${synopsisExpanded ? "" : "line-clamp-5 sm:line-clamp-4"}`}
               >
                 {comicSynopsis}
               </p>
-              {isSynopsisClamped && (
-                <Button
-                  type="button"
-                  variant="link"
-                  size="xs"
-                  className="mt-1"
-                  aria-expanded={synopsisExpanded}
-                  onClick={() => setSynopsisExpanded((expanded) => !expanded)}
-                >
-                  {synopsisExpanded ? "Show less" : "Read more"}
-                </Button>
-              )}
             </div>
+            {isSynopsisClamped && (
+              <Button
+                type="button"
+                variant="link"
+                size="xs"
+                className="mt-1"
+                aria-expanded={synopsisExpanded}
+                onClick={toggleSynopsis}
+              >
+                {synopsisExpanded ? "Show less" : "Read more"}
+              </Button>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
               {firstChapter ? (
