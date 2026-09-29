@@ -37,6 +37,35 @@ export function CommentSection({ comicId, chapterId, variant = "reader" }: Comme
       .catch(() => setIsLoggedIn(false));
   }, []);
 
+  const buildCommentTree = (flatList: CommentData[]): CommentData[] => {
+    try {
+      const map = new Map<string, CommentData>();
+      const roots: CommentData[] = [];
+
+      flatList.forEach((item) => {
+        if (item && item.id) {
+          map.set(item.id, { ...item, replies: [] });
+        }
+      });
+
+      flatList.forEach((item) => {
+        if (!item || !item.id) return;
+        const node = map.get(item.id);
+        if (!node) return;
+
+        if (item.parentId && map.has(item.parentId)) {
+          map.get(item.parentId)!.replies!.push(node);
+        } else {
+          roots.push(node);
+        }
+      });
+
+      return roots;
+    } catch {
+      return flatList || [];
+    }
+  };
+
   const fetchComments = (showSkeleton = false) => {
     if (!comicId && !chapterId) return;
     if (showSkeleton) setIsLoading(true);
@@ -82,35 +111,6 @@ export function CommentSection({ comicId, chapterId, variant = "reader" }: Comme
       if (ws) ws.close();
     };
   }, [comicId, chapterId]);
-
-  const buildCommentTree = (flatList: CommentData[]): CommentData[] => {
-    try {
-      const map = new Map<string, CommentData>();
-      const roots: CommentData[] = [];
-
-      flatList.forEach((item) => {
-        if (item && item.id) {
-          map.set(item.id, { ...item, replies: [] });
-        }
-      });
-
-      flatList.forEach((item) => {
-        if (!item || !item.id) return;
-        const node = map.get(item.id);
-        if (!node) return;
-
-        if (item.parentId && map.has(item.parentId)) {
-          map.get(item.parentId)!.replies!.push(node);
-        } else {
-          roots.push(node);
-        }
-      });
-
-      return roots;
-    } catch {
-      return flatList || [];
-    }
-  };
 
   const handlePostComment = async (
     content: string,
@@ -213,7 +213,6 @@ export function CommentSection({ comicId, chapterId, variant = "reader" }: Comme
         )}
 
         <CommentReportModal
-          commentId={reportingCommentId || ""}
           isOpen={!!reportingCommentId}
           onClose={() => setReportingCommentId(null)}
           onSubmit={handleReportSubmit}

@@ -120,6 +120,25 @@ export function ReaderImageStack({ comicSlug, chapterSlug }: ReaderImageStackPro
   const [chapterMeta, setChapterMeta] = useState<{ comicId: string; chapterId: string } | null>(null);
   const debounceTimerRef = useRef<any>(null);
 
+  const recordView = (comicId: string, chapterId: string) => {
+    apiFetch(`${API_PREFIX}/view`, {
+      method: "POST",
+      body: JSON.stringify({ comicId, chapterId }),
+    }).catch(() => {});
+  };
+
+  const recordHistory = (comicId: string, chapterId: string, pageNum: number, totalPagesCount: number) => {
+    apiFetch(API_ROUTES.HISTORY.RECORD, {
+      method: "POST",
+      body: JSON.stringify({
+        comicId,
+        chapterId,
+        lastReadPage: pageNum,
+        snapshotTotalPages: totalPagesCount,
+      }),
+    }).catch(() => {});
+  };
+
   useEffect(() => {
     if (!comicSlug || !chapterSlug) return;
     let isMounted = true;
@@ -150,25 +169,6 @@ export function ReaderImageStack({ comicSlug, chapterSlug }: ReaderImageStackPro
       isMounted = false;
     };
   }, [comicSlug, chapterSlug]);
-
-  const recordView = (comicId: string, chapterId: string) => {
-    apiFetch(`${API_PREFIX}/view`, {
-      method: "POST",
-      body: JSON.stringify({ comicId, chapterId }),
-    }).catch(() => {});
-  };
-
-  const recordHistory = (comicId: string, chapterId: string, pageNum: number, totalPagesCount: number) => {
-    apiFetch(API_ROUTES.HISTORY.RECORD, {
-      method: "POST",
-      body: JSON.stringify({
-        comicId,
-        chapterId,
-        lastReadPage: pageNum,
-        snapshotTotalPages: totalPagesCount,
-      }),
-    }).catch(() => {});
-  };
 
   const handlePageVisible = (pageIndex: number) => {
     if (!chapterMeta || pages.length === 0) return;
