@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react"
 import {
-  MagnifyingGlass,
   House,
   Compass,
   ListBullets,
@@ -12,11 +11,15 @@ import {
   BookmarkSimple,
   ClockCounterClockwise,
   type Icon,
-} from "@phosphor-icons/react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+} from "@phosphor-icons/react"
+import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,11 +27,12 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { HEADER_NAV_ITEMS, SITE_NAME, type NavItem } from "@/constants";
-import { useAuth } from "@/hooks/use-auth";
-import { ThemeToggle } from "@/components/common/ThemeToggle";
-import { Logo } from "@/components/common/Logo";
+} from "@/components/ui/dropdown-menu"
+import { HEADER_NAV_ITEMS, SITE_NAME, type NavItem } from "@/constants"
+import { useAuth } from "@/hooks/use-auth"
+import { ThemeToggle } from "@/components/common/ThemeToggle"
+import { Logo } from "@/components/common/Logo"
+import { GlobalComicSearch } from "@/components/common/GlobalComicSearch"
 
 const HEADER_NAV_ICONS: Record<string, Icon> = {
   House,
@@ -36,28 +40,20 @@ const HEADER_NAV_ICONS: Record<string, Icon> = {
   ListBullets,
   BookmarkSimple,
   ClockCounterClockwise,
-};
+}
 
 export function SiteHeader() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [mounted, setMounted] = useState(false);
-  const { user, isAuthenticated, handleSignOut } = useAuth();
+  const [mounted, setMounted] = useState(false)
+  const { user, isAuthenticated, handleSignOut } = useAuth()
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      window.location.href = `/browse?search=${encodeURIComponent(searchQuery.trim())}`;
-    }
-  };
+    setMounted(true)
+  }, [])
 
   return (
     <TooltipProvider>
       <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 max-w-screen-2xl items-center justify-between gap-4 px-4 mx-auto">
+        <div className="container mx-auto flex h-14 max-w-screen-2xl items-center justify-between gap-4 px-4">
           <div className="flex items-center gap-6">
             <Tooltip>
               <TooltipTrigger asChild>
@@ -72,9 +68,9 @@ export function SiteHeader() {
               <TooltipContent side="bottom">Go to Homepage</TooltipContent>
             </Tooltip>
 
-            <nav className="hidden md:flex items-center gap-4 text-sm font-medium">
+            <nav className="hidden items-center gap-4 text-sm font-medium md:flex">
               {HEADER_NAV_ITEMS.map((item: NavItem) => {
-                const IconComponent = HEADER_NAV_ICONS[item.iconName];
+                const IconComponent = HEADER_NAV_ICONS[item.iconName]
                 return (
                   <Tooltip key={item.href}>
                     <TooltipTrigger asChild>
@@ -88,72 +84,91 @@ export function SiteHeader() {
                     </TooltipTrigger>
                     <TooltipContent side="bottom">{item.label}</TooltipContent>
                   </Tooltip>
-                );
+                )
               })}
             </nav>
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3">
-            <form onSubmit={handleSearchSubmit} className="w-36 sm:w-64">
-              <div className="relative">
-                <MagnifyingGlass className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  type="search"
-                  placeholder="Cari komik..."
-                  className="w-full pl-9 h-9 text-sm"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-            </form>
+            <GlobalComicSearch />
 
             <ThemeToggle />
 
             {mounted && isAuthenticated && user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="hidden md:flex items-center gap-2 px-2 h-9 rounded-full hover:bg-accent cursor-pointer">
+                  <Button
+                    variant="ghost"
+                    className="hidden h-9 cursor-pointer items-center gap-2 rounded-full px-2 hover:bg-accent md:flex"
+                  >
                     <Avatar className="h-7 w-7 border border-primary/40">
-                      <AvatarImage src={user.image || undefined} alt={user.name || "User"} />
-                      <AvatarFallback className="text-xs font-bold bg-primary/10 text-primary">
+                      <AvatarImage
+                        src={user.image || undefined}
+                        alt={user.name || "User"}
+                      />
+                      <AvatarFallback className="bg-primary/10 text-xs font-bold text-primary">
                         {user.name ? user.name.slice(0, 2).toUpperCase() : "HQ"}
                       </AvatarFallback>
                     </Avatar>
-                    <span className="text-sm font-semibold line-clamp-1 max-w-[110px]">{user.name}</span>
+                    <span className="line-clamp-1 max-w-[110px] text-sm font-semibold">
+                      {user.name}
+                    </span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56" align="end">
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-semibold leading-none">{user.name}</p>
-                      <p className="text-xs leading-none text-muted-foreground truncate">{user.email}</p>
+                      <p className="text-sm leading-none font-semibold">
+                        {user.name}
+                      </p>
+                      <p className="truncate text-xs leading-none text-muted-foreground">
+                        {user.email}
+                      </p>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   {user.role === "admin" && (
-                    <DropdownMenuItem className="cursor-pointer font-semibold text-primary focus:bg-primary/10" onClick={() => (window.location.href = "/dashboard")}>
+                    <DropdownMenuItem
+                      className="cursor-pointer font-semibold text-primary focus:bg-primary/10"
+                      onClick={() => (window.location.href = "/dashboard")}
+                    >
                       <ShieldCheck className="mr-2 h-4 w-4 text-primary" />
                       <span>Dashboard Admin</span>
                     </DropdownMenuItem>
                   )}
-                  <DropdownMenuItem className="cursor-pointer" onClick={() => (window.location.href = "/account")}>
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => (window.location.href = "/account")}
+                  >
                     <UserCircle className="mr-2 h-4 w-4 text-primary" />
                     <span>Profil Saya</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer" onClick={() => (window.location.href = "/bookmark")}>
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => (window.location.href = "/bookmark")}
+                  >
                     <BookmarkSimple className="mr-2 h-4 w-4 text-primary" />
                     <span>Bookmark Saya</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer" onClick={() => (window.location.href = "/history")}>
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => (window.location.href = "/history")}
+                  >
                     <ClockCounterClockwise className="mr-2 h-4 w-4 text-primary" />
                     <span>Riwayat Baca</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer" onClick={() => (window.location.href = "/account/settings")}>
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => (window.location.href = "/account/settings")}
+                  >
                     <Gear className="mr-2 h-4 w-4 text-muted-foreground" />
                     <span>Pengaturan Akun</span>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10">
+                  <DropdownMenuItem
+                    onClick={handleSignOut}
+                    className="cursor-pointer text-destructive focus:bg-destructive/10 focus:text-destructive"
+                  >
                     <SignOut className="mr-2 h-4 w-4" />
                     <span>Keluar</span>
                   </DropdownMenuItem>
@@ -162,17 +177,22 @@ export function SiteHeader() {
             ) : (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button className="hidden md:inline-flex" onClick={() => (window.location.href = "/login")}>
-                    <SignIn className="h-4 w-4 mr-1.5" />
+                  <Button
+                    className="hidden md:inline-flex"
+                    onClick={() => (window.location.href = "/login")}
+                  >
+                    <SignIn className="mr-1.5 h-4 w-4" />
                     <span>Masuk</span>
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent side="bottom">Masuk ke akun KomikHQ</TooltipContent>
+                <TooltipContent side="bottom">
+                  Masuk ke akun KomikHQ
+                </TooltipContent>
               </Tooltip>
             )}
           </div>
         </div>
       </header>
     </TooltipProvider>
-  );
+  )
 }

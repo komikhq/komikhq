@@ -1,7 +1,7 @@
-import { getBaseApiUrl } from "@/lib/api-client";
+import { getBaseApiUrl } from "@/lib/api-client"
 
-export const API_BASE_URL = getBaseApiUrl();
-export const API_PREFIX = "/v1";
+export const API_BASE_URL = getBaseApiUrl()
+export const API_PREFIX = "/v1"
 
 export const API_ROUTES = {
   AUTH: {
@@ -16,8 +16,16 @@ export const API_ROUTES = {
     TRENDING: (period: "daily" | "weekly" | "popular" = "daily", limit = 20) =>
       `${API_PREFIX}/comics/trending?period=${period}&limit=${limit}`,
     BROWSE: (query?: string) =>
-      query ? `${API_PREFIX}/comics/browse?${query}` : `${API_PREFIX}/comics/browse`,
+      query
+        ? `${API_PREFIX}/comics/browse?${query}`
+        : `${API_PREFIX}/comics/browse`,
     DETAIL: (slug: string) => `${API_PREFIX}/comics/${slug}`,
+  },
+  SEARCH: {
+    SUGGESTIONS: (query: string, limit = 6) => {
+      const params = new URLSearchParams({ q: query, limit: String(limit) })
+      return `${API_PREFIX}/search/suggestions?${params.toString()}`
+    },
   },
   GENRES: `${API_PREFIX}/genres`,
   USER: {
@@ -37,8 +45,8 @@ export const API_ROUTES = {
     LIST: (params: { comicId?: string; chapterId?: string }) => {
       const query = params.chapterId
         ? `chapterId=${params.chapterId}`
-        : `comicId=${params.comicId}`;
-      return `${API_PREFIX}/comments?${query}`;
+        : `comicId=${params.comicId}`
+      return `${API_PREFIX}/comments?${query}`
     },
     ADD: `${API_PREFIX}/comments`,
     LIKE: (commentId: string) => `${API_PREFIX}/comments/${commentId}/like`,
@@ -47,10 +55,11 @@ export const API_ROUTES = {
   },
   ADMIN: {
     REPORTS: (page = 1, limit = 20, status?: string) => {
-      const q = status ? `&status=${status}` : "";
-      return `${API_PREFIX}/admin/reports?page=${page}&limit=${limit}${q}`;
+      const q = status ? `&status=${status}` : ""
+      return `${API_PREFIX}/admin/reports?page=${page}&limit=${limit}${q}`
     },
-    RESOLVE_REPORT: (reportId: string) => `${API_PREFIX}/admin/reports/${reportId}/action`,
+    RESOLVE_REPORT: (reportId: string) =>
+      `${API_PREFIX}/admin/reports/${reportId}/action`,
   },
   RATINGS: {
     SUBMIT: `${API_PREFIX}/ratings`,
@@ -59,4 +68,4 @@ export const API_ROUTES = {
     AUTH: `${API_PREFIX}/realtime/auth`,
   },
   VIEW: `${API_PREFIX}/view`,
-} as const;
+} as const
