@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import {
   House,
   Compass,
   ListBullets,
+  DotsThree,
   SignIn,
   UserCircle,
   Gear,
@@ -44,17 +45,70 @@ const HEADER_NAV_ICONS: Record<string, Icon> = {
 
 export function SiteHeader() {
   const [mounted, setMounted] = useState(false)
+  const [visibleNavCount, setVisibleNavCount] = useState(
+    HEADER_NAV_ITEMS.length
+  )
+  const navRef = useRef<HTMLElement>(null)
+  const navMeasurementRef = useRef<HTMLDivElement>(null)
   const { user, isAuthenticated, handleSignOut } = useAuth()
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
+  useEffect(() => {
+    const navElement = navRef.current
+    const measurementElement = navMeasurementRef.current
+    if (!navElement || !measurementElement) return
+
+    const updateVisibleNavItems = () => {
+      const navItems = Array.from(
+        measurementElement.querySelectorAll<HTMLElement>(
+          "[data-nav-measure-item]"
+        )
+      )
+      const moreButton = measurementElement.querySelector<HTMLElement>(
+        "[data-nav-measure-more]"
+      )
+      if (navItems.length !== HEADER_NAV_ITEMS.length || !moreButton) return
+
+      const itemWidths = navItems.map(
+        (item) => item.getBoundingClientRect().width
+      )
+      const moreWidth = moreButton.getBoundingClientRect().width
+      const gap =
+        Number.parseFloat(window.getComputedStyle(navElement).columnGap) || 0
+      const availableWidth = navElement.clientWidth
+      let usedWidth = 0
+      let visibleCount = 0
+
+      for (let index = 0; index < itemWidths.length; index += 1) {
+        const nextWidth =
+          usedWidth + (visibleCount > 0 ? gap : 0) + itemWidths[index]
+        const hasMoreItems = index < itemWidths.length - 1
+        const requiredWidth = nextWidth + (hasMoreItems ? gap + moreWidth : 0)
+        if (requiredWidth > availableWidth) break
+
+        usedWidth = nextWidth
+        visibleCount += 1
+      }
+
+      setVisibleNavCount(visibleCount)
+    }
+
+    updateVisibleNavItems()
+    const resizeObserver = new ResizeObserver(updateVisibleNavItems)
+    resizeObserver.observe(navElement)
+    resizeObserver.observe(measurementElement)
+
+    return () => resizeObserver.disconnect()
+  }, [])
+
   return (
     <TooltipProvider>
       <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto flex h-14 max-w-screen-2xl items-center justify-between gap-4 px-4">
-          <div className="flex items-center gap-6">
+          <div className="flex min-w-0 flex-1 items-center gap-6">
             <Tooltip>
               <TooltipTrigger asChild>
                 <a
@@ -68,24 +122,88 @@ export function SiteHeader() {
               <TooltipContent side="bottom">Go to Homepage</TooltipContent>
             </Tooltip>
 
-            <nav className="hidden items-center gap-4 text-sm font-medium md:flex">
-              {HEADER_NAV_ITEMS.map((item: NavItem) => {
-                const IconComponent = HEADER_NAV_ICONS[item.iconName]
-                return (
-                  <Tooltip key={item.href}>
-                    <TooltipTrigger asChild>
-                      <a
-                        href={item.href}
-                        className="flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-foreground"
-                      >
-                        {IconComponent && <IconComponent className="h-4 w-4" />}
-                        <span>{item.label}</span>
-                      </a>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom">{item.label}</TooltipContent>
-                  </Tooltip>
-                )
-              })}
+            <nav
+              ref={navRef}
+              aria-label="Main navigation"
+              className="relative hidden min-w-0 flex-1 items-center gap-4 overflow-hidden text-sm font-medium md:flex"
+            >
+              {HEADER_NAV_ITEMS.slice(0, visibleNavCount).map(
+                (item: NavItem) => {
+                  const IconComponent = HEADER_NAV_ICONS[item.iconName]
+                  return (
+                    <Tooltip key={item.href}>
+                      <TooltipTrigger asChild>
+                        <a
+                          href={item.href}
+                          className="flex shrink-0 items-center gap-1.5 whitespace-nowrap text-muted-foreground transition-colors hover:text-foreground"
+                        >
+                          {IconComponent && (
+                            <IconComponent className="h-4 w-4" />
+                          )}
+                          <span>{item.label}</span>
+                        </a>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom">
+                        {item.label}
+                      </TooltipContent>
+                    </Tooltip>
+                  )
+                }
+              )}
+              {visibleNavCount < HEADER_NAV_ITEMS.length && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      className="h-8 shrink-0 gap-1 px-2 text-sm font-medium text-muted-foreground hover:text-foreground"
+                    >
+                      <DotsThree className="h-4 w-4" />
+                      <span>More</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start">
+                    {HEADER_NAV_ITEMS.slice(visibleNavCount).map((item) => {
+                      const IconComponent = HEADER_NAV_ICONS[item.iconName]
+                      return (
+                        <DropdownMenuItem key={item.href} asChild>
+                          <a href={item.href}>
+                            {IconComponent && <IconComponent />}
+                            <span>{item.label}</span>
+                          </a>
+                        </DropdownMenuItem>
+                      )
+                    })}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+              <div
+                ref={navMeasurementRef}
+                aria-hidden="true"
+                className="pointer-events-none invisible absolute flex w-max items-center gap-4"
+              >
+                {HEADER_NAV_ITEMS.map((item) => {
+                  const IconComponent = HEADER_NAV_ICONS[item.iconName]
+                  return (
+                    <span
+                      key={item.href}
+                      data-nav-measure-item
+                      className="flex shrink-0 items-center gap-1.5 whitespace-nowrap"
+                    >
+                      {IconComponent && <IconComponent className="h-4 w-4" />}
+                      <span>{item.label}</span>
+                    </span>
+                  )
+                })}
+                <Button
+                  data-nav-measure-more
+                  variant="ghost"
+                  className="h-8 shrink-0 gap-1 px-2 text-sm font-medium"
+                  tabIndex={-1}
+                >
+                  <DotsThree className="h-4 w-4" />
+                  <span>More</span>
+                </Button>
+              </div>
             </nav>
           </div>
 
