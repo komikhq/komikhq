@@ -99,10 +99,11 @@ export function GenreComboboxPicker({
         </PopoverTrigger>
 
         <PopoverContent
-          className="w-[--radix-popover-trigger-width] p-2 space-y-2 bg-popover border border-border shadow-md rounded-2xl z-[100]"
+          collisionPadding={12}
+          className="w-[--radix-popover-trigger-width] max-h-[min(28rem,var(--radix-popover-content-available-height))] min-h-0 gap-2 overflow-hidden bg-popover border border-border shadow-md rounded-2xl z-[100] p-2"
           align="start"
         >
-          <div className="relative">
+          <div className="relative shrink-0">
             <MagnifyingGlass className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
             <Input
               placeholder="Cari nama genre..."
@@ -112,7 +113,7 @@ export function GenreComboboxPicker({
             />
           </div>
 
-          <div className="max-h-48 overflow-y-auto space-y-0.5 pr-1 text-xs">
+          <div className="min-h-0 max-h-[min(18rem,calc(100dvh-10rem))] flex-1 overflow-y-auto overscroll-contain touch-pan-y pr-1 text-xs">
             {filteredGenres.length === 0 ? (
               <div className="p-3 text-center text-muted-foreground text-xs italic">
                 Genre tidak ditemukan.

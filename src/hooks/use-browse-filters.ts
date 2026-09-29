@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { API_ROUTES } from "@/constants";
 import { apiFetch } from "@/lib/api-client";
+import { sortGenresByNaturalName } from "@/lib/sort-genres";
 
 export interface GenreOption {
   slug: string;
@@ -25,7 +26,7 @@ export function useBrowseFilters(
     apiFetch(API_ROUTES.GENRES)
       .then((data) => {
         if (isMounted && data.genres) {
-          setGenres(data.genres);
+          setGenres(sortGenresByNaturalName(data.genres));
         }
       })
       .catch((err) => {

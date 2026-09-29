@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
+import { sortGenresByNaturalName } from "@/lib/sort-genres";
 
 export interface GenreItem {
   id: string;
@@ -31,7 +32,7 @@ export function useAdminGenres() {
       const res = await fetch(`${getApiUrl()}/v1/admin/genres`, { credentials: "include" });
       const data: any = await res.json();
       if (res.ok && data.genres) {
-        setGenres(data.genres);
+        setGenres(sortGenresByNaturalName(data.genres));
       } else {
         toast.error(data.error || "Gagal mengambil daftar genre");
       }
