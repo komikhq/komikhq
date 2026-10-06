@@ -10,10 +10,6 @@
   "keep_vars": true,
   "routes": [
     {
-      "pattern": "komikhq.com",
-      "custom_domain": true
-    },
-    {
       "pattern": "www.komikhq.com",
       "custom_domain": true
     }
