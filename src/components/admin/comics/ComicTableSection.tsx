@@ -24,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { toast } from "sonner"
 import { useAdminComics, type ComicAdminItem } from "@/hooks/use-admin-comics"
 import { ComicFormSheet } from "./ComicFormSheet"
 import { ComicDeleteDialog } from "./ComicDeleteDialog"
@@ -82,11 +83,30 @@ export function ComicTableSection() {
     }
   }
 
+  const handleBulkAction = async (
+    action: string,
+    selectedRows: ComicAdminItem[]
+  ) => {
+    if (action === "delete") {
+      const confirmDelete = window.confirm(
+        `Are you sure you want to delete ${selectedRows.length} selected comic(s)?`
+      )
+      if (!confirmDelete) return
+      let count = 0
+      for (const c of selectedRows) {
+        const ok = await deleteComic(c.id)
+        if (ok) count++
+      }
+      toast.success(`${count} comic(s) deleted successfully.`)
+    }
+  }
+
   const columns = React.useMemo<ColumnDef<ComicAdminItem>[]>(
     () => [
       {
         accessorKey: "coverUrl",
         header: "Cover",
+        enableSorting: false,
         cell: ({ row }) => (
           <div className="w-12">
             <img
@@ -162,6 +182,7 @@ export function ComicTableSection() {
       {
         id: "actions",
         header: () => <div className="text-right">Actions</div>,
+        enableSorting: false,
         cell: ({ row }) => (
           <div className="flex items-center justify-end gap-1">
             <Button
@@ -254,37 +275,22 @@ export function ComicTableSection() {
           loading={loading}
           loadingMessage="Loading comics..."
           emptyMessage="No comics found."
-          enablePagination={false}
+          enableRowSelection={true}
+          enableRowNumbers={true}
+          bulkActions={[
+            {
+              label: "Delete Selected",
+              value: "delete",
+              variant: "destructive",
+            },
+          ]}
+          onBulkAction={handleBulkAction}
+          serverPagination={{
+            page,
+            totalPages,
+            onPageChange: setPage,
+          }}
         />
-
-        {/* Pagination Bar */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between pt-2">
-            <span className="text-xs text-muted-foreground">
-              Page {page} of {totalPages}
-            </span>
-            <div className="flex items-center gap-2">
-              <Button
-                size="sm"
-                variant="outline"
-                disabled={page <= 1}
-                onClick={() => setPage((p) => p - 1)}
-                className="h-8 text-xs"
-              >
-                Previous
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                disabled={page >= totalPages}
-                onClick={() => setPage((p) => p + 1)}
-                className="h-8 text-xs"
-              >
-                Next
-              </Button>
-            </div>
-          </div>
-        )}
       </CardContent>
 
       <ComicFormSheet

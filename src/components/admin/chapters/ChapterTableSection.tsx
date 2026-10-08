@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { toast } from "sonner"
 import { useAdminChapters, type ChapterItem } from "@/hooks/use-admin-chapters"
 import { ChapterFormSheet } from "./ChapterFormSheet"
 import { ChapterEditSheet } from "./ChapterEditSheet"
@@ -63,11 +64,31 @@ export function ChapterTableSection({ comicId }: ChapterTableSectionProps) {
     }
   }
 
+  const handleBulkAction = async (action: string, selectedRows: ChapterItem[]) => {
+    if (action === "delete") {
+      const confirmDelete = window.confirm(
+        `Are you sure you want to delete ${selectedRows.length} selected chapter(s)?`
+      )
+      if (!confirmDelete) return
+      let count = 0
+      for (const ch of selectedRows) {
+        const ok = await deleteChapter(ch.id)
+        if (ok) count++
+      }
+      toast.success(`${count} chapter(s) deleted successfully.`)
+    }
+  }
+
   const columns = React.useMemo<ColumnDef<ChapterItem>[]>(
     () => [
       {
         accessorKey: "chapterNumber",
         header: "Chapter No.",
+        sortingFn: (rowA, rowB) => {
+          const a = parseFloat(rowA.original.chapterNumber) || 0
+          const b = parseFloat(rowB.original.chapterNumber) || 0
+          return a - b
+        },
         cell: ({ row }) => (
           <span className="font-bold text-foreground">
             Chapter {row.original.chapterNumber}
@@ -118,6 +139,7 @@ export function ChapterTableSection({ comicId }: ChapterTableSectionProps) {
       {
         id: "actions",
         header: () => <div className="text-right">Actions</div>,
+        enableSorting: false,
         cell: ({ row }) => (
           <div className="flex items-center justify-end gap-1">
             <Button
@@ -175,7 +197,18 @@ export function ChapterTableSection({ comicId }: ChapterTableSectionProps) {
           loading={loading}
           loadingMessage="Loading released chapters..."
           emptyMessage="No chapters released for this comic yet."
-          pageSize={15}
+          pageSize={10}
+          pageSizeOptions={[10, 20, 50, 100]}
+          enableRowSelection={true}
+          enableRowNumbers={true}
+          bulkActions={[
+            {
+              label: "Delete Selected",
+              value: "delete",
+              variant: "destructive",
+            },
+          ]}
+          onBulkAction={handleBulkAction}
         />
       </CardContent>
 
