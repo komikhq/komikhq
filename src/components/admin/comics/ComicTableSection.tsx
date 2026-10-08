@@ -28,6 +28,9 @@ import { useAdminComics, type ComicAdminItem } from "@/hooks/use-admin-comics"
 import { ComicFormSheet } from "./ComicFormSheet"
 import { ComicDeleteDialog } from "./ComicDeleteDialog"
 
+import { DataTable } from "@/components/ui/data-table"
+import type { ColumnDef } from "@tanstack/react-table"
+
 export function ComicTableSection() {
   const {
     comics,
@@ -79,6 +82,121 @@ export function ComicTableSection() {
     }
   }
 
+  const columns = React.useMemo<ColumnDef<ComicAdminItem>[]>(
+    () => [
+      {
+        accessorKey: "coverUrl",
+        header: "Cover",
+        cell: ({ row }) => (
+          <div className="w-12">
+            <img
+              src={row.original.coverUrl}
+              alt={row.original.title}
+              className="h-12 w-9 rounded border border-border/60 object-cover"
+            />
+          </div>
+        ),
+      },
+      {
+        accessorKey: "title",
+        header: "Comic Title",
+        cell: ({ row }) => (
+          <a
+            href={`/dashboard/comics/${row.original.id}`}
+            className="font-semibold text-foreground transition-colors hover:text-primary"
+          >
+            {row.original.title}
+          </a>
+        ),
+      },
+      {
+        accessorKey: "type",
+        header: "Type",
+        cell: ({ row }) => (
+          <Badge variant="outline" className="text-[10px] capitalize">
+            {row.original.type || "Manga"}
+          </Badge>
+        ),
+      },
+      {
+        accessorKey: "creators",
+        header: "Author",
+        cell: ({ row }) => (
+          <span className="text-muted-foreground">
+            {row.original.creators?.join(", ") || "-"}
+          </span>
+        ),
+      },
+      {
+        accessorKey: "genres",
+        header: "Genres",
+        cell: ({ row }) => (
+          <div className="flex flex-wrap gap-1">
+            {row.original.genres?.map((g) => (
+              <Badge key={g.id} variant="outline" className="text-[10px]">
+                {g.name}
+              </Badge>
+            ))}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "totalChapters",
+        header: "Chapters",
+        cell: ({ row }) => (
+          <span className="font-medium">{row.original.totalChapters} Ch.</span>
+        ),
+      },
+      {
+        accessorKey: "status",
+        header: "Status",
+        cell: ({ row }) => (
+          <Badge
+            variant="secondary"
+            className="bg-emerald-500/10 text-[10px] text-emerald-500"
+          >
+            {row.original.status}
+          </Badge>
+        ),
+      },
+      {
+        id: "actions",
+        header: () => <div className="text-right">Actions</div>,
+        cell: ({ row }) => (
+          <div className="flex items-center justify-end gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7 text-muted-foreground hover:text-foreground"
+              onClick={() =>
+                (window.location.href = `/dashboard/comics/${row.original.id}`)
+              }
+            >
+              <Eye className="h-3.5 w-3.5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7 text-muted-foreground hover:text-foreground"
+              onClick={() => handleOpenEdit(row.original)}
+            >
+              <PencilSimple className="h-3.5 w-3.5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7 text-destructive hover:bg-destructive/10"
+              onClick={() => handleOpenDelete(row.original)}
+            >
+              <Trash className="h-3.5 w-3.5" />
+            </Button>
+          </div>
+        ),
+      },
+    ],
+    []
+  )
+
   return (
     <Card className="w-full border-border/60 shadow-xs">
       <CardHeader className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
@@ -129,130 +247,15 @@ export function ComicTableSection() {
           </Select>
         </div>
 
-        {/* Full-width Comics Table */}
-        <div className="overflow-x-auto rounded-xl border border-border/60">
-          <table className="w-full text-left text-xs">
-            <thead className="border-b border-border/60 bg-muted/60 font-semibold text-muted-foreground">
-              <tr>
-                <th className="p-3">Cover</th>
-                <th className="p-3">Comic Title</th>
-                <th className="p-3">Type</th>
-                <th className="p-3">Author</th>
-                <th className="p-3">Genres</th>
-                <th className="p-3">Chapters</th>
-                <th className="p-3">Status</th>
-                <th className="p-3 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/40">
-              {loading ? (
-                <tr>
-                  <td
-                    colSpan={8}
-                    className="p-6 text-center text-muted-foreground"
-                  >
-                    Loading comics...
-                  </td>
-                </tr>
-              ) : comics.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={8}
-                    className="p-6 text-center text-muted-foreground"
-                  >
-                    No comics found.
-                  </td>
-                </tr>
-              ) : (
-                comics.map((c) => (
-                  <tr
-                    key={c.id}
-                    className="transition-colors hover:bg-muted/30"
-                  >
-                    <td className="w-12 p-2">
-                      <img
-                        src={c.coverUrl}
-                        alt={c.title}
-                        className="h-12 w-9 rounded border border-border/60 object-cover"
-                      />
-                    </td>
-                    <td className="p-3">
-                      <a
-                        href={`/dashboard/comics/${c.id}`}
-                        className="font-semibold text-foreground transition-colors hover:text-primary"
-                      >
-                        {c.title}
-                      </a>
-                    </td>
-                    <td className="p-3">
-                      <Badge
-                        variant="outline"
-                        className="text-[10px] capitalize"
-                      >
-                        {c.type || "Manga"}
-                      </Badge>
-                    </td>
-                    <td className="p-3 text-muted-foreground">
-                      {c.creators?.join(", ") || "-"}
-                    </td>
-                    <td className="p-3">
-                      <div className="flex flex-wrap gap-1">
-                        {c.genres?.map((g) => (
-                          <Badge
-                            key={g.id}
-                            variant="outline"
-                            className="text-[10px]"
-                          >
-                            {g.name}
-                          </Badge>
-                        ))}
-                      </div>
-                    </td>
-                    <td className="p-3 font-medium">{c.totalChapters} Ch.</td>
-                    <td className="p-3">
-                      <Badge
-                        variant="secondary"
-                        className="bg-emerald-500/10 text-[10px] text-emerald-500"
-                      >
-                        {c.status}
-                      </Badge>
-                    </td>
-                    <td className="p-3 text-right">
-                      <div className="flex items-center justify-end gap-1">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7 text-muted-foreground hover:text-foreground"
-                          onClick={() =>
-                            (window.location.href = `/dashboard/comics/${c.id}`)
-                          }
-                        >
-                          <Eye className="h-3.5 w-3.5" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7 text-muted-foreground hover:text-foreground"
-                          onClick={() => handleOpenEdit(c)}
-                        >
-                          <PencilSimple className="h-3.5 w-3.5" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7 text-destructive hover:bg-destructive/10"
-                          onClick={() => handleOpenDelete(c)}
-                        >
-                          <Trash className="h-3.5 w-3.5" />
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+        {/* Data Table */}
+        <DataTable
+          columns={columns}
+          data={comics}
+          loading={loading}
+          loadingMessage="Loading comics..."
+          emptyMessage="No comics found."
+          enablePagination={false}
+        />
 
         {/* Pagination Bar */}
         {totalPages > 1 && (

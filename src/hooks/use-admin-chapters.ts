@@ -185,6 +185,43 @@ export function useAdminChapters(comicId: string) {
     }
   }
 
+  const updateChapter = async (
+    chapterId: string,
+    data: {
+      chapterNumber?: string
+      title?: string
+      accessTier?: string
+      isEarlyAccess?: boolean
+    }
+  ) => {
+    setSubmitting(true)
+    try {
+      const res = await fetch(
+        `${getApiUrl()}/v1/admin/comics/${comicId}/chapters/${chapterId}`,
+        {
+          method: "PUT",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        }
+      )
+      const resData: any = await res.json()
+      if (res.ok && resData.success) {
+        toast.success("Chapter updated successfully.")
+        fetchChapters()
+        return true
+      } else {
+        toast.error(resData.error || "Failed to update chapter.")
+        return false
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update chapter.")
+      return false
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
   const deleteChapter = async (chapterId: string) => {
     try {
       const res = await fetch(
@@ -216,6 +253,7 @@ export function useAdminChapters(comicId: string) {
     fetchChapters,
     createChapter,
     createChapterBatch,
+    updateChapter,
     deleteChapter,
   }
 }

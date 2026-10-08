@@ -14,7 +14,7 @@ export interface UseImageUploadOptions {
 }
 
 export function useImageUpload(options?: UseImageUploadOptions) {
-  const { multiple = false, maxFiles = 50, accept = "image/*" } = options || {}
+  const { multiple = false, maxFiles, accept = "image/*" } = options || {}
   const [files, setFiles] = useState<FileWithPreview[]>([])
   const [isDragging, setIsDragging] = useState(false)
 
@@ -41,7 +41,7 @@ export function useImageUpload(options?: UseImageUploadOptions) {
       if (multiple) {
         setFiles((prev) => {
           const combined = [...prev, ...formatted]
-          if (combined.length > maxFiles) {
+          if (maxFiles && combined.length > maxFiles) {
             toast.warning(`Maximum ${maxFiles} images at once.`)
             return combined.slice(0, maxFiles)
           }

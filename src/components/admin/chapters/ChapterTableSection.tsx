@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import {
   ListNumbers,
   Plus,
+  PencilSimple,
   Trash,
   Image as ImageIcon,
 } from "@phosphor-icons/react"
@@ -16,21 +17,38 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useAdminChapters, type ChapterItem } from "@/hooks/use-admin-chapters"
 import { ChapterFormSheet } from "./ChapterFormSheet"
+import { ChapterEditSheet } from "./ChapterEditSheet"
 import { ChapterDeleteDialog } from "./ChapterDeleteDialog"
+
+import { DataTable } from "@/components/ui/data-table"
+import type { ColumnDef } from "@tanstack/react-table"
 
 interface ChapterTableSectionProps {
   comicId: string
 }
 
 export function ChapterTableSection({ comicId }: ChapterTableSectionProps) {
-  const { chapters, loading, submitting, createChapterBatch, deleteChapter } =
-    useAdminChapters(comicId)
+  const {
+    chapters,
+    loading,
+    submitting,
+    createChapterBatch,
+    updateChapter,
+    deleteChapter,
+  } = useAdminChapters(comicId)
   const [formOpen, setFormOpen] = useState(false)
+  const [editOpen, setEditOpen] = useState(false)
+  const [editingChapter, setEditingChapter] = useState<ChapterItem | null>(null)
 
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [deletingChapter, setDeletingChapter] = useState<ChapterItem | null>(
     null
   )
+
+  const handleOpenEdit = (ch: ChapterItem) => {
+    setEditingChapter(ch)
+    setEditOpen(true)
+  }
 
   const handleOpenDelete = (ch: ChapterItem) => {
     setDeletingChapter(ch)
@@ -44,6 +62,88 @@ export function ChapterTableSection({ comicId }: ChapterTableSectionProps) {
       setDeletingChapter(null)
     }
   }
+
+  const columns = React.useMemo<ColumnDef<ChapterItem>[]>(
+    () => [
+      {
+        accessorKey: "chapterNumber",
+        header: "Chapter No.",
+        cell: ({ row }) => (
+          <span className="font-bold text-foreground">
+            Chapter {row.original.chapterNumber}
+          </span>
+        ),
+      },
+      {
+        accessorKey: "title",
+        header: "Chapter Title",
+        cell: ({ row }) => (
+          <span className="text-muted-foreground">
+            {row.original.title || "-"}
+          </span>
+        ),
+      },
+      {
+        accessorKey: "totalPages",
+        header: "Total Pages",
+        cell: ({ row }) => (
+          <Badge variant="outline" className="gap-1 text-[10px]">
+            <ImageIcon className="h-3 w-3" />
+            <span>{row.original.totalPages} Pages</span>
+          </Badge>
+        ),
+      },
+      {
+        accessorKey: "accessTier",
+        header: "Access",
+        cell: ({ row }) => (
+          <Badge variant="secondary" className="text-[10px]">
+            {row.original.accessTier || "Free"}
+          </Badge>
+        ),
+      },
+      {
+        accessorKey: "publishedAt",
+        header: "Release Date",
+        cell: ({ row }) => (
+          <span className="text-muted-foreground">
+            {new Date(row.original.publishedAt).toLocaleDateString("en-US", {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+            })}
+          </span>
+        ),
+      },
+      {
+        id: "actions",
+        header: () => <div className="text-right">Actions</div>,
+        cell: ({ row }) => (
+          <div className="flex items-center justify-end gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7 cursor-pointer text-muted-foreground hover:text-foreground"
+              title="Edit Chapter"
+              onClick={() => handleOpenEdit(row.original)}
+            >
+              <PencilSimple className="h-3.5 w-3.5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7 cursor-pointer text-destructive hover:bg-destructive/10"
+              title="Delete Chapter"
+              onClick={() => handleOpenDelete(row.original)}
+            >
+              <Trash className="h-3.5 w-3.5" />
+            </Button>
+          </div>
+        ),
+      },
+    ],
+    []
+  )
 
   return (
     <Card className="w-full border-border/60 shadow-xs">
@@ -69,90 +169,28 @@ export function ChapterTableSection({ comicId }: ChapterTableSectionProps) {
       </CardHeader>
 
       <CardContent className="space-y-4">
-        <div className="overflow-x-auto rounded-xl border border-border/60">
-          <table className="w-full text-left text-xs">
-            <thead className="border-b border-border/60 bg-muted/60 font-semibold text-muted-foreground">
-              <tr>
-                <th className="p-3">Chapter No.</th>
-                <th className="p-3">Chapter Title</th>
-                <th className="p-3">Total Pages</th>
-                <th className="p-3">Access</th>
-                <th className="p-3">Release Date</th>
-                <th className="p-3 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/40">
-              {loading ? (
-                <tr>
-                  <td
-                    colSpan={6}
-                    className="p-6 text-center text-muted-foreground"
-                  >
-                    Loading released chapters...
-                  </td>
-                </tr>
-              ) : chapters.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={6}
-                    className="p-6 text-center text-muted-foreground"
-                  >
-                    No chapters released for this comic yet.
-                  </td>
-                </tr>
-              ) : (
-                chapters.map((ch) => (
-                  <tr
-                    key={ch.id}
-                    className="transition-colors hover:bg-muted/30"
-                  >
-                    <td className="p-3 font-bold text-foreground">
-                      Chapter {ch.chapterNumber}
-                    </td>
-                    <td className="p-3 text-muted-foreground">
-                      {ch.title || "-"}
-                    </td>
-                    <td className="p-3 font-medium">
-                      <Badge variant="outline" className="gap-1 text-[10px]">
-                        <ImageIcon className="h-3 w-3" />
-                        <span>{ch.totalPages} Pages</span>
-                      </Badge>
-                    </td>
-                    <td className="p-3">
-                      <Badge variant="secondary" className="text-[10px]">
-                        {ch.accessTier || "Free"}
-                      </Badge>
-                    </td>
-                    <td className="p-3 text-muted-foreground">
-                      {new Date(ch.publishedAt).toLocaleDateString("en-US", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })}
-                    </td>
-                    <td className="p-3 text-right">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-7 w-7 cursor-pointer text-destructive hover:bg-destructive/10"
-                        title="Delete Chapter"
-                        onClick={() => handleOpenDelete(ch)}
-                      >
-                        <Trash className="h-3.5 w-3.5" />
-                      </Button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+        <DataTable
+          columns={columns}
+          data={chapters}
+          loading={loading}
+          loadingMessage="Loading released chapters..."
+          emptyMessage="No chapters released for this comic yet."
+          pageSize={15}
+        />
       </CardContent>
 
       <ChapterFormSheet
         open={formOpen}
         onOpenChange={setFormOpen}
         onSubmitBatch={createChapterBatch}
+        submitting={submitting}
+      />
+
+      <ChapterEditSheet
+        open={editOpen}
+        onOpenChange={setEditOpen}
+        chapter={editingChapter}
+        onUpdate={updateChapter}
         submitting={submitting}
       />
 

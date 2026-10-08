@@ -29,7 +29,7 @@ export function ChapterFormSheet({
   onSubmitBatch,
   submitting,
 }: ChapterFormSheetProps) {
-  const pagesUpload = useImageUpload({ multiple: true, maxFiles: 100 })
+  const pagesUpload = useImageUpload({ multiple: true, maxFiles: 500 })
   const [chapterNumber, setChapterNumber] = useState("")
   const [title, setTitle] = useState("")
   const [progressPercent, setProgressPercent] = useState(0)
