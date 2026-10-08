@@ -5,6 +5,7 @@ import { SiteHeader } from "@/components/common/SiteHeader"
 import { BottomNav } from "@/components/common/BottomNav"
 import { Toaster } from "@/components/ui/sonner"
 import { GlobalPresenceListener } from "@/components/common/GlobalPresenceListener"
+import { CookieConsent } from "@/components/common/CookieConsent"
 import { GoogleAnalytics, MicrosoftClarity } from "@/components/analytics"
 import { SITE_NAME, SITE_DESCRIPTION } from "@/constants"
 
@@ -100,6 +101,8 @@ const {
       </main>
       {!isReaderMode && <BottomNav client:load />}
       <Toaster client:load position="top-right" richColors />
+      <CookieConsent client:load />
     </div>
   </body>
 </html>
+

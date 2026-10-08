@@ -20,7 +20,17 @@ const { projectId = import.meta.env.PUBLIC_CLARITY_ID } = Astro.props
         t.src = "https://www.clarity.ms/tag/" + projectId
         y = l.getElementsByTagName(r)[0]
         y.parentNode.insertBefore(t, y)
+
+        var storedConsent = null
+        try {
+          var raw = localStorage.getItem("komikhq_cookie_consent_v1")
+          if (raw) storedConsent = JSON.parse(raw)
+        } catch (e) {}
+
+        var isExperienceGranted = storedConsent && storedConsent.experience === true
+        c[a]("consent", isExperienceGranted)
       })(window, document, "clarity", "script")
     </script>
   )
 }
+
