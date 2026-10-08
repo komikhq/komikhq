@@ -1,16 +1,18 @@
 ---
 import RootLayout from "@/layouts/RootLayout.astro";
-import { AdminHeader } from "@/components/admin/AdminHeader";
 import { AdminTabNav } from "@/components/admin/AdminTabNav";
 import { AdminOverviewView } from "@/components/admin/AdminOverviewView";
+import { AdminFooter } from "@/components/admin/AdminFooter";
 ---
 
 <RootLayout title="Control Panel & Dashboard Admin - KomikHQ">
   <div class="w-full flex flex-col gap-6 pb-20 pt-4 px-4 sm:px-6 lg:px-8">
-    <AdminHeader client:load />
     <AdminTabNav currentTab="overview" client:load />
 
     <AdminOverviewView client:only="react" />
+
+    <AdminFooter client:load />
   </div>
 </RootLayout>
+
 

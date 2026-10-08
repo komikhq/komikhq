@@ -1,18 +1,20 @@
 ---
 import RootLayout from "@/layouts/RootLayout.astro";
 import { AdminGuard } from "@/components/admin/AdminGuard";
-import { AdminHeader } from "@/components/admin/AdminHeader";
 import { AdminTabNav } from "@/components/admin/AdminTabNav";
 import { AdminPlatformSettingsCard } from "@/components/admin/AdminPlatformSettingsCard";
+import { AdminFooter } from "@/components/admin/AdminFooter";
 ---
 
 <RootLayout title="Pengaturan Platform Admin - KomikHQ">
   <div class="w-full flex flex-col gap-6 pb-20 pt-4 px-4 sm:px-6 lg:px-8">
-    <AdminHeader client:load />
     <AdminTabNav currentTab="settings" client:load />
 
     <AdminGuard client:only="react">
       <AdminPlatformSettingsCard client:only="react" />
     </AdminGuard>
+
+    <AdminFooter client:load />
   </div>
 </RootLayout>
+
