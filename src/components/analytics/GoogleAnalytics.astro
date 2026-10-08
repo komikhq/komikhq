@@ -7,50 +7,51 @@ const { measurementId = import.meta.env.PUBLIC_GA_ID } = Astro.props
 ---
 
 {
-  measurementId && (
-    <>
-      <script is:inline define:vars={{ measurementId }}>
-        window.dataLayer = window.dataLayer || []
-        function gtag() {
-          dataLayer.push(arguments)
-        }
-
-        // Initialize Google Consent Mode v2 defaults based on stored consent
-        var storedConsent = null
-        try {
-          var raw = localStorage.getItem("komikhq_cookie_consent_v1")
-          if (raw) storedConsent = JSON.parse(raw)
-        } catch (e) {}
-
-        var isAnalyticsGranted = storedConsent && storedConsent.analytics === true ? "granted" : "denied"
-
-        gtag("consent", "default", {
-          analytics_storage: isAnalyticsGranted,
-          ad_storage: isAnalyticsGranted,
-          ad_user_data: isAnalyticsGranted,
-          ad_personalization: isAnalyticsGranted,
-          wait_for_update: 500,
-        })
-
-        gtag("js", new Date())
-        gtag("config", measurementId, {
-          send_page_view: false,
-        })
-
-        // Track pageview on initial load and on every Astro View Transition / ClientRouter navigation
-        document.addEventListener("astro:page-load", () => {
-          gtag("event", "page_view", {
-            page_location: window.location.href,
-            page_title: document.title,
-          })
-        })
-      </script>
-      <script
-        is:inline
-        async
-        src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`}
-      />
-    </>
-  )
+  measurementId ? (
+    <script
+      is:inline
+      async
+      src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`}
+    />
+  ) : null
 }
 
+<script is:inline define:vars={{ measurementId }}>
+  if (measurementId) {
+    window.dataLayer = window.dataLayer || []
+    function gtag() {
+      dataLayer.push(arguments)
+    }
+
+    let isAnalyticsGranted = "denied"
+    try {
+      const raw = localStorage.getItem("komikhq_cookie_consent_v1")
+      if (raw) {
+        const parsed = JSON.parse(raw)
+        if (parsed && parsed.analytics === true) {
+          isAnalyticsGranted = "granted"
+        }
+      }
+    } catch (_) {}
+
+    gtag("consent", "default", {
+      analytics_storage: isAnalyticsGranted,
+      ad_storage: isAnalyticsGranted,
+      ad_user_data: isAnalyticsGranted,
+      ad_personalization: isAnalyticsGranted,
+      wait_for_update: 500,
+    })
+
+    gtag("js", new Date())
+    gtag("config", measurementId, {
+      send_page_view: false,
+    })
+
+    document.addEventListener("astro:page-load", () => {
+      gtag("event", "page_view", {
+        page_location: window.location.href,
+        page_title: document.title,
+      })
+    })
+  }
+</script>

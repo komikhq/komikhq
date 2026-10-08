@@ -11,14 +11,14 @@ We welcome your inquiries, feedback, bug reports, and partnership proposals. The
 
 ## 1. Primary Contact Channels
 
-### 📧 General & Technical Support
+### A. General & Technical Support
 
 For questions about your account, reporting broken chapters or image loading errors, feature suggestions, or general inquiries:
 
 - **Email**: [contact@komikhq.com](mailto:contact@komikhq.com)
 - **Response Time**: Typically within 24 to 48 hours on business days.
 
-### ⚖️ Legal & DMCA Inquiries
+### B. Legal & DMCA Inquiries
 
 For copyright notices, takedown requests, or privacy inquiries:
 
@@ -26,7 +26,7 @@ For copyright notices, takedown requests, or privacy inquiries:
 - **Subject Line**: `[DMCA Request]` or `[Privacy Inquiry]`
 - **Processing Time**: Expeditiously handled within 24 to 48 business hours.
 
-### 💼 Partnerships & Advertising
+### C. Partnerships & Advertising
 
 For business inquiries, collaboration, or Ad network communication:
 
