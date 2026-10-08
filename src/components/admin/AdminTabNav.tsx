@@ -8,13 +8,13 @@ export interface AdminTabNavProps {
 
 export function AdminTabNav({ currentTab }: AdminTabNavProps) {
   const tabs = [
-    { id: "overview", label: "Ikhtisar", href: "/dashboard", icon: ShieldCheck },
-    { id: "users", label: "Pengguna", href: "/dashboard/users", icon: Users },
-    { id: "comics", label: "Komik", href: "/dashboard/comics", icon: BookOpen },
-    { id: "genres", label: "Genre", href: "/dashboard/genres", icon: Tag },
-    { id: "moderation", label: "Moderasi", href: "/dashboard/moderation", icon: ChatDots },
-    { id: "analytics", label: "Analitik", href: "/dashboard/analytics", icon: ChartBar },
-    { id: "settings", label: "Pengaturan Platform", href: "/dashboard/settings", icon: Gear },
+    { id: "overview", label: "Overview", href: "/dashboard", icon: ShieldCheck },
+    { id: "users", label: "Users", href: "/dashboard/users", icon: Users },
+    { id: "comics", label: "Comics", href: "/dashboard/comics", icon: BookOpen },
+    { id: "genres", label: "Genres", href: "/dashboard/genres", icon: Tag },
+    { id: "moderation", label: "Moderation", href: "/dashboard/moderation", icon: ChatDots },
+    { id: "analytics", label: "Analytics", href: "/dashboard/analytics", icon: ChartBar },
+    { id: "settings", label: "Platform Settings", href: "/dashboard/settings", icon: Gear },
   ];
 
   const navRef = useRef<HTMLElement | null>(null);

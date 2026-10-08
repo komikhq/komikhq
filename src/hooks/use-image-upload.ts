@@ -24,7 +24,7 @@ export function useImageUpload(options?: UseImageUploadOptions) {
       const validImages = arrayFiles.filter((file) => file.type.startsWith("image/"));
 
       if (validImages.length === 0) {
-        toast.error("Format file tidak didukung. Harap pilih gambar (JPEG, PNG, WEBP).");
+        toast.error("Unsupported file format. Please select images (JPEG, PNG, WEBP).");
         return;
       }
 
@@ -38,7 +38,7 @@ export function useImageUpload(options?: UseImageUploadOptions) {
         setFiles((prev) => {
           const combined = [...prev, ...formatted];
           if (combined.length > maxFiles) {
-            toast.warning(`Maksimal ${maxFiles} gambar sekaligus.`);
+            toast.warning(`Maximum ${maxFiles} images at once.`);
             return combined.slice(0, maxFiles);
           }
           return combined;

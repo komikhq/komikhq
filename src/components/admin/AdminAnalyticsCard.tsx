@@ -9,15 +9,15 @@ export function AdminAnalyticsCard() {
         <CardHeader>
           <CardTitle className="text-base font-bold flex items-center gap-2">
             <TrendUp className="h-5 w-5 text-emerald-500" />
-            <span>Trafik Pembacaan Mingguan</span>
+            <span>Weekly Reading Traffic</span>
           </CardTitle>
           <CardDescription className="text-xs">
-            Visualisasi statistik tayangan (views) chapter komik 7 hari terakhir.
+            Views statistics visualization of comic chapters over the last 7 days.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="h-44 bg-muted/40 rounded-xl border border-border/40 flex items-center justify-center text-muted-foreground text-xs font-medium">
-            [ Grafik Analitik Views Realtime Cloudflare ]
+            [ Cloudflare Realtime Views Analytics Chart ]
           </div>
         </CardContent>
       </Card>
@@ -26,10 +26,10 @@ export function AdminAnalyticsCard() {
         <CardHeader>
           <CardTitle className="text-base font-bold flex items-center gap-2">
             <Lightning className="h-5 w-5 text-amber-500" />
-            <span>Performa Edge Worker & Cache Hit Rate</span>
+            <span>Edge Worker Performance & Cache Hit Rate</span>
           </CardTitle>
           <CardDescription className="text-xs">
-            Pengukuran waktu respon API dan tingkat keberhasilan cache R2/KV.
+            API response time measurement and R2/KV cache hit rates.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3 text-xs">

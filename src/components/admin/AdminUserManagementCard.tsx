@@ -65,12 +65,12 @@ export function AdminUserManagementCard() {
       const res = await fetch(`${API_BASE_URL}/v1/admin/users?q=${encodeURIComponent(search)}`, {
         credentials: "include",
       });
-      if (!res.ok) throw new Error("Gagal mengambil daftar pengguna");
+      if (!res.ok) throw new Error("Failed to fetch user list");
       const resJson = (await res.json()) as any;
       const userList = resJson.data?.users || resJson.users || [];
       setUsers(userList);
     } catch (err: any) {
-      toast.error(err.message || "Gagal memuat pengguna.");
+      toast.error(err.message || "Failed to load users.");
     } finally {
       setIsLoading(false);
     }
@@ -107,13 +107,13 @@ export function AdminUserManagementCard() {
       });
 
       const data = (await res.json()) as any;
-      if (!res.ok) throw new Error(data.error || "Gagal memperbarui pengguna.");
+      if (!res.ok) throw new Error(data.error || "Failed to update user.");
 
-      toast.success(`Data pengguna ${editName} berhasil diperbarui.`);
+      toast.success(`User ${editName} successfully updated.`);
       setEditingUser(null);
       fetchUsers();
     } catch (err: any) {
-      toast.error(err.message || "Gagal menyimpan perubahan.");
+      toast.error(err.message || "Failed to save changes.");
     }
   };
 
@@ -126,19 +126,19 @@ export function AdminUserManagementCard() {
       });
 
       const data = (await res.json()) as any;
-      if (!res.ok) throw new Error(data.error || "Gagal menghapus pengguna.");
+      if (!res.ok) throw new Error(data.error || "Failed to delete user.");
 
-      toast.success(data.message || `User ${deleteTarget.name} telah dihapus.`);
+      toast.success(data.message || `User ${deleteTarget.name} has been deleted.`);
       setDeleteTarget(null);
       fetchUsers();
     } catch (err: any) {
-      toast.error(err.message || "Gagal menghapus akun.");
+      toast.error(err.message || "Failed to delete account.");
     }
   };
 
   const handleCreateUser = async () => {
     if (!editName || !editEmail || !editPassword) {
-      toast.error("Nama, email, dan kata sandi wajib diisi.");
+      toast.error("Name, email, and password are required.");
       return;
     }
     try {
@@ -155,13 +155,13 @@ export function AdminUserManagementCard() {
       });
 
       const data = (await res.json()) as any;
-      if (!res.ok) throw new Error(data.error || "Gagal membuat pengguna baru.");
+      if (!res.ok) throw new Error(data.error || "Failed to create new user.");
 
-      toast.success(`Pengguna ${editName} berhasil dibuat.`);
+      toast.success(`User ${editName} successfully created.`);
       setIsAddOpen(false);
       fetchUsers();
     } catch (err: any) {
-      toast.error(err.message || "Gagal membuat pengguna.");
+      toast.error(err.message || "Failed to create user.");
     }
   };
 
@@ -170,9 +170,9 @@ export function AdminUserManagementCard() {
       <Card className="border-border/60 shadow-xs">
         <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <CardTitle className="text-lg font-bold">Manajemen Pengguna</CardTitle>
+            <CardTitle className="text-lg font-bold">User Management</CardTitle>
             <CardDescription className="text-xs">
-              Kelola role, kredensial, dan status verifikasi seluruh pengguna KomikHQ.
+              Manage roles, credentials, and verification status of all KomikHQ users.
             </CardDescription>
           </div>
 
@@ -198,7 +198,7 @@ export function AdminUserManagementCard() {
               className="gap-1.5 text-xs"
             >
               <UserPlus className="h-3.5 w-3.5" />
-              <span>Tambah User Baru</span>
+              <span>Add New User</span>
             </Button>
           </div>
         </CardHeader>
@@ -207,7 +207,7 @@ export function AdminUserManagementCard() {
           <div className="relative w-full max-w-sm">
             <MagnifyingGlass className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Cari berdasarkan nama atau email..."
+              placeholder="Search by name or email..."
               className="pl-9 text-xs h-9"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -218,11 +218,11 @@ export function AdminUserManagementCard() {
             <table className="w-full text-left text-xs">
               <thead className="bg-muted/60 text-muted-foreground font-semibold border-b border-border/60">
                 <tr>
-                  <th className="p-3">Pengguna</th>
+                  <th className="p-3">User</th>
                   <th className="p-3">Email & Status</th>
                   <th className="p-3">Role</th>
-                  <th className="p-3">Tanggal Dibuat</th>
-                  <th className="p-3 text-right">Aksi</th>
+                  <th className="p-3">Created Date</th>
+                  <th className="p-3 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/40">
@@ -231,14 +231,14 @@ export function AdminUserManagementCard() {
                     <td colSpan={5} className="p-8 text-center text-muted-foreground">
                       <div className="flex items-center justify-center gap-2">
                         <ArrowsClockwise className="h-4 w-4 animate-spin text-primary" />
-                        <span>Memuat daftar pengguna...</span>
+                        <span>Loading users...</span>
                       </div>
                     </td>
                   </tr>
                 ) : users.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="p-8 text-center text-muted-foreground">
-                      Tidak ada pengguna ditemukan.
+                      No users found.
                     </td>
                   </tr>
                 ) : (
@@ -264,11 +264,11 @@ export function AdminUserManagementCard() {
                           <div className="flex items-center gap-1 text-[10px]">
                             {u.emailVerified ? (
                               <span className="text-emerald-500 flex items-center gap-0.5">
-                                <CheckCircle className="h-3 w-3" /> Terverifikasi
+                                <CheckCircle className="h-3 w-3" /> Verified
                               </span>
                             ) : (
                               <span className="text-amber-500 flex items-center gap-0.5">
-                                <XCircle className="h-3 w-3" /> Belum Verifikasi
+                                <XCircle className="h-3 w-3" /> Unverified
                               </span>
                             )}
                           </div>
@@ -293,7 +293,7 @@ export function AdminUserManagementCard() {
                         </Badge>
                       </td>
                       <td className="p-3 text-muted-foreground">
-                        {new Date(u.createdAt).toLocaleDateString("id-ID", {
+                        {new Date(u.createdAt).toLocaleDateString("en-US", {
                           day: "numeric",
                           month: "short",
                           year: "numeric",
@@ -306,7 +306,7 @@ export function AdminUserManagementCard() {
                             size="icon"
                             className="h-7 w-7 text-muted-foreground hover:text-foreground"
                             onClick={() => handleOpenEdit(u)}
-                            title="Edit Pengguna"
+                            title="Edit User"
                           >
                             <PencilSimple className="h-3.5 w-3.5" />
                           </Button>
@@ -315,7 +315,7 @@ export function AdminUserManagementCard() {
                             size="icon"
                             className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10"
                             onClick={() => setDeleteTarget(u)}
-                            title="Hapus Pengguna"
+                            title="Delete User"
                           >
                             <Trash className="h-3.5 w-3.5" />
                           </Button>
@@ -334,28 +334,28 @@ export function AdminUserManagementCard() {
       <Dialog open={Boolean(editingUser)} onOpenChange={() => setEditingUser(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Edit Pengguna</DialogTitle>
+            <DialogTitle>Edit User</DialogTitle>
             <DialogDescription>
-              Perbarui rincian profil, role, atau kata sandi pengguna ini secara remote.
+              Update profile details, role, or password for this user.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-3 py-2 text-xs">
             <div>
-              <label className="font-semibold block mb-1">Nama Lengkap</label>
+              <label className="font-semibold block mb-1">Full Name</label>
               <Input value={editName} onChange={(e) => setEditName(e.target.value)} className="h-8 text-xs" />
             </div>
             <div>
-              <label className="font-semibold block mb-1">Alamat Email</label>
+              <label className="font-semibold block mb-1">Email Address</label>
               <Input value={editEmail} onChange={(e) => setEditEmail(e.target.value)} className="h-8 text-xs" />
             </div>
             <div>
-              <label className="font-semibold block mb-1">Role Akses</label>
+              <label className="font-semibold block mb-1">Role</label>
               <Select value={editRole} onValueChange={setEditRole}>
                 <SelectTrigger className="h-8 text-xs">
-                  <SelectValue placeholder="Pilih Role" />
+                  <SelectValue placeholder="Select Role" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="user">User Biasa</SelectItem>
+                  <SelectItem value="user">Regular User</SelectItem>
                   <SelectItem value="admin">Administrator</SelectItem>
                 </SelectContent>
               </Select>
@@ -363,11 +363,11 @@ export function AdminUserManagementCard() {
             <div>
               <label className="font-semibold block mb-1 flex items-center gap-1">
                 <Key className="h-3.5 w-3.5 text-primary" />
-                <span>Reset Kata Sandi (Opsional)</span>
+                <span>Reset Password (Optional)</span>
               </label>
               <Input
                 type="password"
-                placeholder="Kosongkan jika tidak ingin mengubah"
+                placeholder="Leave blank to keep unchanged"
                 value={editPassword}
                 onChange={(e) => setEditPassword(e.target.value)}
                 className="h-8 text-xs"
@@ -376,10 +376,10 @@ export function AdminUserManagementCard() {
           </div>
           <DialogFooter>
             <Button variant="outline" size="sm" onClick={() => setEditingUser(null)}>
-              Batal
+              Cancel
             </Button>
             <Button size="sm" onClick={handleSaveEdit}>
-              Simpan Perubahan
+              Save Changes
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -389,32 +389,32 @@ export function AdminUserManagementCard() {
       <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Tambah User Baru</DialogTitle>
+            <DialogTitle>Add New User</DialogTitle>
             <DialogDescription>
-              Buat akun baru secara langsung dari dashboard administrator.
+              Create a new user account directly from the admin dashboard.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-3 py-2 text-xs">
             <div>
-              <label className="font-semibold block mb-1">Nama Lengkap</label>
-              <Input value={editName} onChange={(e) => setEditName(e.target.value)} placeholder="Nama pengguna" className="h-8 text-xs" />
+              <label className="font-semibold block mb-1">Full Name</label>
+              <Input value={editName} onChange={(e) => setEditName(e.target.value)} placeholder="User name" className="h-8 text-xs" />
             </div>
             <div>
-              <label className="font-semibold block mb-1">Alamat Email</label>
+              <label className="font-semibold block mb-1">Email Address</label>
               <Input value={editEmail} onChange={(e) => setEditEmail(e.target.value)} placeholder="email@domain.com" className="h-8 text-xs" />
             </div>
             <div>
-              <label className="font-semibold block mb-1">Kata Sandi</label>
-              <Input type="password" value={editPassword} onChange={(e) => setEditPassword(e.target.value)} placeholder="Minimal 8 karakter" className="h-8 text-xs" />
+              <label className="font-semibold block mb-1">Password</label>
+              <Input type="password" value={editPassword} onChange={(e) => setEditPassword(e.target.value)} placeholder="At least 8 characters" className="h-8 text-xs" />
             </div>
             <div>
-              <label className="font-semibold block mb-1">Role Akses</label>
+              <label className="font-semibold block mb-1">Role</label>
               <Select value={editRole} onValueChange={setEditRole}>
                 <SelectTrigger className="h-8 text-xs">
-                  <SelectValue placeholder="Pilih Role" />
+                  <SelectValue placeholder="Select Role" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="user">User Biasa</SelectItem>
+                  <SelectItem value="user">Regular User</SelectItem>
                   <SelectItem value="admin">Administrator</SelectItem>
                 </SelectContent>
               </Select>
@@ -422,10 +422,10 @@ export function AdminUserManagementCard() {
           </div>
           <DialogFooter>
             <Button variant="outline" size="sm" onClick={() => setIsAddOpen(false)}>
-              Batal
+              Cancel
             </Button>
             <Button size="sm" onClick={handleCreateUser}>
-              Buat Akun
+              Create User
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -435,17 +435,17 @@ export function AdminUserManagementCard() {
       <Dialog open={Boolean(deleteTarget)} onOpenChange={() => setDeleteTarget(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-destructive">Konfirmasi Hapus Pengguna</DialogTitle>
+            <DialogTitle className="text-destructive">Confirm Delete User</DialogTitle>
             <DialogDescription>
-              Apakah Anda yakin ingin menghapus pengguna <strong className="text-foreground">{deleteTarget?.name}</strong> ({deleteTarget?.email})? Tindakan ini permanen.
+              Are you sure you want to delete user <strong className="text-foreground">{deleteTarget?.name}</strong> ({deleteTarget?.email})? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" size="sm" onClick={() => setDeleteTarget(null)}>
-              Batal
+              Cancel
             </Button>
             <Button variant="destructive" size="sm" onClick={handleDeleteUser}>
-              Hapus Permanen
+              Delete Permanently
             </Button>
           </DialogFooter>
         </DialogContent>

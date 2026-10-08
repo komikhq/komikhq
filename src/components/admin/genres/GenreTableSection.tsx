@@ -35,10 +35,10 @@ export function GenreTableSection() {
         <div>
           <CardTitle className="text-lg font-bold flex items-center gap-2">
             <Tag className="h-5 w-5 text-primary" />
-            <span>Manajemen Genre Komik</span>
+            <span>Genre Management</span>
           </CardTitle>
           <CardDescription className="text-xs">
-            Kelola kategori & genre komik di platform KomikHQ secara langsung dengan cepat.
+            Manage comic categories & genres directly and swiftly on KomikHQ.
           </CardDescription>
         </div>
       </CardHeader>
@@ -48,7 +48,7 @@ export function GenreTableSection() {
         <form onSubmit={handleAdd} className="flex flex-col sm:flex-row items-center gap-2.5 bg-muted/40 p-3.5 rounded-xl border border-border/60 shadow-2xs">
           <div className="flex-1 w-full space-y-1">
             <Input
-              placeholder="Nama Genre Baru (misal: Action, Sci-Fi)"
+              placeholder="New Genre Name (e.g. Action, Sci-Fi)"
               className="text-xs h-9 bg-background"
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
@@ -56,7 +56,7 @@ export function GenreTableSection() {
           </div>
           <div className="flex-[1.5] w-full space-y-1">
             <Input
-              placeholder="Deskripsi Ringkas Genre (opsional)"
+              placeholder="Brief Genre Description (optional)"
               className="text-xs h-9 bg-background"
               value={newDesc}
               onChange={(e) => setNewDesc(e.target.value)}
@@ -64,7 +64,7 @@ export function GenreTableSection() {
           </div>
           <Button type="submit" size="sm" disabled={submitting || !newName.trim()} className="gap-1.5 text-xs shrink-0 w-full sm:w-auto h-9">
             <Plus className="h-4 w-4" />
-            <span>{submitting ? "Menambahkan..." : "Tambah Genre"}</span>
+            <span>{submitting ? "Adding..." : "Add Genre"}</span>
           </Button>
         </form>
 
@@ -74,10 +74,10 @@ export function GenreTableSection() {
             <thead className="bg-muted/60 text-muted-foreground font-semibold border-b border-border/60 select-none">
               <tr>
                 <th className="p-3 w-10 text-center">#</th>
-                <th className="p-3">Nama Genre</th>
+                <th className="p-3">Genre Name</th>
                 <th className="p-3">Slug</th>
-                <th className="p-3">Deskripsi</th>
-                <th className="p-3 text-right">Aksi & Quick Edit</th>
+                <th className="p-3">Description</th>
+                <th className="p-3 text-right">Actions & Quick Edit</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40">
@@ -86,14 +86,14 @@ export function GenreTableSection() {
                   <td colSpan={5} className="p-8 text-center text-muted-foreground">
                     <div className="flex items-center justify-center gap-2">
                       <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-                      <span>Memuat daftar genre...</span>
+                      <span>Loading genres...</span>
                     </div>
                   </td>
                 </tr>
               ) : genres.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="p-8 text-center text-muted-foreground">
-                    Belum ada genre terdaftar. Tambahkan genre pertama Anda di atas.
+                    No genres registered yet. Add your first genre above.
                   </td>
                 </tr>
               ) : (
@@ -138,7 +138,7 @@ export function GenreTableSection() {
                               onClick={() => toggleExpand(g)}
                             >
                               {isExpanded ? <CaretUp className="h-3.5 w-3.5" /> : <CaretDown className="h-3.5 w-3.5" />}
-                              <span>{isExpanded ? "Tutup" : "Edit"}</span>
+                              <span>{isExpanded ? "Close" : "Edit"}</span>
                             </Button>
                             <Button
                               size="icon"
@@ -160,24 +160,24 @@ export function GenreTableSection() {
                               <div className="flex items-center justify-between border-b border-border/40 pb-2">
                                 <h4 className="text-xs font-bold flex items-center gap-1.5 text-foreground">
                                   <PencilSimple className="h-4 w-4 text-primary" />
-                                  <span>Edit Quick Record Genre</span>
+                                  <span>Quick Edit Genre</span>
                                 </h4>
                                 <span className="text-[11px] font-mono text-muted-foreground">ID: {g.id}</span>
                               </div>
 
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-1">
-                                  <label className="text-[11px] font-semibold text-muted-foreground">Nama Genre</label>
+                                  <label className="text-[11px] font-semibold text-muted-foreground">Genre Name</label>
                                   <Input
                                     className="text-xs h-8 bg-background"
                                     value={editName}
                                     onChange={(e) => setEditName(e.target.value)}
-                                    placeholder="Nama Genre"
+                                    placeholder="Genre Name"
                                   />
                                 </div>
 
                                 <div className="space-y-1">
-                                  <label className="text-[11px] font-semibold text-muted-foreground">Slug (Otomatis)</label>
+                                  <label className="text-[11px] font-semibold text-muted-foreground">Slug (Automatic)</label>
                                   <Input
                                     disabled
                                     className="text-xs h-8 bg-muted font-mono text-muted-foreground"
@@ -186,12 +186,12 @@ export function GenreTableSection() {
                                 </div>
 
                                 <div className="sm:col-span-2 space-y-1">
-                                  <label className="text-[11px] font-semibold text-muted-foreground">Deskripsi Genre</label>
+                                  <label className="text-[11px] font-semibold text-muted-foreground">Genre Description</label>
                                   <Input
                                     className="text-xs h-8 bg-background"
                                     value={editDesc}
                                     onChange={(e) => setEditDesc(e.target.value)}
-                                    placeholder="Tuliskan keterangan genre..."
+                                    placeholder="Write genre description..."
                                   />
                                 </div>
                               </div>
@@ -199,16 +199,16 @@ export function GenreTableSection() {
                               <div className="flex items-center justify-between pt-2 border-t border-border/40">
                                 <span className="text-[11px] text-muted-foreground flex items-center gap-1">
                                   <Info className="h-3.5 w-3.5" />
-                                  <span>Perubahan akan langsung memperbarui relasi komik terkait.</span>
+                                  <span>Changes will immediately update associated comic relations.</span>
                                 </span>
 
                                 <div className="flex items-center gap-2">
                                   <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => setExpandedId(null)}>
-                                    Batal
+                                    Cancel
                                   </Button>
                                   <Button size="sm" className="h-7 text-xs gap-1" disabled={submitting} onClick={() => handleSaveEdit(g.id)}>
                                     <FloppyDisk className="h-3.5 w-3.5" />
-                                    <span>{submitting ? "Menyimpan..." : "Simpan Perubahan"}</span>
+                                    <span>{submitting ? "Saving..." : "Save Changes"}</span>
                                   </Button>
                                 </div>
                               </div>
@@ -223,13 +223,13 @@ export function GenreTableSection() {
                           <td colSpan={5} className="p-3 text-center">
                             <div className="flex items-center justify-center gap-3">
                               <span className="text-xs font-semibold text-destructive">
-                                Hapus genre <strong>"{g.name}"</strong> secara permanen?
+                                Permanently delete genre <strong>"{g.name}"</strong>?
                               </span>
                               <Button size="sm" variant="destructive" className="h-7 text-xs" onClick={() => handleDeleteConfirm(g.id)}>
-                                Ya, Hapus
+                                Yes, Delete
                               </Button>
                               <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => setConfirmDeleteId(null)}>
-                                Batal
+                                Cancel
                               </Button>
                             </div>
                           </td>

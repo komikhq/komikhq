@@ -26,19 +26,19 @@ export function ComicDeleteDialog({ comic, open, onOpenChange, onConfirm }: Comi
       <AlertDialogContent className="max-w-md">
         <AlertDialogHeader>
           <AlertDialogTitle className="text-base font-bold text-destructive">
-            Hapus Komik &quot;{comic.title}&quot;?
+            Delete Comic &quot;{comic.title}&quot;?
           </AlertDialogTitle>
           <AlertDialogDescription className="text-xs">
-            Tindakan ini tidak dapat dibatalkan. Seluruh data komik, sampul, banner, dan seluruh chapter beserta halamannya di R2 akan dihapus secara permanen.
+            This action cannot be undone. All comic metadata, covers, banners, and chapters along with their pages in R2 will be permanently deleted.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel className="text-xs">Batal</AlertDialogCancel>
+          <AlertDialogCancel className="text-xs">Cancel</AlertDialogCancel>
           <AlertDialogAction
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90 text-xs"
             onClick={onConfirm}
           >
-            Hapus Permanen
+            Delete Permanently
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

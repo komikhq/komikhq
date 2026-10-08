@@ -49,7 +49,7 @@ export function AdminModerationCard() {
       });
       fetchReports();
     } catch (err: any) {
-      alert(err.message || "Gagal memproses laporan");
+      alert(err.message || "Failed to process report");
     } finally {
       setProcessingId(null);
     }
@@ -60,13 +60,13 @@ export function AdminModerationCard() {
       case "SPAM":
         return <Badge variant="outline" className="bg-amber-500/10 text-amber-400 border-amber-500/30">Spam</Badge>;
       case "HARASSMENT":
-        return <Badge variant="outline" className="bg-rose-500/10 text-rose-400 border-rose-500/30">Pelecehan/SARA</Badge>;
+        return <Badge variant="outline" className="bg-rose-500/10 text-rose-400 border-rose-500/30">Harassment</Badge>;
       case "SPOILER":
         return <Badge variant="outline" className="bg-purple-500/10 text-purple-400 border-purple-500/30">Spoiler</Badge>;
       case "NSFW":
         return <Badge variant="outline" className="bg-red-500/10 text-red-500 border-red-500/30">NSFW</Badge>;
       default:
-        return <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/30">Lainnya</Badge>;
+        return <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/30">Other</Badge>;
     }
   };
 
@@ -76,10 +76,10 @@ export function AdminModerationCard() {
         <div>
           <CardTitle className="text-base font-bold flex items-center gap-2">
             <ChatDots className="h-5 w-5 text-primary" />
-            <span>Moderasi Komentar & Laporan</span>
+            <span>Comment Moderation & Reports</span>
           </CardTitle>
           <CardDescription className="text-xs text-muted-foreground mt-1">
-            Tinjau dan ambil tindakan terhadap komentar yang dilaporkan oleh pengguna.
+            Review and take action on comments reported by users.
           </CardDescription>
         </div>
         <Button variant="outline" size="sm" onClick={fetchReports} disabled={isLoading} className="h-8 gap-1.5 text-xs">
@@ -110,13 +110,13 @@ export function AdminModerationCard() {
         {/* List Reports */}
         {isLoading ? (
           <div className="space-y-3 py-6 text-center text-xs text-muted-foreground">
-            Memuat daftar laporan...
+            Loading reports...
           </div>
         ) : reports.length === 0 ? (
           <div className="py-12 text-center text-xs text-muted-foreground space-y-1">
             <ShieldWarning className="h-8 w-8 mx-auto text-muted-foreground/40 mb-2" />
-            <p className="font-semibold text-foreground">Tidak Ada Laporan</p>
-            <p>Belum ada laporan komentar dalam kategori ini.</p>
+            <p className="font-semibold text-foreground">No Reports Found</p>
+            <p>No comment reports currently match this status filter.</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -129,19 +129,19 @@ export function AdminModerationCard() {
                   <div className="flex items-center gap-2">
                     {getReasonBadge(report.reason)}
                     <span className="text-muted-foreground">
-                      Dilaporkan oleh <strong className="text-foreground">{report.reporterName}</strong>
+                      Reported by <strong className="text-foreground">{report.reporterName}</strong>
                     </span>
                   </div>
                   <span className="text-[11px] text-muted-foreground">
-                    {new Date(report.createdAt).toLocaleString("id-ID")}
+                    {new Date(report.createdAt).toLocaleString("en-US")}
                   </span>
                 </div>
 
                 <div className="p-3 rounded-lg bg-muted/60 border border-border/40 space-y-1">
-                  <p className="text-[11px] font-semibold text-muted-foreground">Isi Komentar yang Dilaporkan:</p>
+                  <p className="text-[11px] font-semibold text-muted-foreground">Reported Comment Content:</p>
                   <p className="text-foreground italic">
                     {report.commentIsDeleted ? (
-                      <span className="text-muted-foreground">[Telah dihapus]</span>
+                      <span className="text-muted-foreground">[Deleted]</span>
                     ) : (
                       `"${report.commentContent || "-"}"`
                     )}
@@ -150,7 +150,7 @@ export function AdminModerationCard() {
 
                 {report.details && (
                   <p className="text-muted-foreground">
-                    <strong>Catatan Pelapor:</strong> {report.details}
+                    <strong>Reporter Notes:</strong> {report.details}
                   </p>
                 )}
 
@@ -164,7 +164,7 @@ export function AdminModerationCard() {
                       className="h-7 text-xs text-muted-foreground hover:text-foreground"
                     >
                       <Check className="mr-1 h-3 w-3" />
-                      Abaikan Laporan
+                      Dismiss Report
                     </Button>
                     <Button
                       variant="destructive"
@@ -174,7 +174,7 @@ export function AdminModerationCard() {
                       className="h-7 text-xs"
                     >
                       <Trash className="mr-1 h-3 w-3" />
-                      Hapus Komentar
+                      Delete Comment
                     </Button>
                   </div>
                 )}

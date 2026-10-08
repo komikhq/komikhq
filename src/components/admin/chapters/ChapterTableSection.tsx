@@ -37,16 +37,16 @@ export function ChapterTableSection({ comicId }: ChapterTableSectionProps) {
         <div>
           <CardTitle className="text-lg font-bold flex items-center gap-2">
             <ListNumbers className="h-5 w-5 text-primary" />
-            <span>Manajemen Chapter</span>
+            <span>Chapter Management</span>
           </CardTitle>
           <CardDescription className="text-xs">
-            Daftar chapter yang telah dirilis beserta jumlah gambar halaman.
+            List of released chapters and their page counts.
           </CardDescription>
         </div>
 
         <Button size="sm" className="gap-1.5 text-xs w-full sm:w-auto" onClick={() => setFormOpen(true)}>
           <Plus className="h-4 w-4" />
-          <span>Tambah Chapter Baru</span>
+          <span>Add New Chapter</span>
         </Button>
       </CardHeader>
 
@@ -55,22 +55,22 @@ export function ChapterTableSection({ comicId }: ChapterTableSectionProps) {
           <table className="w-full text-left text-xs">
             <thead className="bg-muted/60 text-muted-foreground font-semibold border-b border-border/60">
               <tr>
-                <th className="p-3">No. Chapter</th>
-                <th className="p-3">Judul Chapter</th>
-                <th className="p-3">Total Halaman</th>
-                <th className="p-3">Akses</th>
-                <th className="p-3">Tanggal Rilis</th>
-                <th className="p-3 text-right">Aksi</th>
+                <th className="p-3">Chapter No.</th>
+                <th className="p-3">Chapter Title</th>
+                <th className="p-3">Total Pages</th>
+                <th className="p-3">Access</th>
+                <th className="p-3">Release Date</th>
+                <th className="p-3 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="p-6 text-center text-muted-foreground">Memuat rilis chapter...</td>
+                  <td colSpan={6} className="p-6 text-center text-muted-foreground">Loading released chapters...</td>
                 </tr>
               ) : chapters.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="p-6 text-center text-muted-foreground">Belum ada chapter dirilis untuk komik ini.</td>
+                  <td colSpan={6} className="p-6 text-center text-muted-foreground">No chapters released for this comic yet.</td>
                 </tr>
               ) : (
                 chapters.map((ch) => (
@@ -80,7 +80,7 @@ export function ChapterTableSection({ comicId }: ChapterTableSectionProps) {
                     <td className="p-3 font-medium">
                       <Badge variant="outline" className="text-[10px] gap-1">
                         <ImageIcon className="h-3 w-3" />
-                        <span>{ch.totalPages} Halaman</span>
+                        <span>{ch.totalPages} Pages</span>
                       </Badge>
                     </td>
                     <td className="p-3">
@@ -89,14 +89,14 @@ export function ChapterTableSection({ comicId }: ChapterTableSectionProps) {
                       </Badge>
                     </td>
                     <td className="p-3 text-muted-foreground">
-                      {new Date(ch.publishedAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
+                      {new Date(ch.publishedAt).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" })}
                     </td>
                     <td className="p-3 text-right">
                       <Button
                         variant="ghost"
                         size="icon"
                         className="h-7 w-7 text-destructive hover:bg-destructive/10 cursor-pointer"
-                        title="Hapus Chapter"
+                        title="Delete Chapter"
                         onClick={() => handleOpenDelete(ch)}
                       >
                         <Trash className="h-3.5 w-3.5" />

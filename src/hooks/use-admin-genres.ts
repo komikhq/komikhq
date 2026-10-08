@@ -34,10 +34,10 @@ export function useAdminGenres() {
       if (res.ok && data.genres) {
         setGenres(sortGenresByNaturalName(data.genres));
       } else {
-        toast.error(data.error || "Gagal mengambil daftar genre");
+        toast.error(data.error || "Failed to fetch genre list");
       }
     } catch (err: any) {
-      toast.error(err.message || "Terjadi kesalahan jaringan");
+      toast.error(err.message || "Network error occurred");
     } finally {
       setLoading(false);
     }
@@ -60,15 +60,15 @@ export function useAdminGenres() {
       });
       const data: any = await res.json();
       if (res.ok && data.success) {
-        toast.success(`Genre "${newName}" berhasil ditambahkan.`);
+        toast.success(`Genre "${newName}" successfully added.`);
         setNewName("");
         setNewDesc("");
         fetchGenres();
       } else {
-        toast.error(data.error || "Gagal membuat genre baru");
+        toast.error(data.error || "Failed to create new genre");
       }
     } catch (err: any) {
-      toast.error(err.message || "Gagal membuat genre");
+      toast.error(err.message || "Failed to create genre");
     } finally {
       setSubmitting(false);
     }
@@ -97,14 +97,14 @@ export function useAdminGenres() {
       });
       const data: any = await res.json();
       if (res.ok && data.success) {
-        toast.success("Genre berhasil diperbarui.");
+        toast.success("Genre successfully updated.");
         setExpandedId(null);
         fetchGenres();
       } else {
-        toast.error(data.error || "Gagal mengedit genre");
+        toast.error(data.error || "Failed to edit genre");
       }
     } catch (err: any) {
-      toast.error(err.message || "Gagal mengedit genre");
+      toast.error(err.message || "Failed to edit genre");
     } finally {
       setSubmitting(false);
     }
@@ -118,15 +118,15 @@ export function useAdminGenres() {
       });
       const data: any = await res.json();
       if (res.ok && data.success) {
-        toast.success(data.message || "Genre berhasil dihapus");
+        toast.success(data.message || "Genre successfully deleted");
         setConfirmDeleteId(null);
         if (expandedId === id) setExpandedId(null);
         fetchGenres();
       } else {
-        toast.error(data.error || "Gagal menghapus genre");
+        toast.error(data.error || "Failed to delete genre");
       }
     } catch (err: any) {
-      toast.error(err.message || "Gagal menghapus genre");
+      toast.error(err.message || "Failed to delete genre");
     }
   };
 

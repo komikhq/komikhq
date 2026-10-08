@@ -30,7 +30,7 @@ export function ImageUploadZone({
   onFilesSelected,
   onRemove,
   multiple = false,
-  label = "Unggah Gambar",
+  label = "Upload Image",
   existingPreviewUrl,
   aspectRatioHint,
   recommendedSize,
@@ -66,7 +66,7 @@ export function ImageUploadZone({
         <div className="space-y-1">
           <p className="text-xs font-semibold text-foreground">{label}</p>
           <p className="text-[11px] text-muted-foreground">
-            {multiple ? "Tarik & lepas banyak file atau klik di sini" : "Tarik & lepas file atau klik untuk memilih"}
+            {multiple ? "Drag & drop multiple files or click here" : "Drag & drop file or click to select"}
           </p>
           {(aspectRatioHint || recommendedSize || maxSizeHint) && (
             <div className="flex flex-wrap items-center justify-center gap-1.5 pt-1">

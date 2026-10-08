@@ -27,10 +27,10 @@ export function ComicFormSheet({ open, onOpenChange, comic, onSubmit, submitting
       <SheetContent side="right" className="w-full sm:[&[data-slot=sheet-content]]:max-w-[92vw] lg:[&[data-slot=sheet-content]]:max-w-[90vw] xl:[&[data-slot=sheet-content]]:max-w-[1400px] flex flex-col h-full overflow-hidden p-0">
         <SheetHeader className="p-6 border-b border-border/60 sticky top-0 bg-background/95 backdrop-blur z-10 shrink-0">
           <SheetTitle className="text-lg font-bold">
-            {comic ? "Edit Data Komik" : "Tambah Komik Baru"}
+            {comic ? "Edit Comic Data" : "Add New Comic"}
           </SheetTitle>
           <SheetDescription className="text-xs">
-            Isi formulir kelengkapan metadata komik dan unggah berkas gambar dengan spesifikasi rasio yang tepat.
+            Fill in the comic metadata and upload image files with the correct aspect ratios.
           </SheetDescription>
         </SheetHeader>
 
@@ -40,14 +40,14 @@ export function ComicFormSheet({ open, onOpenChange, comic, onSubmit, submitting
               {/* Left Column: Metadata & Text Form */}
               <div className="space-y-4">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground border-b border-border/40 pb-1">
-                  Metadata Informasi
+                  Metadata Information
                 </h3>
 
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold">Judul Komik *</Label>
+                  <Label className="text-xs font-semibold">Comic Title *</Label>
                   <Input
                     required
-                    placeholder="Contoh: Solo Leveling"
+                    placeholder="e.g. Solo Leveling"
                     className="text-xs h-9"
                     value={form.title}
                     onChange={(e) => form.setTitle(e.target.value)}
@@ -55,9 +55,9 @@ export function ComicFormSheet({ open, onOpenChange, comic, onSubmit, submitting
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold">Penulis / Creator</Label>
+                  <Label className="text-xs font-semibold">Author / Creator</Label>
                   <Input
-                    placeholder="Contoh: DUBU, REDICE STUDIO"
+                    placeholder="e.g. DUBU, REDICE STUDIO"
                     className="text-xs h-9"
                     value={form.creator}
                     onChange={(e) => form.setCreator(e.target.value)}
@@ -65,21 +65,21 @@ export function ComicFormSheet({ open, onOpenChange, comic, onSubmit, submitting
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold">Tipe Komik</Label>
+                  <Label className="text-xs font-semibold">Comic Type</Label>
                   <Select value={form.type} onValueChange={form.setType}>
                     <SelectTrigger className="h-9 text-xs">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="manga">Manga (Jepang)</SelectItem>
-                      <SelectItem value="manhwa">Manhwa (Korea)</SelectItem>
-                      <SelectItem value="manhua">Manhua (China)</SelectItem>
+                      <SelectItem value="manga">Manga (Japanese)</SelectItem>
+                      <SelectItem value="manhwa">Manhwa (Korean)</SelectItem>
+                      <SelectItem value="manhua">Manhua (Chinese)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold">Status Publikasi</Label>
+                  <Label className="text-xs font-semibold">Publication Status</Label>
                   <Select value={form.status} onValueChange={form.setStatus}>
                     <SelectTrigger className="h-9 text-xs">
                       <SelectValue />
@@ -93,7 +93,7 @@ export function ComicFormSheet({ open, onOpenChange, comic, onSubmit, submitting
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold">Genre Komik</Label>
+                  <Label className="text-xs font-semibold">Comic Genres</Label>
                   <GenreComboboxPicker
                     genres={form.genres}
                     selectedGenreIds={form.selectedGenreIds}
@@ -102,9 +102,9 @@ export function ComicFormSheet({ open, onOpenChange, comic, onSubmit, submitting
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold">Sinopsis Komik</Label>
+                  <Label className="text-xs font-semibold">Comic Synopsis</Label>
                   <Textarea
-                    placeholder="Tuliskan ringkasan alur cerita komik secara lengkap..."
+                    placeholder="Write a complete summary of the comic story..."
                     className="text-xs min-h-[100px]"
                     value={form.synopsis}
                     onChange={(e) => form.setSynopsis(e.target.value)}
@@ -115,11 +115,11 @@ export function ComicFormSheet({ open, onOpenChange, comic, onSubmit, submitting
               {/* Right Column: Media Uploader & Guidance */}
               <div className="space-y-4">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground border-b border-border/40 pb-1">
-                  Berkas Gambar & Sampul
+                  Images & Artwork
                 </h3>
 
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold">Cover Sampul Poster *</Label>
+                  <Label className="text-xs font-semibold">Poster Cover *</Label>
                   <ImageUploadZone
                     files={form.coverUpload.files}
                     isDragging={form.coverUpload.isDragging}
@@ -128,16 +128,16 @@ export function ComicFormSheet({ open, onOpenChange, comic, onSubmit, submitting
                     onDragLeave={form.coverUpload.handleDragLeave}
                     onFilesSelected={form.coverUpload.addFiles}
                     onRemove={form.coverUpload.removeFile}
-                    label="Unggah Cover Poster"
+                    label="Upload Poster Cover"
                     existingPreviewUrl={comic?.coverUrl}
-                    aspectRatioHint="Rasio 3:4"
+                    aspectRatioHint="3:4 Ratio"
                     recommendedSize="600 × 800 px"
-                    maxSizeHint="Maks 5 MB"
+                    maxSizeHint="Max 5 MB"
                   />
                 </div>
 
                 <div className="space-y-1.5 pt-2">
-                  <Label className="text-xs font-semibold">Banner Header (Opsional)</Label>
+                  <Label className="text-xs font-semibold">Header Banner (Optional)</Label>
                   <ImageUploadZone
                     files={form.bannerUpload.files}
                     isDragging={form.bannerUpload.isDragging}
@@ -146,11 +146,11 @@ export function ComicFormSheet({ open, onOpenChange, comic, onSubmit, submitting
                     onDragLeave={form.bannerUpload.handleDragLeave}
                     onFilesSelected={form.bannerUpload.addFiles}
                     onRemove={form.bannerUpload.removeFile}
-                    label="Unggah Banner Header"
+                    label="Upload Header Banner"
                     existingPreviewUrl={comic?.bannerUrl}
-                    aspectRatioHint="Rasio 16:9"
+                    aspectRatioHint="16:9 Ratio"
                     recommendedSize="1200 × 400 px"
-                    maxSizeHint="Maks 8 MB"
+                    maxSizeHint="Max 8 MB"
                   />
                 </div>
               </div>
@@ -159,10 +159,10 @@ export function ComicFormSheet({ open, onOpenChange, comic, onSubmit, submitting
 
           <SheetFooter className="p-6 sticky bottom-0 bg-background/95 backdrop-blur border-t border-border/60 flex flex-row items-center justify-end gap-2 shrink-0 mt-auto z-10">
             <Button type="button" variant="outline" size="sm" onClick={() => onOpenChange(false)}>
-              Batal
+              Cancel
             </Button>
             <Button type="submit" size="sm" disabled={submitting}>
-              {submitting ? "Menyimpan Data..." : comic ? "Simpan Perubahan" : "Tambah Komik"}
+              {submitting ? "Saving Data..." : comic ? "Save Changes" : "Add Comic"}
             </Button>
           </SheetFooter>
         </form>

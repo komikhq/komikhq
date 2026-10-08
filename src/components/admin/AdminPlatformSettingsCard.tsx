@@ -18,7 +18,7 @@ export function AdminPlatformSettingsCard() {
 
   const handlePurgeOrphans = async () => {
     setPurging(true);
-    const toastId = toast.loading("Memindai Cloudflare R2 bucket & membandingkan dengan database...");
+    const toastId = toast.loading("Scanning Cloudflare R2 bucket & comparing with database...");
 
     try {
       const res = await fetch(`${getApiUrl()}/v1/admin/storage/purge-orphans`, {
@@ -31,19 +31,19 @@ export function AdminPlatformSettingsCard() {
         const resultObj = {
           purgedCount: data.purgedCount || 0,
           totalSizeMB: data.totalSizeMB || "0.00",
-          timestamp: new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" }),
+          timestamp: new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit" }),
         };
         setLastResult(resultObj);
 
         toast.success(
-          data.message || `Berhasil membersihkan ${resultObj.purgedCount} file sampah (${resultObj.totalSizeMB} MB).`,
+          data.message || `Successfully purged ${resultObj.purgedCount} orphan files (${resultObj.totalSizeMB} MB freed).`,
           { id: toastId }
         );
       } else {
-        toast.error(data.error || "Gagal melakukan pembersihan storage R2.", { id: toastId });
+        toast.error(data.error || "Failed to purge R2 storage.", { id: toastId });
       }
     } catch (err: any) {
-      toast.error(err.message || "Terjadi kesalahan jaringan saat memproses pembersihan.", { id: toastId });
+      toast.error(err.message || "A network error occurred while processing storage purge.", { id: toastId });
     } finally {
       setPurging(false);
     }
@@ -55,17 +55,17 @@ export function AdminPlatformSettingsCard() {
         <CardHeader>
           <CardTitle className="text-lg font-bold flex items-center gap-2">
             <Gear className="h-5 w-5 text-primary" />
-            <span>Pengaturan Platform & Layanan Backend</span>
+            <span>Platform Settings & Backend Services</span>
           </CardTitle>
           <CardDescription className="text-xs">
-            Konfigurasi umum aplikasi, penyedia email verifikasi, dan status penyimpanan media.
+            General application configuration, verification email provider, and media storage status.
           </CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-6 text-xs">
           <div className="space-y-2">
-            <label className="font-semibold block text-foreground">Nama Platform</label>
-            <Input defaultValue="KomikHQ - Platform Baca Komik Digital" className="h-9 text-xs" />
+            <label className="font-semibold block text-foreground">Platform Name</label>
+            <Input defaultValue="KomikHQ - Digital Comic Platform" className="h-9 text-xs" />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -78,7 +78,7 @@ export function AdminPlatformSettingsCard() {
                 <Badge variant="secondary" className="text-[10px] text-emerald-500 bg-emerald-500/10">Active</Badge>
               </div>
               <p className="text-[11px] text-muted-foreground">
-                Pengiriman email verifikasi registrasi dan reset password.
+                Delivery of registration verification and password reset emails.
               </p>
             </div>
 
@@ -91,13 +91,13 @@ export function AdminPlatformSettingsCard() {
                 <Badge variant="secondary" className="text-[10px] text-emerald-500 bg-emerald-500/10">Connected</Badge>
               </div>
               <p className="text-[11px] text-muted-foreground">
-                Penyimpanan gambar avatar pengguna dan media komik.
+                Storage for user avatar images and comic media.
               </p>
             </div>
           </div>
 
           <div className="pt-2 flex justify-end">
-            <Button size="sm">Simpan Konfigurasi</Button>
+            <Button size="sm">Save Configuration</Button>
           </div>
         </CardContent>
       </Card>
@@ -110,11 +110,11 @@ export function AdminPlatformSettingsCard() {
               <div className="flex items-center gap-2">
                 <Broom className="h-5 w-5 text-amber-500 shrink-0" />
                 <h3 className="text-base font-bold text-foreground">
-                  Pembersihan Manual Storage R2 (Purge Orphan Images)
+                  Manual R2 Storage Purge (Purge Orphan Images)
                 </h3>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Hapus file gambar terisolasi/sampah di Cloudflare R2 yang tidak lagi terhubung ke database akibat pengunggahan yang terputus atau chapter yang dihapus.
+                Delete isolated/orphan image files in Cloudflare R2 that are no longer linked to the database due to interrupted uploads or deleted chapters.
               </p>
               <div className="pt-1 flex flex-col gap-2">
 
@@ -122,7 +122,7 @@ export function AdminPlatformSettingsCard() {
                   <div className="p-3 rounded-xl border border-amber-500/40 bg-amber-500/10 flex items-center gap-2 text-amber-600 dark:text-amber-400 text-xs font-medium">
                     <CircleNotch className="h-4 w-4 animate-spin shrink-0 text-amber-500" />
                     <span className="shimmer shimmer-color-amber-500">
-                      Memindai R2 bucket & membandingkan dengan 100+ record database...
+                      Scanning R2 bucket & comparing with database records...
                     </span>
                   </div>
                 )}
@@ -132,10 +132,10 @@ export function AdminPlatformSettingsCard() {
                     <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-semibold">
                       <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-ping shrink-0" />
                       <span>
-                        Pembersihan Selesai: {lastResult.purgedCount} file sampah terhapus ({lastResult.totalSizeMB} MB dibebaskan)
+                        Purge Completed: {lastResult.purgedCount} orphan files deleted ({lastResult.totalSizeMB} MB freed)
                       </span>
                     </div>
-                    <span className="text-[10px] text-muted-foreground font-mono">Pukul {lastResult.timestamp}</span>
+                    <span className="text-[10px] text-muted-foreground font-mono">At {lastResult.timestamp}</span>
                   </div>
                 )}
               </div>
@@ -152,12 +152,12 @@ export function AdminPlatformSettingsCard() {
                 {purging ? (
                   <>
                     <CircleNotch className="h-4 w-4 animate-spin" />
-                    <span>Memindai & Membersihkan...</span>
+                    <span>Scanning & Purging...</span>
                   </>
                 ) : (
                   <>
                     <Broom className="h-4 w-4" />
-                    <span>Purge File Gambar Sampah</span>
+                    <span>Purge Orphan Images</span>
                   </>
                 )}
               </Button>

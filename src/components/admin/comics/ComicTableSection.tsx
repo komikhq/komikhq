@@ -62,16 +62,16 @@ export function ComicTableSection() {
         <div>
           <CardTitle className="text-lg font-bold flex items-center gap-2">
             <BookOpen className="h-5 w-5 text-primary" />
-            <span>Katalog Komik</span>
+            <span>Comic Catalog</span>
           </CardTitle>
           <CardDescription className="text-xs">
-            Kelola data komik, sampul cover, genre, penulis, dan status publikasi di KomikHQ.
+            Manage comic data, cover artwork, genres, authors, and publication status on KomikHQ.
           </CardDescription>
         </div>
 
         <Button size="sm" className="gap-1.5 text-xs w-full sm:w-auto" onClick={handleOpenAdd}>
           <Plus className="h-4 w-4" />
-          <span>Tambah Komik Baru</span>
+          <span>Add New Comic</span>
         </Button>
       </CardHeader>
 
@@ -81,7 +81,7 @@ export function ComicTableSection() {
           <div className="relative w-full sm:w-80">
             <MagnifyingGlass className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Cari judul komik atau penulis..."
+              placeholder="Search comic title or author..."
               className="pl-9 text-xs h-9"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -93,7 +93,7 @@ export function ComicTableSection() {
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Semua Status</SelectItem>
+              <SelectItem value="all">All Statuses</SelectItem>
               <SelectItem value="ongoing">Ongoing</SelectItem>
               <SelectItem value="completed">Completed</SelectItem>
               <SelectItem value="hiatus">Hiatus</SelectItem>
@@ -107,23 +107,23 @@ export function ComicTableSection() {
             <thead className="bg-muted/60 text-muted-foreground font-semibold border-b border-border/60">
               <tr>
                 <th className="p-3">Cover</th>
-                <th className="p-3">Judul Komik</th>
-                <th className="p-3">Tipe</th>
-                <th className="p-3">Penulis</th>
-                <th className="p-3">Genre</th>
+                <th className="p-3">Comic Title</th>
+                <th className="p-3">Type</th>
+                <th className="p-3">Author</th>
+                <th className="p-3">Genres</th>
                 <th className="p-3">Chapters</th>
                 <th className="p-3">Status</th>
-                <th className="p-3 text-right">Aksi</th>
+                <th className="p-3 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40">
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="p-6 text-center text-muted-foreground">Memuat data komik...</td>
+                  <td colSpan={8} className="p-6 text-center text-muted-foreground">Loading comics...</td>
                 </tr>
               ) : comics.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="p-6 text-center text-muted-foreground">Tidak ada komik ditemukan.</td>
+                  <td colSpan={8} className="p-6 text-center text-muted-foreground">No comics found.</td>
                 </tr>
               ) : (
                 comics.map((c) => (
@@ -178,13 +178,13 @@ export function ComicTableSection() {
         {/* Pagination Bar */}
         {totalPages > 1 && (
           <div className="flex items-center justify-between pt-2">
-            <span className="text-xs text-muted-foreground">Halaman {page} dari {totalPages}</span>
+            <span className="text-xs text-muted-foreground">Page {page} of {totalPages}</span>
             <div className="flex items-center gap-2">
               <Button size="sm" variant="outline" disabled={page <= 1} onClick={() => setPage((p) => p - 1)} className="text-xs h-8">
-                Sebelumnya
+                Previous
               </Button>
               <Button size="sm" variant="outline" disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)} className="text-xs h-8">
-                Berikutnya
+                Next
               </Button>
             </div>
           </div>

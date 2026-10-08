@@ -15,7 +15,7 @@ export function AdminGuard({ children, redirectTo = "/" }: AdminGuardProps) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[350px] w-full p-8 text-center space-y-4">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent mx-auto" />
-        <p className="text-sm text-muted-foreground animate-pulse">Memeriksa hak akses Administrator...</p>
+        <p className="text-sm text-muted-foreground animate-pulse">Verifying Administrator access permissions...</p>
       </div>
     );
   }

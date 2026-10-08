@@ -23,7 +23,7 @@ export function AdminStatsOverviewCard() {
         const res = await fetch(`${API_BASE_URL}/v1/admin/stats`, {
           credentials: "include",
         });
-        if (!res.ok) throw new Error("Gagal mengambil statistik");
+        if (!res.ok) throw new Error("Failed to fetch statistics");
         const json = (await res.json()) as any;
         const data = json.data || json;
         setStatsData(data);
@@ -39,30 +39,30 @@ export function AdminStatsOverviewCard() {
 
   const stats = [
     {
-      title: "Total Pengguna",
-      value: isLoading ? "..." : (statsData?.totalUsers ?? 0).toLocaleString("id-ID"),
-      change: "Akun terdaftar di platform",
+      title: "Total Users",
+      value: isLoading ? "..." : (statsData?.totalUsers ?? 0).toLocaleString("en-US"),
+      change: "Registered platform accounts",
       icon: Users,
       color: "text-blue-500",
     },
     {
-      title: "Katalog Komik",
-      value: isLoading ? "..." : (statsData?.totalComics ?? 0).toLocaleString("id-ID"),
-      change: `${statsData?.totalChapters ?? 0} chapter dipublikasikan`,
+      title: "Comic Catalog",
+      value: isLoading ? "..." : (statsData?.totalComics ?? 0).toLocaleString("en-US"),
+      change: `${statsData?.totalChapters ?? 0} published chapters`,
       icon: BookOpen,
       color: "text-emerald-500",
     },
     {
-      title: "Total Pembacaan (Views)",
-      value: isLoading ? "..." : (statsData?.totalViews ?? 0).toLocaleString("id-ID"),
-      change: "Tercatat di sistem log",
+      title: "Total Views",
+      value: isLoading ? "..." : (statsData?.totalViews ?? 0).toLocaleString("en-US"),
+      change: "Recorded in system logs",
       icon: Eye,
       color: "text-purple-500",
     },
     {
-      title: "Administrator Active",
-      value: isLoading ? "..." : (statsData?.totalAdmins ?? 0).toLocaleString("id-ID"),
-      change: "Role admin terverifikasi",
+      title: "Active Administrators",
+      value: isLoading ? "..." : (statsData?.totalAdmins ?? 0).toLocaleString("en-US"),
+      change: "Verified admin accounts",
       icon: ShieldWarning,
       color: "text-amber-500",
     },

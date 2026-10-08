@@ -26,19 +26,19 @@ export function ChapterDeleteDialog({ chapter, open, onOpenChange, onConfirm }: 
       <AlertDialogContent className="max-w-md">
         <AlertDialogHeader>
           <AlertDialogTitle className="text-base font-bold text-destructive">
-            Hapus Chapter {chapter.chapterNumber} ({chapter.title || "Tanpa Judul"})?
+            Delete Chapter {chapter.chapterNumber} ({chapter.title || "Untitled"})?
           </AlertDialogTitle>
           <AlertDialogDescription className="text-xs">
-            Tindakan ini tidak dapat dibatalkan. Seluruh data chapter beserta gambar {chapter.totalPages} halaman komik akan dihapus secara permanen dari sistem.
+            This action cannot be undone. All chapter metadata along with {chapter.totalPages} comic page images will be permanently deleted from the system.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel className="text-xs">Batal</AlertDialogCancel>
+          <AlertDialogCancel className="text-xs">Cancel</AlertDialogCancel>
           <AlertDialogAction
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90 text-xs"
             onClick={onConfirm}
           >
-            Hapus Chapter
+            Delete Chapter
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

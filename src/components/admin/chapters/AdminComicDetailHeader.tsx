@@ -21,7 +21,7 @@ export function AdminComicDetailHeader({ comicId }: AdminComicDetailHeaderProps)
           setComic(data);
         }
       } catch (err) {
-        console.error("Gagal memuat detail komik", err);
+        console.error("Failed to load comic details", err);
       } finally {
         setLoading(false);
       }
@@ -30,13 +30,13 @@ export function AdminComicDetailHeader({ comicId }: AdminComicDetailHeaderProps)
   }, [comicId]);
 
   if (loading) {
-    return <div className="p-4 bg-muted/20 rounded-xl animate-pulse text-xs text-muted-foreground">Memuat info komik...</div>;
+    return <div className="p-4 bg-muted/20 rounded-xl animate-pulse text-xs text-muted-foreground">Loading comic info...</div>;
   }
 
   if (!comic || !comic.comic) {
     return (
       <div className="p-4 bg-destructive/10 text-destructive rounded-xl text-xs">
-        Komik tidak ditemukan. <a href="/dashboard/comics" className="underline font-semibold">Kembali ke katalog</a>
+        Comic not found. <a href="/dashboard/comics" className="underline font-semibold">Back to catalog</a>
       </div>
     );
   }
@@ -57,7 +57,7 @@ export function AdminComicDetailHeader({ comicId }: AdminComicDetailHeaderProps)
               {item.status}
             </Badge>
           </div>
-          <p className="text-xs text-muted-foreground line-clamp-1">{item.synopsis || "Tidak ada sinopsis."}</p>
+          <p className="text-xs text-muted-foreground line-clamp-1">{item.synopsis || "No synopsis available."}</p>
           <div className="flex flex-wrap items-center gap-3 pt-0.5 text-xs text-muted-foreground">
             <span className="flex items-center gap-1">
               <BookOpen className="h-3.5 w-3.5 text-primary" />

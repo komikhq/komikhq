@@ -40,7 +40,7 @@ export function GenreComboboxPicker({
         >
           {selectedGenres.length === 0 ? (
             <span className="text-xs text-muted-foreground italic px-1">
-              Belum ada genre dipilih. Klik pemilih genre di bawah.
+              No genres selected yet. Click the selector below.
             </span>
           ) : (
             selectedGenres.map((g) => (
@@ -57,7 +57,7 @@ export function GenreComboboxPicker({
                     onToggleGenre(g.id);
                   }}
                   className="rounded-full p-0.5 hover:bg-primary-foreground/20 text-primary-foreground/80 hover:text-primary-foreground transition-colors cursor-pointer"
-                  title={`Hapus ${g.name}`}
+                  title={`Remove ${g.name}`}
                 >
                   <X className="h-3 w-3" />
                 </button>
@@ -72,7 +72,7 @@ export function GenreComboboxPicker({
             type="button"
             onClick={() => setIsExpanded((prev) => !prev)}
             className="absolute right-2 top-2 p-1 rounded-md bg-background/80 hover:bg-accent border border-border/60 text-muted-foreground hover:text-foreground transition-colors cursor-pointer shadow-2xs z-10"
-            title={isExpanded ? "Ringkaskan ke 1 baris (Horizontal Scroll)" : "Tampilkan semua baris baru (Multi-Row Grid)"}
+            title={isExpanded ? "Collapse to single row (Horizontal Scroll)" : "Expand all rows (Multi-Row Grid)"}
           >
             {isExpanded ? <CaretUp className="h-3.5 w-3.5" /> : <CaretDown className="h-3.5 w-3.5" />}
           </button>
@@ -91,8 +91,8 @@ export function GenreComboboxPicker({
           >
             <span className="truncate">
               {selectedGenreIds.length > 0
-                ? `${selectedGenreIds.length} Genre Terpilih`
-                : "Pilih / Cari Genre Komik..."}
+                ? `${selectedGenreIds.length} Genres Selected`
+                : "Select / Search Comic Genres..."}
             </span>
             <CaretDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
@@ -106,7 +106,7 @@ export function GenreComboboxPicker({
           <div className="relative shrink-0">
             <MagnifyingGlass className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
             <Input
-              placeholder="Cari nama genre..."
+              placeholder="Search genre..."
               className="pl-8 text-xs h-8"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -116,7 +116,7 @@ export function GenreComboboxPicker({
           <div className="min-h-0 max-h-[min(18rem,calc(100dvh-10rem))] flex-1 overflow-y-auto overscroll-contain touch-pan-y pr-1 text-xs">
             {filteredGenres.length === 0 ? (
               <div className="p-3 text-center text-muted-foreground text-xs italic">
-                Genre tidak ditemukan.
+                No genres found.
               </div>
             ) : (
               filteredGenres.map((g) => {

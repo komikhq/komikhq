@@ -251,7 +251,7 @@ export function SiteHeader() {
                       onClick={() => (window.location.href = "/dashboard")}
                     >
                       <ShieldCheck className="mr-2 h-4 w-4 text-primary" />
-                      <span>Dashboard Admin</span>
+                      <span>Admin Dashboard</span>
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuItem

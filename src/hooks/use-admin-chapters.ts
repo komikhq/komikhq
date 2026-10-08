@@ -29,10 +29,10 @@ export function useAdminChapters(comicId: string) {
       if (res.ok && data.chapters) {
         setChapters(data.chapters);
       } else {
-        toast.error(data.error || "Gagal memuat daftar chapter");
+        toast.error(data.error || "Failed to load chapter list");
       }
     } catch (err: any) {
-      toast.error(err.message || "Gagal mengambil data chapter");
+      toast.error(err.message || "Failed to fetch chapter data");
     } finally {
       setLoading(false);
     }
@@ -54,7 +54,7 @@ export function useAdminChapters(comicId: string) {
   ) => {
     setSubmitting(true);
     try {
-      onProgress?.(5, "Menginisialisasi chapter baru...");
+      onProgress?.(5, "Initializing new chapter...");
 
       // Step 1: Init chapter
       const initRes = await fetch(`${getApiUrl()}/v1/admin/comics/${comicId}/chapters/init`, {
@@ -72,7 +72,7 @@ export function useAdminChapters(comicId: string) {
 
       const initData: any = await initRes.json();
       if (!initRes.ok || !initData.success || !initData.chapter?.id) {
-        throw new Error(initData.error || "Gagal menginisialisasi chapter.");
+        throw new Error(initData.error || "Failed to initialize chapter.");
       }
 
       const chapterId = initData.chapter.id;
@@ -84,7 +84,7 @@ export function useAdminChapters(comicId: string) {
         const pageFile = input.pages[i];
         const percent = 10 + Math.floor(((i + 1) / total) * 80);
 
-        onProgress?.(percent, `Mengunggah halaman ${pageNum} dari ${total}...`);
+        onProgress?.(percent, `Uploading page ${pageNum} of ${total}...`);
 
         let uploaded = false;
         let lastErr = "";
@@ -109,20 +109,20 @@ export function useAdminChapters(comicId: string) {
               uploaded = true;
               break;
             } else {
-              lastErr = pageData.error || "Gagal mengunggah halaman.";
+              lastErr = pageData.error || "Failed to upload page.";
             }
           } catch (err: any) {
-            lastErr = err.message || "Kesalahan jaringan saat mengunggah halaman.";
+            lastErr = err.message || "Network error while uploading page.";
           }
         }
 
         if (!uploaded) {
-          throw new Error(`Gagal mengunggah halaman ${pageNum}: ${lastErr}`);
+          throw new Error(`Failed to upload page ${pageNum}: ${lastErr}`);
         }
       }
 
       // Step 3: Finalize
-      onProgress?.(95, "Memfinalisasi rilis chapter...");
+      onProgress?.(95, "Finalizing chapter release...");
       const finalizeRes = await fetch(
         `${getApiUrl()}/v1/admin/comics/${comicId}/chapters/${chapterId}/finalize`,
         {
@@ -135,15 +135,15 @@ export function useAdminChapters(comicId: string) {
 
       const finalizeData: any = await finalizeRes.json();
       if (!finalizeRes.ok || !finalizeData.success) {
-        throw new Error(finalizeData.error || "Gagal memfinalisasi chapter.");
+        throw new Error(finalizeData.error || "Failed to finalize chapter.");
       }
 
-      onProgress?.(100, "Berhasil mengunggah semua halaman chapter!");
-      toast.success("Chapter baru berhasil dibuat.");
+      onProgress?.(100, "All chapter pages uploaded successfully!");
+      toast.success("New chapter successfully created.");
       fetchChapters();
       return true;
     } catch (err: any) {
-      toast.error(err.message || "Gagal mengunggah chapter.");
+      toast.error(err.message || "Failed to upload chapter.");
       return false;
     } finally {
       setSubmitting(false);
@@ -160,15 +160,15 @@ export function useAdminChapters(comicId: string) {
       });
       const data: any = await res.json();
       if (res.ok && data.success) {
-        toast.success("Chapter baru berhasil dibuat.");
+        toast.success("New chapter successfully created.");
         fetchChapters();
         return true;
       } else {
-        toast.error(data.error || "Gagal menambahkan chapter baru");
+        toast.error(data.error || "Failed to add new chapter");
         return false;
       }
     } catch (err: any) {
-      toast.error(err.message || "Gagal mengunggah chapter");
+      toast.error(err.message || "Failed to upload chapter");
       return false;
     } finally {
       setSubmitting(false);
@@ -183,15 +183,15 @@ export function useAdminChapters(comicId: string) {
       });
       const data: any = await res.json();
       if (res.ok && data.success) {
-        toast.success(data.message || "Chapter berhasil dihapus");
+        toast.success(data.message || "Chapter successfully deleted.");
         fetchChapters();
         return true;
       } else {
-        toast.error(data.error || "Gagal menghapus chapter");
+        toast.error(data.error || "Failed to delete chapter");
         return false;
       }
     } catch (err: any) {
-      toast.error(err.message || "Gagal menghapus chapter");
+      toast.error(err.message || "Failed to delete chapter");
       return false;
     }
   };

@@ -47,10 +47,10 @@ export function useAdminComics() {
         setTotalPages(data.pagination?.totalPages || 1);
         setTotalCount(data.pagination?.total || 0);
       } else {
-        toast.error(data.error || "Gagal memuat katalog komik");
+        toast.error(data.error || "Failed to load comic catalog");
       }
     } catch (err: any) {
-      toast.error(err.message || "Gagal mengambil data komik");
+      toast.error(err.message || "Failed to fetch comics");
     } finally {
       setLoading(false);
     }
@@ -70,15 +70,15 @@ export function useAdminComics() {
       });
       const data: any = await res.json();
       if (res.ok && data.success) {
-        toast.success("Komik baru berhasil ditambahkan.");
+        toast.success("New comic successfully added.");
         fetchComics();
         return true;
       } else {
-        toast.error(data.error || "Gagal menambahkan komik");
+        toast.error(data.error || "Failed to add comic");
         return false;
       }
     } catch (err: any) {
-      toast.error(err.message || "Gagal mengunggah komik");
+      toast.error(err.message || "Failed to upload comic");
       return false;
     } finally {
       setSubmitting(false);
@@ -95,15 +95,15 @@ export function useAdminComics() {
       });
       const data: any = await res.json();
       if (res.ok && data.success) {
-        toast.success("Data komik berhasil diperbarui.");
+        toast.success("Comic successfully updated.");
         fetchComics();
         return true;
       } else {
-        toast.error(data.error || "Gagal memperbarui komik");
+        toast.error(data.error || "Failed to update comic");
         return false;
       }
     } catch (err: any) {
-      toast.error(err.message || "Gagal memperbarui komik");
+      toast.error(err.message || "Failed to update comic");
       return false;
     } finally {
       setSubmitting(false);
@@ -118,15 +118,15 @@ export function useAdminComics() {
       });
       const data: any = await res.json();
       if (res.ok && data.success) {
-        toast.success(data.message || "Komik berhasil dihapus");
+        toast.success(data.message || "Comic successfully deleted.");
         fetchComics();
         return true;
       } else {
-        toast.error(data.error || "Gagal menghapus komik");
+        toast.error(data.error || "Failed to delete comic");
         return false;
       }
     } catch (err: any) {
-      toast.error(err.message || "Gagal menghapus komik");
+      toast.error(err.message || "Failed to delete comic");
       return false;
     }
   };

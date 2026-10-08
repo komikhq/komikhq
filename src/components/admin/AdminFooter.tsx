@@ -21,7 +21,7 @@ export function AdminFooter() {
           <span>Control Panel & Dashboard</span>
         </div>
         <p className="text-sm text-muted-foreground">
-          Kelola data pengguna, sistem komik, analitik platform, dan infrastruktur KomikHQ.
+          Manage users, comic catalog, platform analytics, and KomikHQ infrastructure.
         </p>
       </div>
 
