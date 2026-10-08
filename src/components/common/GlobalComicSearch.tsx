@@ -17,7 +17,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { Popover, PopoverAnchor, PopoverContent } from "@/components/ui/popover"
 
 const MIN_QUERY_LENGTH = 2
 const MAX_SUGGESTIONS = 6
@@ -48,9 +47,11 @@ export function GlobalComicSearch() {
   const [isDesktopOpen, setIsDesktopOpen] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
   const [retryCount, setRetryCount] = useState(0)
+  const desktopContainerRef = useRef<HTMLDivElement>(null)
   const mobileInputRef = useRef<HTMLInputElement>(null)
   const normalizedQuery = query.trim()
 
+  // Debounced API fetch for search suggestions
   useEffect(() => {
     if (normalizedQuery.length < MIN_QUERY_LENGTH) {
       setSuggestions([])
@@ -94,16 +95,66 @@ export function GlobalComicSearch() {
     }
   }, [normalizedQuery, retryCount])
 
+  // Click-outside listener for the desktop dropdown
+  useEffect(() => {
+    function handlePointerDown(event: MouseEvent | TouchEvent) {
+      if (
+        desktopContainerRef.current &&
+        !desktopContainerRef.current.contains(event.target as Node)
+      ) {
+        setIsDesktopOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handlePointerDown)
+    document.addEventListener("touchstart", handlePointerDown)
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown)
+      document.removeEventListener("touchstart", handlePointerDown)
+    }
+  }, [])
+
   const handleQueryChange = (value: string) => {
     setQuery(value)
     setActiveIndex(0)
     setSuggestions([])
-    setIsLoading(value.trim().length >= MIN_QUERY_LENGTH)
     setHasSearched(false)
     setHasError(false)
+
+    const trimmed = value.trim()
+    if (trimmed.length >= MIN_QUERY_LENGTH) {
+      setIsLoading(true)
+      setIsDesktopOpen(true)
+    } else {
+      setIsLoading(false)
+    }
   }
 
-  const handleSearchKeyDown = (
+  const handleDesktopKeyDown = (
+    event: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (event.key === "Escape") {
+      event.preventDefault()
+      setIsDesktopOpen(false)
+      return
+    }
+
+    if (!suggestions.length) return
+
+    if (event.key === "ArrowDown") {
+      event.preventDefault()
+      setActiveIndex((current) => (current + 1) % suggestions.length)
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault()
+      setActiveIndex(
+        (current) => (current - 1 + suggestions.length) % suggestions.length
+      )
+    } else if (event.key === "Enter") {
+      event.preventDefault()
+      window.location.href = `/komik/${suggestions[activeIndex].slug}`
+    }
+  }
+
+  const handleMobileKeyDown = (
     event: React.KeyboardEvent<HTMLInputElement>
   ) => {
     if (!suggestions.length) return
@@ -121,6 +172,9 @@ export function GlobalComicSearch() {
       window.location.href = `/komik/${suggestions[activeIndex].slug}`
     }
   }
+
+  const showDesktopDropdown =
+    isDesktopOpen && normalizedQuery.length >= MIN_QUERY_LENGTH
 
   const renderSearchResults = (idPrefix: string) => (
     <SearchSuggestionList
@@ -142,48 +196,55 @@ export function GlobalComicSearch() {
 
   return (
     <>
-      <Popover open={isDesktopOpen} onOpenChange={setIsDesktopOpen}>
-        <div className="hidden w-60 md:block lg:w-64">
-          <PopoverAnchor asChild>
-            <form
-              onSubmit={(event) => event.preventDefault()}
-              className="relative"
-            >
-              <MagnifyingGlass className="absolute top-2.5 left-3 size-4 text-muted-foreground" />
-              <Input
-                type="search"
-                role="combobox"
-                aria-label="Search comics"
-                aria-autocomplete="list"
-                aria-expanded={isDesktopOpen}
-                aria-controls="desktop-comic-search-results"
-                aria-activedescendant={
-                  suggestions[activeIndex]
-                    ? `desktop-comic-search-option-${activeIndex}`
-                    : undefined
-                }
-                autoComplete="off"
-                maxLength={80}
-                placeholder="Search comics..."
-                className="h-9 w-full pl-9 text-sm"
-                value={query}
-                onFocus={() => setIsDesktopOpen(true)}
-                onChange={(event) => handleQueryChange(event.target.value)}
-                onKeyDown={handleSearchKeyDown}
-              />
-            </form>
-          </PopoverAnchor>
-          <PopoverContent
-            align="end"
-            sideOffset={8}
-            className="w-[min(24rem,calc(100vw-2rem))] p-2"
-            onOpenAutoFocus={(event) => event.preventDefault()}
+      {/* ── Desktop: Custom Dropdown (no Radix Popover) ── */}
+      <div
+        ref={desktopContainerRef}
+        className="relative hidden w-60 md:block lg:w-64"
+      >
+        <form
+          onSubmit={(event) => event.preventDefault()}
+          className="relative"
+        >
+          <MagnifyingGlass className="absolute top-2.5 left-3 size-4 text-muted-foreground" />
+          <Input
+            type="search"
+            role="combobox"
+            aria-label="Search comics"
+            aria-autocomplete="list"
+            aria-expanded={showDesktopDropdown}
+            aria-controls="desktop-comic-search-results"
+            aria-activedescendant={
+              suggestions[activeIndex]
+                ? `desktop-comic-search-option-${activeIndex}`
+                : undefined
+            }
+            autoComplete="off"
+            maxLength={80}
+            placeholder="Search comics..."
+            className="h-9 w-full pl-9 text-sm"
+            value={query}
+            onFocus={() => setIsDesktopOpen(true)}
+            onChange={(event) => handleQueryChange(event.target.value)}
+            onKeyDown={handleDesktopKeyDown}
+          />
+        </form>
+
+        {showDesktopDropdown && (
+          <div
+            className="absolute top-full right-0 z-50 mt-2 w-[min(24rem,calc(100vw-2rem))] rounded-2xl border bg-popover p-2 text-popover-foreground shadow-xl ring-1 ring-foreground/5 dark:ring-foreground/10"
+            onMouseDown={(event) => {
+              // Prevent input blur when clicking inside dropdown
+              // (links handle their own navigation via href)
+              if ((event.target as HTMLElement).closest("a")) return
+              event.preventDefault()
+            }}
           >
             {renderSearchResults("desktop")}
-          </PopoverContent>
-        </div>
-      </Popover>
+          </div>
+        )}
+      </div>
 
+      {/* ── Mobile: Full-screen Dialog (retained, no dismiss conflict) ── */}
       <Dialog open={isMobileOpen} onOpenChange={setIsMobileOpen}>
         <Button
           type="button"
@@ -234,7 +295,7 @@ export function GlobalComicSearch() {
                 className="h-10 w-full pl-9"
                 value={query}
                 onChange={(event) => handleQueryChange(event.target.value)}
-                onKeyDown={handleSearchKeyDown}
+                onKeyDown={handleMobileKeyDown}
               />
             </form>
             <Button
@@ -255,6 +316,8 @@ export function GlobalComicSearch() {
     </>
   )
 }
+
+// ─── Sub-components (unchanged logic, kept in same file) ─────────────────────
 
 interface SearchSuggestionListProps {
   idPrefix: string
