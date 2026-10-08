@@ -1,0 +1,13 @@
+---
+import LegalLayout from "@/layouts/LegalLayout.astro"
+import { Content, frontmatter } from "@/content/legal/contact.md"
+---
+
+<LegalLayout
+  title={frontmatter.title}
+  description={frontmatter.description}
+  lastUpdated={frontmatter.lastUpdated}
+  currentSlug="contact"
+>
+  <Content />
+</LegalLayout>

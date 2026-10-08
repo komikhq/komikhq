@@ -3,6 +3,7 @@ import "@/styles/global.css"
 import { ClientRouter } from "astro:transitions"
 import { SiteHeader } from "@/components/common/SiteHeader"
 import { BottomNav } from "@/components/common/BottomNav"
+import { SiteFooter } from "@/components/common/SiteFooter"
 import { Toaster } from "@/components/ui/sonner"
 import { GlobalPresenceListener } from "@/components/common/GlobalPresenceListener"
 import { CookieConsent } from "@/components/common/CookieConsent"
@@ -99,10 +100,10 @@ const {
       <main class={isReaderMode ? "flex-1" : "flex-1 pb-16 md:pb-0"}>
         <slot />
       </main>
+      {!isReaderMode && <SiteFooter client:load />}
       {!isReaderMode && <BottomNav client:load />}
       <Toaster client:load position="top-right" richColors />
       <CookieConsent client:load />
     </div>
   </body>
 </html>
-

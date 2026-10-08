@@ -7,3 +7,5 @@ export const SITE_URL = "https://komikhq.com"
 
 export const SITE_TAGLINE =
   "Read comics, manga, manhua & manhwa — free and distraction-free."
+
+export const SITE_CONTACT_EMAIL = "contact@komikhq.com"

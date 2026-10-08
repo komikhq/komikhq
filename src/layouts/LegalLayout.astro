@@ -1,0 +1,165 @@
+---
+import RootLayout from "@/layouts/RootLayout.astro"
+import { Badge } from "@/components/ui/badge"
+import {
+  ShieldCheck,
+  FileText,
+  Copyright,
+  EnvelopeSimple,
+  SlidersHorizontal,
+  CaretRight,
+  Clock,
+} from "@phosphor-icons/react"
+
+interface Props {
+  title: string
+  description?: string
+  lastUpdated?: string
+  currentSlug: "privacy" | "terms" | "dmca" | "contact"
+}
+
+const {
+  title,
+  description,
+  lastUpdated = "October 8, 2026",
+  currentSlug,
+} = Astro.props
+
+const legalNav = [
+  {
+    slug: "privacy",
+    label: "Privacy Policy",
+    href: "/privacy",
+    icon: ShieldCheck,
+  },
+  { slug: "terms", label: "Terms of Service", href: "/terms", icon: FileText },
+  { slug: "dmca", label: "DMCA Policy", href: "/dmca", icon: Copyright },
+  {
+    slug: "contact",
+    label: "Contact Us",
+    href: "/contact",
+    icon: EnvelopeSimple,
+  },
+]
+---
+
+<RootLayout title={`${title} - KomikHQ`} description={description}>
+  <div class="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
+    <!-- Breadcrumb -->
+    <nav
+      aria-label="Breadcrumb"
+      class="mb-6 flex items-center gap-1.5 text-xs text-muted-foreground"
+    >
+      <a href="/" class="transition-colors hover:text-foreground">Home</a>
+      <CaretRight className="size-3.5 opacity-60" />
+      <span>Legal</span>
+      <CaretRight className="size-3.5 opacity-60" />
+      <span class="font-medium text-foreground">{title}</span>
+    </nav>
+
+    <!-- Header Banner -->
+    <header class="mb-8 border-b border-border/80 pb-6">
+      <div class="flex flex-wrap items-center gap-2 pb-2">
+        <Badge
+          variant="secondary"
+          className="gap-1 px-2.5 py-0.5 text-xs font-normal"
+        >
+          <ShieldCheck className="size-3 text-primary" />
+          Official Policy
+        </Badge>
+        <span class="flex items-center gap-1 text-xs text-muted-foreground">
+          <Clock className="size-3.5" />
+          Last updated: {lastUpdated}
+        </span>
+      </div>
+      <h1
+        class="font-heading text-2xl font-bold tracking-tight text-foreground sm:text-3xl"
+      >
+        {title}
+      </h1>
+      {
+        description && (
+          <p class="mt-2 text-sm leading-relaxed text-muted-foreground sm:text-base">
+            {description}
+          </p>
+        )
+      }
+    </header>
+
+    <!-- Legal Navigation Tabs -->
+    <div
+      class="mb-8 flex flex-wrap gap-1.5 rounded-2xl border border-border/70 bg-muted/30 p-1.5 backdrop-blur-sm"
+    >
+      {
+        legalNav.map((item) => {
+          const isActive = item.slug === currentSlug
+          const Icon = item.icon
+          return (
+            <a
+              href={item.href}
+              class={
+                isActive
+                  ? "flex items-center gap-2 rounded-xl bg-background px-3.5 py-2 text-xs font-semibold text-foreground shadow-sm ring-1 ring-border/50 transition-all dark:bg-card"
+                  : "flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-medium text-muted-foreground transition-all hover:bg-background/50 hover:text-foreground"
+              }
+            >
+              <Icon
+                className={
+                  isActive ? "size-4 text-primary" : "size-4 opacity-70"
+                }
+              />
+              <span>{item.label}</span>
+            </a>
+          )
+        })
+      }
+    </div>
+
+    <!-- Quick Cookie Control Callout on Privacy Page -->
+    {
+      currentSlug === "privacy" && (
+        <div class="mb-8 flex flex-col gap-3 rounded-2xl border border-primary/20 bg-primary/5 p-4 sm:flex-row sm:items-center sm:justify-between dark:bg-primary/10">
+          <div class="space-y-0.5">
+            <h4 class="text-xs font-semibold text-foreground">
+              Manage Your Cookie Preferences
+            </h4>
+            <p class="text-xs text-muted-foreground">
+              You can adjust Google Analytics and Microsoft Clarity tracking
+              permissions at any time.
+            </p>
+          </div>
+          <button
+            type="button"
+            id="open-cookie-settings-btn"
+            class="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-4xl bg-primary px-3.5 py-1.5 text-xs font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
+          >
+            <SlidersHorizontal className="size-3.5" />
+            Cookie Settings
+          </button>
+        </div>
+      )
+    }
+
+    <!-- Markdown Content Container (Fumadocs / Starlight styled) -->
+    <main
+      class="rounded-3xl border border-border/80 bg-card/60 p-6 shadow-sm backdrop-blur-sm sm:p-10 dark:bg-card/40"
+    >
+      <article
+        class="prose max-w-none prose-neutral dark:prose-invert prose-headings:font-heading prose-headings:font-bold prose-headings:tracking-tight prose-h2:mt-8 prose-h2:mb-4 prose-h2:border-b prose-h2:border-border/60 prose-h2:pb-2 prose-h2:text-lg prose-h3:mt-6 prose-h3:text-base prose-p:text-sm prose-p:leading-relaxed prose-a:font-medium prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-blockquote:rounded-r-2xl prose-blockquote:border-l-4 prose-blockquote:border-l-primary prose-blockquote:bg-muted/40 prose-blockquote:px-4 prose-blockquote:py-2 prose-blockquote:text-xs prose-code:rounded-lg prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:font-mono prose-code:text-xs prose-code:before:content-none prose-code:after:content-none prose-li:text-sm prose-hr:my-8 prose-hr:border-border/60"
+      >
+        <slot />
+      </article>
+    </main>
+  </div>
+</RootLayout>
+
+<script is:inline>
+  document.addEventListener("astro:page-load", () => {
+    const btn = document.getElementById("open-cookie-settings-btn")
+    if (btn) {
+      btn.addEventListener("click", () => {
+        window.dispatchEvent(new CustomEvent("komikhq:open-cookie-settings"))
+      })
+    }
+  })
+</script>
