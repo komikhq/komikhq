@@ -10,6 +10,7 @@ import {
   FileText,
   Copyright,
   Compass,
+  ListBullets,
   BookmarkSimple,
   ClockCounterClockwise,
 } from "@phosphor-icons/react"
@@ -70,6 +71,7 @@ export function SiteFooter() {
                   href="/list-all"
                   className="flex items-center gap-2 transition-colors hover:text-foreground"
                 >
+                  <ListBullets className="size-3.5" />
                   <span>All Manga List</span>
                 </a>
               </li>
