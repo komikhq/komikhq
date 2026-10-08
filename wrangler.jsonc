@@ -5,13 +5,13 @@
     "global_fetch_strictly_public"
   ],
   "name": "komikhq",
-  "workers_dev": false,
+  "workers_dev": true,
   "preview_urls": false,
   "keep_vars": true,
 
   "routes": [
     {
-      "pattern": "komikhq.com",
+      "pattern": "web.komikhq.dpdns.org",
       "custom_domain": true
     }
   ],
