@@ -1,11 +1,11 @@
 ---
-import RootLayout from "@/layouts/RootLayout.astro";
-import { ListAllFilterBar } from "@/components/list-all/ListAllFilterBar";
-import { ListAllComicTable } from "@/components/list-all/ListAllComicTable";
+import RootLayout from "@/layouts/RootLayout.astro"
+import { ListAllFilterBar } from "@/components/list-all/ListAllFilterBar"
+import { ListAllComicTable } from "@/components/list-all/ListAllComicTable"
 ---
 
 <RootLayout title="Daftar Komik A-Z - KomikHQ">
-  <div class="flex flex-col gap-6 pb-20 pt-4 px-4 max-w-screen-2xl mx-auto">
+  <div class="mx-auto flex max-w-screen-2xl flex-col gap-6 px-4 pt-4 pb-20">
     <ListAllFilterBar client:load />
     <ListAllComicTable client:load />
   </div>

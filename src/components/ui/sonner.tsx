@@ -1,10 +1,16 @@
-import "sonner/dist/styles.css";
-import { useTheme } from "@/hooks/use-theme";
-import { Toaster as Sonner, type ToasterProps } from "sonner";
-import { CheckCircleIcon, InfoIcon, WarningIcon, XCircleIcon, SpinnerIcon } from "@phosphor-icons/react";
+import "sonner/dist/styles.css"
+import { useTheme } from "@/hooks/use-theme"
+import { Toaster as Sonner, type ToasterProps } from "sonner"
+import {
+  CheckCircleIcon,
+  InfoIcon,
+  WarningIcon,
+  XCircleIcon,
+  SpinnerIcon,
+} from "@phosphor-icons/react"
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { resolvedTheme } = useTheme();
+  const { resolvedTheme } = useTheme()
 
   return (
     <Sonner
@@ -23,15 +29,19 @@ const Toaster = ({ ...props }: ToasterProps) => {
         },
       }}
       icons={{
-        success: <CheckCircleIcon className="size-4 text-emerald-500 shrink-0" />,
-        info: <InfoIcon className="size-4 text-sky-500 shrink-0" />,
-        warning: <WarningIcon className="size-4 text-amber-500 shrink-0" />,
-        error: <XCircleIcon className="size-4 text-destructive shrink-0" />,
-        loading: <SpinnerIcon className="size-4 animate-spin text-primary shrink-0" />,
+        success: (
+          <CheckCircleIcon className="size-4 shrink-0 text-emerald-500" />
+        ),
+        info: <InfoIcon className="size-4 shrink-0 text-sky-500" />,
+        warning: <WarningIcon className="size-4 shrink-0 text-amber-500" />,
+        error: <XCircleIcon className="size-4 shrink-0 text-destructive" />,
+        loading: (
+          <SpinnerIcon className="size-4 shrink-0 animate-spin text-primary" />
+        ),
       }}
       {...props}
     />
-  );
-};
+  )
+}
 
-export { Toaster };
+export { Toaster }

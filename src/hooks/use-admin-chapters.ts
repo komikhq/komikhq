@@ -1,99 +1,106 @@
-import { useState, useEffect, useCallback } from "react";
-import { toast } from "sonner";
+import { useState, useEffect, useCallback } from "react"
+import { toast } from "sonner"
 
 export interface ChapterItem {
-  id: string;
-  comicId: string;
-  chapterNumber: string;
-  title?: string | null;
-  slug: string;
-  totalPages: number;
-  accessTier?: string | null;
-  isEarlyAccess: boolean;
-  publishedAt: string;
+  id: string
+  comicId: string
+  chapterNumber: string
+  title?: string | null
+  slug: string
+  totalPages: number
+  accessTier?: string | null
+  isEarlyAccess: boolean
+  publishedAt: string
 }
 
 export function useAdminChapters(comicId: string) {
-  const [chapters, setChapters] = useState<ChapterItem[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
+  const [chapters, setChapters] = useState<ChapterItem[]>([])
+  const [loading, setLoading] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
 
-  const getApiUrl = () => (window as any).__PUBLIC_API_URL__ || "http://localhost:8787";
+  const getApiUrl = () =>
+    (window as any).__PUBLIC_API_URL__ || "http://localhost:8787"
 
   const fetchChapters = useCallback(async () => {
-    if (!comicId) return;
-    setLoading(true);
+    if (!comicId) return
+    setLoading(true)
     try {
-      const res = await fetch(`${getApiUrl()}/v1/admin/comics/${comicId}/chapters`, { credentials: "include" });
-      const data: any = await res.json();
+      const res = await fetch(
+        `${getApiUrl()}/v1/admin/comics/${comicId}/chapters`,
+        { credentials: "include" }
+      )
+      const data: any = await res.json()
       if (res.ok && data.chapters) {
-        setChapters(data.chapters);
+        setChapters(data.chapters)
       } else {
-        toast.error(data.error || "Failed to load chapter list");
+        toast.error(data.error || "Failed to load chapter list")
       }
     } catch (err: any) {
-      toast.error(err.message || "Failed to fetch chapter data");
+      toast.error(err.message || "Failed to fetch chapter data")
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  }, [comicId]);
+  }, [comicId])
 
   useEffect(() => {
-    fetchChapters();
-  }, [fetchChapters]);
+    fetchChapters()
+  }, [fetchChapters])
 
   const createChapterBatch = async (
     input: {
-      chapterNumber: string;
-      title?: string;
-      accessTier?: string;
-      isEarlyAccess?: boolean;
-      pages: File[];
+      chapterNumber: string
+      title?: string
+      accessTier?: string
+      isEarlyAccess?: boolean
+      pages: File[]
     },
     onProgress?: (progress: number, stepText: string) => void
   ) => {
-    setSubmitting(true);
+    setSubmitting(true)
     try {
-      onProgress?.(5, "Initializing new chapter...");
+      onProgress?.(5, "Initializing new chapter...")
 
       // Step 1: Init chapter
-      const initRes = await fetch(`${getApiUrl()}/v1/admin/comics/${comicId}/chapters/init`, {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chapterNumber: input.chapterNumber,
-          title: input.title,
-          accessTier: input.accessTier || "free",
-          isEarlyAccess: input.isEarlyAccess || false,
-          totalPages: input.pages.length,
-        }),
-      });
+      const initRes = await fetch(
+        `${getApiUrl()}/v1/admin/comics/${comicId}/chapters/init`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chapterNumber: input.chapterNumber,
+            title: input.title,
+            accessTier: input.accessTier || "free",
+            isEarlyAccess: input.isEarlyAccess || false,
+            totalPages: input.pages.length,
+          }),
+        }
+      )
 
-      const initData: any = await initRes.json();
+      const initData: any = await initRes.json()
       if (!initRes.ok || !initData.success || !initData.chapter?.id) {
-        throw new Error(initData.error || "Failed to initialize chapter.");
+        throw new Error(initData.error || "Failed to initialize chapter.")
       }
 
-      const chapterId = initData.chapter.id;
-      const total = input.pages.length;
+      const chapterId = initData.chapter.id
+      const total = input.pages.length
 
       // Step 2: Upload pages one by one (or batch) with retry
       for (let i = 0; i < total; i++) {
-        const pageNum = i + 1;
-        const pageFile = input.pages[i];
-        const percent = 10 + Math.floor(((i + 1) / total) * 80);
+        const pageNum = i + 1
+        const pageFile = input.pages[i]
+        const percent = 10 + Math.floor(((i + 1) / total) * 80)
 
-        onProgress?.(percent, `Uploading page ${pageNum} of ${total}...`);
+        onProgress?.(percent, `Uploading page ${pageNum} of ${total}...`)
 
-        let uploaded = false;
-        let lastErr = "";
+        let uploaded = false
+        let lastErr = ""
 
         for (let attempt = 1; attempt <= 3; attempt++) {
           try {
-            const pageFormData = new FormData();
-            pageFormData.append("pageNumber", pageNum.toString());
-            pageFormData.append("file", pageFile);
+            const pageFormData = new FormData()
+            pageFormData.append("pageNumber", pageNum.toString())
+            pageFormData.append("file", pageFile)
 
             const pageRes = await fetch(
               `${getApiUrl()}/v1/admin/comics/${comicId}/chapters/${chapterId}/pages/upload`,
@@ -102,27 +109,27 @@ export function useAdminChapters(comicId: string) {
                 credentials: "include",
                 body: pageFormData,
               }
-            );
+            )
 
-            const pageData: any = await pageRes.json();
+            const pageData: any = await pageRes.json()
             if (pageRes.ok && pageData.success) {
-              uploaded = true;
-              break;
+              uploaded = true
+              break
             } else {
-              lastErr = pageData.error || "Failed to upload page.";
+              lastErr = pageData.error || "Failed to upload page."
             }
           } catch (err: any) {
-            lastErr = err.message || "Network error while uploading page.";
+            lastErr = err.message || "Network error while uploading page."
           }
         }
 
         if (!uploaded) {
-          throw new Error(`Failed to upload page ${pageNum}: ${lastErr}`);
+          throw new Error(`Failed to upload page ${pageNum}: ${lastErr}`)
         }
       }
 
       // Step 3: Finalize
-      onProgress?.(95, "Finalizing chapter release...");
+      onProgress?.(95, "Finalizing chapter release...")
       const finalizeRes = await fetch(
         `${getApiUrl()}/v1/admin/comics/${comicId}/chapters/${chapterId}/finalize`,
         {
@@ -131,70 +138,76 @@ export function useAdminChapters(comicId: string) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ totalPages: total }),
         }
-      );
+      )
 
-      const finalizeData: any = await finalizeRes.json();
+      const finalizeData: any = await finalizeRes.json()
       if (!finalizeRes.ok || !finalizeData.success) {
-        throw new Error(finalizeData.error || "Failed to finalize chapter.");
+        throw new Error(finalizeData.error || "Failed to finalize chapter.")
       }
 
-      onProgress?.(100, "All chapter pages uploaded successfully!");
-      toast.success("New chapter successfully created.");
-      fetchChapters();
-      return true;
+      onProgress?.(100, "All chapter pages uploaded successfully!")
+      toast.success("New chapter successfully created.")
+      fetchChapters()
+      return true
     } catch (err: any) {
-      toast.error(err.message || "Failed to upload chapter.");
-      return false;
+      toast.error(err.message || "Failed to upload chapter.")
+      return false
     } finally {
-      setSubmitting(false);
+      setSubmitting(false)
     }
-  };
+  }
 
   const createChapter = async (formData: FormData) => {
-    setSubmitting(true);
+    setSubmitting(true)
     try {
-      const res = await fetch(`${getApiUrl()}/v1/admin/comics/${comicId}/chapters`, {
-        method: "POST",
-        credentials: "include",
-        body: formData,
-      });
-      const data: any = await res.json();
+      const res = await fetch(
+        `${getApiUrl()}/v1/admin/comics/${comicId}/chapters`,
+        {
+          method: "POST",
+          credentials: "include",
+          body: formData,
+        }
+      )
+      const data: any = await res.json()
       if (res.ok && data.success) {
-        toast.success("New chapter successfully created.");
-        fetchChapters();
-        return true;
+        toast.success("New chapter successfully created.")
+        fetchChapters()
+        return true
       } else {
-        toast.error(data.error || "Failed to add new chapter");
-        return false;
+        toast.error(data.error || "Failed to add new chapter")
+        return false
       }
     } catch (err: any) {
-      toast.error(err.message || "Failed to upload chapter");
-      return false;
+      toast.error(err.message || "Failed to upload chapter")
+      return false
     } finally {
-      setSubmitting(false);
+      setSubmitting(false)
     }
-  };
+  }
 
   const deleteChapter = async (chapterId: string) => {
     try {
-      const res = await fetch(`${getApiUrl()}/v1/admin/comics/${comicId}/chapters/${chapterId}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
-      const data: any = await res.json();
+      const res = await fetch(
+        `${getApiUrl()}/v1/admin/comics/${comicId}/chapters/${chapterId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      )
+      const data: any = await res.json()
       if (res.ok && data.success) {
-        toast.success(data.message || "Chapter successfully deleted.");
-        fetchChapters();
-        return true;
+        toast.success(data.message || "Chapter successfully deleted.")
+        fetchChapters()
+        return true
       } else {
-        toast.error(data.error || "Failed to delete chapter");
-        return false;
+        toast.error(data.error || "Failed to delete chapter")
+        return false
       }
     } catch (err: any) {
-      toast.error(err.message || "Failed to delete chapter");
-      return false;
+      toast.error(err.message || "Failed to delete chapter")
+      return false
     }
-  };
+  }
 
   return {
     chapters,
@@ -204,5 +217,5 @@ export function useAdminChapters(comicId: string) {
     createChapter,
     createChapterBatch,
     deleteChapter,
-  };
+  }
 }

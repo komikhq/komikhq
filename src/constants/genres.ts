@@ -1,6 +1,6 @@
 export interface GenreDefinition {
-  readonly name: string;
-  readonly slug: string;
+  readonly name: string
+  readonly slug: string
 }
 
 export const COMMON_GENRES: readonly GenreDefinition[] = [
@@ -20,7 +20,7 @@ export const COMMON_GENRES: readonly GenreDefinition[] = [
   { name: "Sports", slug: "sports" },
   { name: "Supernatural", slug: "supernatural" },
   { name: "Thriller", slug: "thriller" },
-] as const;
+] as const
 
-export const TOP_GENRES_LIMIT = 6;
-export const TRENDING_COMICS_LIMIT = 20;
+export const TOP_GENRES_LIMIT = 6
+export const TRENDING_COMICS_LIMIT = 20

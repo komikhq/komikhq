@@ -1,6 +1,6 @@
-import { createAuthClient } from "better-auth/react";
-import { getBaseApiUrl } from "./api-client";
-import { API_PREFIX } from "@/constants/api-routes";
+import { createAuthClient } from "better-auth/react"
+import { getBaseApiUrl } from "./api-client"
+import { API_PREFIX } from "@/constants/api-routes"
 
 export const authClient = createAuthClient({
   baseURL: getBaseApiUrl(),
@@ -8,6 +8,7 @@ export const authClient = createAuthClient({
   fetchOptions: {
     credentials: "include",
   },
-});
+})
 
-export const { useSession, signIn, signOut, signUp, sendVerificationEmail } = authClient;
+export const { useSession, signIn, signOut, signUp, sendVerificationEmail } =
+  authClient

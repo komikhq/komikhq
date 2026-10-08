@@ -1,5 +1,5 @@
-import React from "react";
-import { useTheme } from "@/hooks/use-theme";
+import React from "react"
+import { useTheme } from "@/hooks/use-theme"
 
 const LOGO_SIZES = {
   header: {
@@ -17,19 +17,22 @@ const LOGO_SIZES = {
     wordmark: { width: 136, height: 68 },
     gap: "gap-2.5",
   },
-} as const;
+} as const
 
 type LogoProps = {
-  size?: keyof typeof LOGO_SIZES;
-};
+  size?: keyof typeof LOGO_SIZES
+}
 
 export function Logo({ size = "header" }: LogoProps) {
-  const { resolvedTheme, mounted } = useTheme();
-  const theme = mounted && resolvedTheme === "dark" ? "dark" : "light";
-  const dimensions = LOGO_SIZES[size];
+  const { resolvedTheme, mounted } = useTheme()
+  const theme = mounted && resolvedTheme === "dark" ? "dark" : "light"
+  const dimensions = LOGO_SIZES[size]
 
   return (
-    <span aria-hidden="true" className={`flex shrink-0 items-center ${dimensions.gap}`}>
+    <span
+      aria-hidden="true"
+      className={`flex shrink-0 items-center ${dimensions.gap}`}
+    >
       <img
         src={`/logo-mark-${theme}.svg`}
         alt=""
@@ -45,5 +48,5 @@ export function Logo({ size = "header" }: LogoProps) {
         className="hidden md:block"
       />
     </span>
-  );
+  )
 }

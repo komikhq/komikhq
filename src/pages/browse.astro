@@ -1,11 +1,11 @@
 ---
-import RootLayout from "@/layouts/RootLayout.astro";
-import { BrowseFilterBar } from "@/components/browse/BrowseFilterBar";
-import { BrowseComicGrid } from "@/components/browse/BrowseComicGrid";
+import RootLayout from "@/layouts/RootLayout.astro"
+import { BrowseFilterBar } from "@/components/browse/BrowseFilterBar"
+import { BrowseComicGrid } from "@/components/browse/BrowseComicGrid"
 ---
 
 <RootLayout title="Browse Komik & Manga - KomikHQ">
-  <div class="flex flex-col gap-6 pb-20 pt-4 px-4 max-w-screen-2xl mx-auto">
+  <div class="mx-auto flex max-w-screen-2xl flex-col gap-6 px-4 pt-4 pb-20">
     <BrowseFilterBar client:load />
     <BrowseComicGrid client:load />
   </div>

@@ -60,6 +60,12 @@ export const API_ROUTES = {
     },
     RESOLVE_REPORT: (reportId: string) =>
       `${API_PREFIX}/admin/reports/${reportId}/action`,
+    SYSTEM: {
+      MAINTENANCE_STATUS: `${API_PREFIX}/admin/system/maintenance-status`,
+      SYNC_VIEWS: `${API_PREFIX}/admin/system/sync-views`,
+      CLEAR_SEARCH_CACHE: `${API_PREFIX}/admin/system/clear-search-cache`,
+      PURGE_ORPHANS: `${API_PREFIX}/admin/storage/purge-orphans`,
+    },
   },
   RATINGS: {
     SUBMIT: `${API_PREFIX}/ratings`,

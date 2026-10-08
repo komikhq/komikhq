@@ -4,12 +4,12 @@ export type NavIconName =
   | "ClockCounterClockwise"
   | "UserCircle"
   | "Compass"
-  | "ListBullets";
+  | "ListBullets"
 
 export interface NavItem {
-  readonly label: string;
-  readonly href: string;
-  readonly iconName: NavIconName;
+  readonly label: string
+  readonly href: string
+  readonly iconName: NavIconName
 }
 
 export const BOTTOM_NAV_ITEMS: readonly NavItem[] = [
@@ -18,7 +18,7 @@ export const BOTTOM_NAV_ITEMS: readonly NavItem[] = [
   { label: "Browse", href: "/browse", iconName: "Compass" },
   { label: "History", href: "/history", iconName: "ClockCounterClockwise" },
   { label: "Account", href: "/account", iconName: "UserCircle" },
-] as const;
+] as const
 
 export const HEADER_NAV_ITEMS: readonly NavItem[] = [
   { label: "Home", href: "/", iconName: "House" },
@@ -26,4 +26,4 @@ export const HEADER_NAV_ITEMS: readonly NavItem[] = [
   { label: "List All", href: "/list-all", iconName: "ListBullets" },
   { label: "Bookmark", href: "/bookmark", iconName: "BookmarkSimple" },
   { label: "History", href: "/history", iconName: "ClockCounterClockwise" },
-] as const;
+] as const

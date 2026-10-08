@@ -1,55 +1,55 @@
-import React, { useState, useEffect, useRef } from "react";
-import { BookOpen, Clock, MagnifyingGlass } from "@phosphor-icons/react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { formatDate } from "@/lib/format-date";
-import { API_ROUTES } from "@/constants";
-import { apiFetch } from "@/lib/api-client";
+import React, { useState, useEffect, useRef } from "react"
+import { BookOpen, Clock, MagnifyingGlass } from "@phosphor-icons/react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { formatDate } from "@/lib/format-date"
+import { API_ROUTES } from "@/constants"
+import { apiFetch } from "@/lib/api-client"
 
 interface ComicChapterListProps {
-  slug?: string;
+  slug?: string
 }
 
 export function ComicChapterList({ slug }: ComicChapterListProps) {
-  const [chapters, setChapters] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const chapterListRef = useRef<HTMLDivElement>(null);
+  const [chapters, setChapters] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [searchQuery, setSearchQuery] = useState("")
+  const chapterListRef = useRef<HTMLDivElement>(null)
 
-  const normalizedSearch = searchQuery.trim().toLowerCase();
+  const normalizedSearch = searchQuery.trim().toLowerCase()
   const filteredChapters = chapters.filter((chapter) =>
     `Chapter ${chapter.chapterNumber} ${chapter.title ?? ""}`
       .toLowerCase()
-      .includes(normalizedSearch),
-  );
+      .includes(normalizedSearch)
+  )
   useEffect(() => {
-    chapterListRef.current?.scrollTo({ top: 0 });
-  }, [normalizedSearch]);
+    chapterListRef.current?.scrollTo({ top: 0 })
+  }, [normalizedSearch])
 
   useEffect(() => {
-    if (!slug) return;
-    let isMounted = true;
-    setIsLoading(true);
-    setSearchQuery("");
+    if (!slug) return
+    let isMounted = true
+    setIsLoading(true)
+    setSearchQuery("")
 
     apiFetch(API_ROUTES.COMICS.DETAIL(slug))
       .then((data) => {
         if (isMounted) {
-          setChapters(data.chapters || []);
+          setChapters(data.chapters || [])
         }
       })
       .catch(() => {
-        if (isMounted) setChapters([]);
+        if (isMounted) setChapters([])
       })
       .finally(() => {
-        if (isMounted) setIsLoading(false);
-      });
+        if (isMounted) setIsLoading(false)
+      })
 
     return () => {
-      isMounted = false;
-    };
-  }, [slug]);
+      isMounted = false
+    }
+  }, [slug])
 
   return (
     <Card>
@@ -60,7 +60,7 @@ export function ComicChapterList({ slug }: ComicChapterListProps) {
           </CardTitle>
           {!isLoading && chapters.length > 0 && (
             <div className="relative w-full sm:max-w-xs">
-              <MagnifyingGlass className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <MagnifyingGlass className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 type="search"
                 value={searchQuery}
@@ -75,9 +75,12 @@ export function ComicChapterList({ slug }: ComicChapterListProps) {
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <div className="divide-y animate-pulse">
+          <div className="animate-pulse divide-y">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="flex items-center justify-between py-3.5 px-2">
+              <div
+                key={i}
+                className="flex items-center justify-between px-2 py-3.5"
+              >
                 <div className="flex items-center gap-3">
                   <div className="h-5 w-5 shrink-0 rounded bg-muted" />
                   <div className="space-y-1">
@@ -92,7 +95,10 @@ export function ComicChapterList({ slug }: ComicChapterListProps) {
         ) : chapters.length > 0 ? (
           <>
             {normalizedSearch && (
-              <p className="mb-2 text-xs text-muted-foreground" aria-live="polite">
+              <p
+                className="mb-2 text-xs text-muted-foreground"
+                aria-live="polite"
+              >
                 Showing {filteredChapters.length} of {chapters.length} chapters
               </p>
             )}
@@ -110,18 +116,20 @@ export function ComicChapterList({ slug }: ComicChapterListProps) {
                       <a
                         key={chapter.id}
                         href={`/komik/${slug}/${chapter.slug}`}
-                        className="flex items-center justify-between py-3.5 px-2 transition-colors hover:bg-accent/50 font-semibold"
+                        className="flex items-center justify-between px-2 py-3.5 font-semibold transition-colors hover:bg-accent/50"
                       >
                         <div className="flex items-center gap-3">
-                          <BookOpen className="h-5 w-5 text-primary flex-shrink-0" />
+                          <BookOpen className="h-5 w-5 flex-shrink-0 text-primary" />
                           <div>
                             <h4 className="text-sm">
                               Chapter {chapter.chapterNumber}
                               {chapter.title && ` - ${chapter.title}`}
                             </h4>
-                            <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5 font-normal">
+                            <p className="mt-0.5 flex items-center gap-1 text-xs font-normal text-muted-foreground">
                               <Clock className="h-3 w-3" />
-                              {formatDate(chapter.publishedAt || chapter.createdAt)}
+                              {formatDate(
+                                chapter.publishedAt || chapter.createdAt
+                              )}
                             </p>
                           </div>
                         </div>
@@ -141,13 +149,16 @@ export function ComicChapterList({ slug }: ComicChapterListProps) {
             )}
           </>
         ) : (
-          <div className="text-center py-8 space-y-1 text-muted-foreground">
-            <p className="text-sm font-medium">No chapters have been uploaded yet.</p>
-            <p className="text-xs">New chapters will appear here after an admin publishes them.</p>
+          <div className="space-y-1 py-8 text-center text-muted-foreground">
+            <p className="text-sm font-medium">
+              No chapters have been uploaded yet.
+            </p>
+            <p className="text-xs">
+              New chapters will appear here after an admin publishes them.
+            </p>
           </div>
         )}
       </CardContent>
     </Card>
-  );
+  )
 }
-

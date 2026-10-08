@@ -1,37 +1,49 @@
-import React, { useEffect, useRef, useState } from "react";
-import { BookmarkSimple, BookOpen, User } from "@phosphor-icons/react";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { useComicDetail } from "@/hooks/use-comic-detail";
+import React, { useEffect, useRef, useState } from "react"
+import { BookmarkSimple, BookOpen, User } from "@phosphor-icons/react"
+import { Card } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { useComicDetail } from "@/hooks/use-comic-detail"
 
 interface ComicHeaderCardProps {
-  slug?: string;
+  slug?: string
 }
 
-function useClampedText<T extends HTMLElement>(text: string, expanded: boolean) {
-  const elementRef = useRef<T>(null);
-  const [isClamped, setIsClamped] = useState(false);
+function useClampedText<T extends HTMLElement>(
+  text: string,
+  expanded: boolean
+) {
+  const elementRef = useRef<T>(null)
+  const [isClamped, setIsClamped] = useState(false)
 
   useEffect(() => {
-    if (expanded) return;
+    if (expanded) return
 
-    const element = elementRef.current;
-    if (!element) return;
+    const element = elementRef.current
+    if (!element) return
 
     const measure = () => {
-      setIsClamped(element.scrollHeight > element.clientHeight + 1);
-    };
+      setIsClamped(element.scrollHeight > element.clientHeight + 1)
+    }
 
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, [text, expanded]);
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [text, expanded])
 
-  return { elementRef, isClamped };
+  return { elementRef, isClamped }
 }
 
 export function ComicHeaderCard({ slug }: ComicHeaderCardProps) {
@@ -43,121 +55,127 @@ export function ComicHeaderCard({ slug }: ComicHeaderCardProps) {
     toggleBookmark,
     handleReadFirstChapter,
     handleNavigateCatalog,
-  } = useComicDetail(slug);
-  const comicTitle = comicData?.comic?.title ?? "";
-  const comicSynopsis = comicData?.comic?.synopsis || "No synopsis available for this comic.";
-  const [titleExpanded, setTitleExpanded] = useState(false);
-  const [synopsisExpanded, setSynopsisExpanded] = useState(false);
-  const synopsisContainerRef = useRef<HTMLDivElement>(null);
-  const synopsisAnimationRef = useRef(false);
-  const synopsisNextExpandedRef = useRef<boolean | null>(null);
-  const { elementRef: titleRef, isClamped: isTitleClamped } = useClampedText<HTMLHeadingElement>(
-    comicTitle,
-    titleExpanded,
-  );
-  const { elementRef: synopsisRef, isClamped: isSynopsisClamped } = useClampedText<HTMLParagraphElement>(
-    comicSynopsis,
-    synopsisExpanded,
-  );
+  } = useComicDetail(slug)
+  const comicTitle = comicData?.comic?.title ?? ""
+  const comicSynopsis =
+    comicData?.comic?.synopsis || "No synopsis available for this comic."
+  const [titleExpanded, setTitleExpanded] = useState(false)
+  const [synopsisExpanded, setSynopsisExpanded] = useState(false)
+  const synopsisContainerRef = useRef<HTMLDivElement>(null)
+  const synopsisAnimationRef = useRef(false)
+  const synopsisNextExpandedRef = useRef<boolean | null>(null)
+  const { elementRef: titleRef, isClamped: isTitleClamped } =
+    useClampedText<HTMLHeadingElement>(comicTitle, titleExpanded)
+  const { elementRef: synopsisRef, isClamped: isSynopsisClamped } =
+    useClampedText<HTMLParagraphElement>(comicSynopsis, synopsisExpanded)
 
-  useEffect(() => setTitleExpanded(false), [comicTitle]);
+  useEffect(() => setTitleExpanded(false), [comicTitle])
   useEffect(() => {
-    setSynopsisExpanded(false);
-    synopsisAnimationRef.current = false;
-    synopsisNextExpandedRef.current = null;
+    setSynopsisExpanded(false)
+    synopsisAnimationRef.current = false
+    synopsisNextExpandedRef.current = null
     if (synopsisContainerRef.current) {
-      synopsisContainerRef.current.style.height = "auto";
+      synopsisContainerRef.current.style.height = "auto"
     }
-  }, [comicSynopsis]);
+  }, [comicSynopsis])
 
   const toggleSynopsis = () => {
-    const container = synopsisContainerRef.current;
-    const paragraph = synopsisRef.current;
-    if (!container || !paragraph || synopsisAnimationRef.current) return;
+    const container = synopsisContainerRef.current
+    const paragraph = synopsisRef.current
+    if (!container || !paragraph || synopsisAnimationRef.current) return
 
-    const nextExpanded = !synopsisExpanded;
+    const nextExpanded = !synopsisExpanded
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setSynopsisExpanded(nextExpanded);
-      container.style.height = "auto";
-      return;
+      setSynopsisExpanded(nextExpanded)
+      container.style.height = "auto"
+      return
     }
 
-    let collapsedHeight = 0;
+    let collapsedHeight = 0
     if (!nextExpanded) {
-      paragraph.classList.add("line-clamp-5", "sm:line-clamp-4");
-      collapsedHeight = paragraph.getBoundingClientRect().height;
-      paragraph.classList.remove("line-clamp-5", "sm:line-clamp-4");
+      paragraph.classList.add("line-clamp-5", "sm:line-clamp-4")
+      collapsedHeight = paragraph.getBoundingClientRect().height
+      paragraph.classList.remove("line-clamp-5", "sm:line-clamp-4")
     }
 
-    synopsisAnimationRef.current = true;
-    synopsisNextExpandedRef.current = nextExpanded;
-    container.style.height = `${container.getBoundingClientRect().height}px`;
-    void container.offsetHeight;
-    if (nextExpanded) setSynopsisExpanded(true);
+    synopsisAnimationRef.current = true
+    synopsisNextExpandedRef.current = nextExpanded
+    container.style.height = `${container.getBoundingClientRect().height}px`
+    void container.offsetHeight
+    if (nextExpanded) setSynopsisExpanded(true)
 
     requestAnimationFrame(() => {
-      const targetHeight = nextExpanded ? paragraph.scrollHeight : collapsedHeight;
-      container.style.height = `${targetHeight}px`;
-    });
-  };
+      const targetHeight = nextExpanded
+        ? paragraph.scrollHeight
+        : collapsedHeight
+      container.style.height = `${targetHeight}px`
+    })
+  }
 
   if (isLoading) {
     return (
-      <Card className="overflow-hidden animate-pulse">
-        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 p-6">
-          <div className="aspect-[3/4] w-44 sm:w-48 bg-muted rounded-md shrink-0" />
-          <div className="w-full flex-1 min-w-0 space-y-4 text-center sm:text-left">
+      <Card className="animate-pulse overflow-hidden">
+        <div className="flex flex-col items-center gap-6 p-6 sm:flex-row sm:items-start">
+          <div className="aspect-[3/4] w-44 shrink-0 rounded-md bg-muted sm:w-48" />
+          <div className="w-full min-w-0 flex-1 space-y-4 text-center sm:text-left">
             <div>
-              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-2.5">
-                {["w-14", "w-16", "w-12", "w-16", "w-14", "w-12"].map((width, index) => (
-                  <div key={index} className={`h-5 ${width} bg-muted rounded-full`} />
-                ))}
+              <div className="mb-2.5 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
+                {["w-14", "w-16", "w-12", "w-16", "w-14", "w-12"].map(
+                  (width, index) => (
+                    <div
+                      key={index}
+                      className={`h-5 ${width} rounded-full bg-muted`}
+                    />
+                  )
+                )}
               </div>
-              <div className="min-h-[2.5em] sm:min-h-[1.25em] space-y-1">
-                <div className="h-8 bg-muted rounded w-3/4 mx-auto sm:mx-0" />
-                <div className="h-8 bg-muted rounded w-1/2 mx-auto sm:mx-0 sm:hidden" />
+              <div className="min-h-[2.5em] space-y-1 sm:min-h-[1.25em]">
+                <div className="mx-auto h-8 w-3/4 rounded bg-muted sm:mx-0" />
+                <div className="mx-auto h-8 w-1/2 rounded bg-muted sm:mx-0 sm:hidden" />
               </div>
-              <div className="h-3 bg-muted rounded w-2/5 mx-auto sm:mx-0 mt-1.5" />
+              <div className="mx-auto mt-1.5 h-3 w-2/5 rounded bg-muted sm:mx-0" />
             </div>
             <div className="space-y-2">
-              <div className="h-4 bg-muted rounded w-full" />
-              <div className="h-4 bg-muted rounded w-full" />
-              <div className="h-4 bg-muted rounded w-full" />
-              <div className="h-4 bg-muted rounded w-5/6" />
-              <div className="h-4 bg-muted rounded w-2/3 sm:hidden" />
+              <div className="h-4 w-full rounded bg-muted" />
+              <div className="h-4 w-full rounded bg-muted" />
+              <div className="h-4 w-full rounded bg-muted" />
+              <div className="h-4 w-5/6 rounded bg-muted" />
+              <div className="h-4 w-2/3 rounded bg-muted sm:hidden" />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
-              <div className="h-10 w-full bg-muted rounded-md" />
-              <div className="h-10 w-full bg-muted rounded-md" />
+            <div className="grid grid-cols-1 gap-3 pt-2 md:grid-cols-2">
+              <div className="h-10 w-full rounded-md bg-muted" />
+              <div className="h-10 w-full rounded-md bg-muted" />
             </div>
           </div>
         </div>
       </Card>
-    );
+    )
   }
 
   if (error || !comicData) {
     return (
-      <Card className="p-8 text-center space-y-3">
+      <Card className="space-y-3 p-8 text-center">
         <h2 className="text-lg font-bold text-destructive">Comic Not Found</h2>
-        <p className="text-sm text-muted-foreground">{error || "Comic data could not be retrieved."}</p>
+        <p className="text-sm text-muted-foreground">
+          {error || "Comic data could not be retrieved."}
+        </p>
         <Button variant="outline" size="sm" onClick={handleNavigateCatalog}>
           Back to Catalog
         </Button>
       </Card>
-    );
+    )
   }
 
-  const { comic, genres = [], creators = [], chapters = [] } = comicData;
-  const firstChapter = chapters[0];
-  const visibleGenres = genres.slice(0, 3);
-  const remainingGenres = genres.slice(3);
+  const { comic, genres = [], creators = [], chapters = [] } = comicData
+  const firstChapter = chapters[0]
+  const visibleGenres = genres.slice(0, 3)
+  const remainingGenres = genres.slice(3)
 
   return (
     <TooltipProvider>
       <Card className="overflow-hidden">
-        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 p-6">
-          <div className="relative aspect-[3/4] w-44 sm:w-48 shrink-0 overflow-hidden rounded-md bg-muted border shadow-sm">
+        <div className="flex flex-col items-center gap-6 p-6 sm:flex-row sm:items-start">
+          <div className="relative aspect-[3/4] w-44 shrink-0 overflow-hidden rounded-md border bg-muted shadow-sm sm:w-48">
             <img
               src={comic.coverUrl}
               alt={comic.title}
@@ -165,9 +183,9 @@ export function ComicHeaderCard({ slug }: ComicHeaderCardProps) {
             />
           </div>
 
-          <div className="flex-1 space-y-4 text-center sm:text-left min-w-0">
+          <div className="min-w-0 flex-1 space-y-4 text-center sm:text-left">
             <div>
-              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-2.5">
+              <div className="mb-2.5 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
                 <Badge variant="default" className="capitalize">
                   {comic.type || "Manga"}
                 </Badge>
@@ -194,7 +212,10 @@ export function ComicHeaderCard({ slug }: ComicHeaderCardProps) {
                         +{remainingGenres.length}
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent align="start" className="w-auto max-w-72 flex-row flex-wrap gap-2">
+                    <PopoverContent
+                      align="start"
+                      className="w-auto max-w-72 flex-row flex-wrap gap-2"
+                    >
                       {remainingGenres.map((g: any) => (
                         <Badge key={g.id || g.slug} variant="outline">
                           {g.name}
@@ -206,7 +227,7 @@ export function ComicHeaderCard({ slug }: ComicHeaderCardProps) {
               </div>
               <h1
                 ref={titleRef}
-                className={`text-2xl sm:text-3xl font-extrabold tracking-tight break-words min-h-[2.5em] sm:min-h-[1.25em] ${titleExpanded ? "" : "line-clamp-2"}`}
+                className={`min-h-[2.5em] text-2xl font-extrabold tracking-tight break-words sm:min-h-[1.25em] sm:text-3xl ${titleExpanded ? "" : "line-clamp-2"}`}
               >
                 {comicTitle}
               </h1>
@@ -223,8 +244,8 @@ export function ComicHeaderCard({ slug }: ComicHeaderCardProps) {
                 </Button>
               )}
               {creators.length > 0 && (
-                <p className="text-xs text-muted-foreground flex items-center justify-center sm:justify-start gap-1 mt-1.5 font-medium">
-                  <User className="h-3.5 w-3.5 text-primary shrink-0" />
+                <p className="mt-1.5 flex items-center justify-center gap-1 text-xs font-medium text-muted-foreground sm:justify-start">
+                  <User className="h-3.5 w-3.5 shrink-0 text-primary" />
                   <span>By: {creators.map((c: any) => c.name).join(", ")}</span>
                 </p>
               )}
@@ -234,17 +255,21 @@ export function ComicHeaderCard({ slug }: ComicHeaderCardProps) {
               ref={synopsisContainerRef}
               className="overflow-hidden transition-[height] duration-300 ease-in-out motion-reduce:transition-none"
               onTransitionEnd={(event) => {
-                if (event.propertyName !== "height" || synopsisNextExpandedRef.current === null) return;
+                if (
+                  event.propertyName !== "height" ||
+                  synopsisNextExpandedRef.current === null
+                )
+                  return
 
-                if (!synopsisNextExpandedRef.current) setSynopsisExpanded(false);
-                synopsisNextExpandedRef.current = null;
-                synopsisAnimationRef.current = false;
-                event.currentTarget.style.height = "auto";
+                if (!synopsisNextExpandedRef.current) setSynopsisExpanded(false)
+                synopsisNextExpandedRef.current = null
+                synopsisAnimationRef.current = false
+                event.currentTarget.style.height = "auto"
               }}
             >
               <p
                 ref={synopsisRef}
-                className={`text-justify text-sm text-muted-foreground leading-relaxed whitespace-pre-line ${synopsisExpanded ? "" : "line-clamp-5 sm:line-clamp-4"}`}
+                className={`text-justify text-sm leading-relaxed whitespace-pre-line text-muted-foreground ${synopsisExpanded ? "" : "line-clamp-5 sm:line-clamp-4"}`}
               >
                 {comicSynopsis}
               </p>
@@ -262,7 +287,7 @@ export function ComicHeaderCard({ slug }: ComicHeaderCardProps) {
               </Button>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+            <div className="grid grid-cols-1 gap-3 pt-2 md:grid-cols-2">
               {firstChapter ? (
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -271,7 +296,9 @@ export function ComicHeaderCard({ slug }: ComicHeaderCardProps) {
                       Read Chapter 1
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent side="top">Start reading from the first chapter</TooltipContent>
+                  <TooltipContent side="top">
+                    Start reading from the first chapter
+                  </TooltipContent>
                 </Tooltip>
               ) : (
                 <Button className="w-full" disabled variant="secondary">
@@ -295,7 +322,9 @@ export function ComicHeaderCard({ slug }: ComicHeaderCardProps) {
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="top">
-                  {bookmarked ? "Remove from your reading list" : "Save to your favorites"}
+                  {bookmarked
+                    ? "Remove from your reading list"
+                    : "Save to your favorites"}
                 </TooltipContent>
               </Tooltip>
             </div>
@@ -303,5 +332,5 @@ export function ComicHeaderCard({ slug }: ComicHeaderCardProps) {
         </div>
       </Card>
     </TooltipProvider>
-  );
+  )
 }

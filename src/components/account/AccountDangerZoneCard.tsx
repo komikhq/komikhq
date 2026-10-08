@@ -1,10 +1,21 @@
-import React from "react";
-import { Warning, Trash, CircleNotch } from "@phosphor-icons/react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import React from "react"
+import { Warning, Trash, CircleNotch } from "@phosphor-icons/react"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,8 +26,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { useDeleteAccount } from "@/hooks/use-delete-account";
+} from "@/components/ui/alert-dialog"
+import { useDeleteAccount } from "@/hooks/use-delete-account"
 
 export function AccountDangerZoneCard() {
   const {
@@ -28,13 +39,13 @@ export function AccountDangerZoneCard() {
     deleteError,
     resetDeleteState,
     deleteAccount,
-  } = useDeleteAccount();
+  } = useDeleteAccount()
 
   return (
     <TooltipProvider>
       <Card className="border-destructive/40">
         <CardHeader>
-          <CardTitle className="text-lg font-bold flex items-center gap-2 text-destructive">
+          <CardTitle className="flex items-center gap-2 text-lg font-bold text-destructive">
             <Warning className="h-5 w-5 text-destructive" />
             <span>Danger Zone</span>
           </CardTitle>
@@ -43,14 +54,17 @@ export function AccountDangerZoneCard() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-2">
+          <div className="flex flex-col justify-between gap-4 py-2 sm:flex-row sm:items-center">
             <div>
-              <h4 className="font-semibold text-sm">Hapus Akun Permanen</h4>
+              <h4 className="text-sm font-semibold">Hapus Akun Permanen</h4>
               <p className="text-xs text-muted-foreground">
-                Menghapus akun Anda dari KomikHQ beserta bookmark dan riwayat baca.
+                Menghapus akun Anda dari KomikHQ beserta bookmark dan riwayat
+                baca.
               </p>
               {deleteError && (
-                <p className="text-xs text-destructive mt-1 font-medium">{deleteError}</p>
+                <p className="mt-1 text-xs font-medium text-destructive">
+                  {deleteError}
+                </p>
               )}
             </div>
 
@@ -64,7 +78,9 @@ export function AccountDangerZoneCard() {
                     </Button>
                   </AlertDialogTrigger>
                 </TooltipTrigger>
-                <TooltipContent side="left">Hapus akun secara permanen</TooltipContent>
+                <TooltipContent side="left">
+                  Hapus akun secara permanen
+                </TooltipContent>
               </Tooltip>
               <AlertDialogContent>
                 <AlertDialogHeader>
@@ -73,7 +89,9 @@ export function AccountDangerZoneCard() {
                     <span>Apakah Anda yakin ingin menghapus akun?</span>
                   </AlertDialogTitle>
                   <AlertDialogDescription>
-                    Tindakan ini tidak dapat dibatalkan. Ini akan menghapus akun KomikHQ Anda secara permanen beserta seluruh preferensi, riwayat baca, dan bookmark.
+                    Tindakan ini tidak dapat dibatalkan. Ini akan menghapus akun
+                    KomikHQ Anda secara permanen beserta seluruh preferensi,
+                    riwayat baca, dan bookmark.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
 
@@ -86,29 +104,35 @@ export function AccountDangerZoneCard() {
                   <Input
                     id="deleteConfirmInput"
                     type={hasPassword ? "password" : "text"}
-                    placeholder={hasPassword ? "••••••••" : user?.email || "user@email.com"}
+                    placeholder={
+                      hasPassword ? "••••••••" : user?.email || "user@email.com"
+                    }
                     value={confirmInput}
                     onChange={(e) => setConfirmInput(e.target.value)}
                     disabled={isDeleting}
                   />
                   {deleteError && (
-                    <p className="text-xs text-destructive font-medium">{deleteError}</p>
+                    <p className="text-xs font-medium text-destructive">
+                      {deleteError}
+                    </p>
                   )}
                 </div>
 
                 <AlertDialogFooter className="mt-2">
-                  <AlertDialogCancel disabled={isDeleting}>Batal</AlertDialogCancel>
+                  <AlertDialogCancel disabled={isDeleting}>
+                    Batal
+                  </AlertDialogCancel>
                   <AlertDialogAction
                     variant="destructive"
                     onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                      e.preventDefault();
-                      deleteAccount();
+                      e.preventDefault()
+                      deleteAccount()
                     }}
                     disabled={isDeleting || !confirmInput.trim()}
                   >
                     {isDeleting ? (
                       <>
-                        <CircleNotch className="h-4 w-4 animate-spin mr-2" />
+                        <CircleNotch className="mr-2 h-4 w-4 animate-spin" />
                         <span>Menghapus...</span>
                       </>
                     ) : (
@@ -122,5 +146,5 @@ export function AccountDangerZoneCard() {
         </CardContent>
       </Card>
     </TooltipProvider>
-  );
+  )
 }

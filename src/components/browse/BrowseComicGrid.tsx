@@ -1,94 +1,102 @@
-import React, { useState, useEffect } from "react";
-import { BookOpen, Star } from "@phosphor-icons/react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { API_ROUTES } from "@/constants";
-import { apiFetch } from "@/lib/api-client";
-import { BROWSE_FILTERS_CHANGE_EVENT } from "@/hooks/use-browse-filters";
+import React, { useState, useEffect } from "react"
+import { BookOpen, Star } from "@phosphor-icons/react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { API_ROUTES } from "@/constants"
+import { apiFetch } from "@/lib/api-client"
+import { BROWSE_FILTERS_CHANGE_EVENT } from "@/hooks/use-browse-filters"
 
 export function BrowseComicGrid() {
-  const [comics, setComics] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [comics, setComics] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(true)
 
   useEffect(() => {
-    let isMounted = true;
-    let requestId = 0;
-    let reloadTimeout = 0;
-    let genreCache: Array<{ id: string; slug: string }> | null = null;
+    let isMounted = true
+    let requestId = 0
+    let reloadTimeout = 0
+    let genreCache: Array<{ id: string; slug: string }> | null = null
 
     const loadComics = async (currentRequestId: number) => {
       try {
-        const params = new URLSearchParams(window.location.search);
-        const genre = params.get("genre");
+        const params = new URLSearchParams(window.location.search)
+        const genre = params.get("genre")
 
         if (genre) {
           if (!genreCache) {
             const response = await apiFetch<{
-              genres: Array<{ id: string; slug: string }>;
-            }>(API_ROUTES.GENRES);
-            genreCache = response.genres || [];
+              genres: Array<{ id: string; slug: string }>
+            }>(API_ROUTES.GENRES)
+            genreCache = response.genres || []
           }
-          const matchedGenre = genreCache.find((item) => item.slug === genre || item.id === genre);
-          if (matchedGenre) params.set("genre", matchedGenre.id);
+          const matchedGenre = genreCache.find(
+            (item) => item.slug === genre || item.id === genre
+          )
+          if (matchedGenre) params.set("genre", matchedGenre.id)
         }
 
-        const endpoint = API_ROUTES.COMICS.BROWSE(params.toString());
-        const response = await apiFetch(endpoint);
+        const endpoint = API_ROUTES.COMICS.BROWSE(params.toString())
+        const response = await apiFetch(endpoint)
         if (isMounted && currentRequestId === requestId) {
-          setComics(response.comics || response.data || []);
+          setComics(response.comics || response.data || [])
         }
       } catch {
-        if (isMounted && currentRequestId === requestId) setComics([]);
+        if (isMounted && currentRequestId === requestId) setComics([])
       } finally {
-        if (isMounted && currentRequestId === requestId) setIsLoading(false);
+        if (isMounted && currentRequestId === requestId) setIsLoading(false)
       }
-    };
+    }
 
     const reloadComics = () => {
-      requestId += 1;
-      const currentRequestId = requestId;
-      window.clearTimeout(reloadTimeout);
-      reloadTimeout = window.setTimeout(() => void loadComics(currentRequestId), 250);
-    };
+      requestId += 1
+      const currentRequestId = requestId
+      window.clearTimeout(reloadTimeout)
+      reloadTimeout = window.setTimeout(
+        () => void loadComics(currentRequestId),
+        250
+      )
+    }
 
-    void loadComics(++requestId);
-    window.addEventListener(BROWSE_FILTERS_CHANGE_EVENT, reloadComics);
+    void loadComics(++requestId)
+    window.addEventListener(BROWSE_FILTERS_CHANGE_EVENT, reloadComics)
 
     return () => {
-      isMounted = false;
-      window.clearTimeout(reloadTimeout);
-      window.removeEventListener(BROWSE_FILTERS_CHANGE_EVENT, reloadComics);
-    };
-  }, []);
+      isMounted = false
+      window.clearTimeout(reloadTimeout)
+      window.removeEventListener(BROWSE_FILTERS_CHANGE_EVENT, reloadComics)
+    }
+  }, [])
 
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-xl font-bold flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 text-xl font-bold">
           <BookOpen className="h-5 w-5 text-primary" />
           <span>Katalog Komik</span>
         </CardTitle>
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5">
             {Array.from({ length: 10 }).map((_, i) => (
-              <div key={i} className="flex flex-col space-y-2 border rounded-lg p-2 bg-card">
-                <div className="aspect-[3/4] overflow-hidden rounded-md bg-muted animate-pulse" />
-                <div className="h-4 bg-muted animate-pulse rounded w-3/4" />
-                <div className="h-3 bg-muted animate-pulse rounded w-1/2" />
+              <div
+                key={i}
+                className="flex flex-col space-y-2 rounded-lg border bg-card p-2"
+              >
+                <div className="aspect-[3/4] animate-pulse overflow-hidden rounded-md bg-muted" />
+                <div className="h-4 w-3/4 animate-pulse rounded bg-muted" />
+                <div className="h-3 w-1/2 animate-pulse rounded bg-muted" />
               </div>
             ))}
           </div>
         ) : comics.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5">
             {comics.map((comic) => (
               <a
                 key={comic.id || comic.slug}
                 href={`/komik/${comic.slug}`}
-                className="group flex flex-col space-y-2 border rounded-lg p-2 bg-card hover:bg-accent transition-colors"
+                className="group flex flex-col space-y-2 rounded-lg border bg-card p-2 transition-colors hover:bg-accent"
               >
-                <div className="aspect-[3/4] overflow-hidden rounded-md bg-muted relative">
+                <div className="relative aspect-[3/4] overflow-hidden rounded-md bg-muted">
                   <img
                     src={comic.coverUrl || comic.cover}
                     alt={comic.title}
@@ -96,16 +104,16 @@ export function BrowseComicGrid() {
                     loading="lazy"
                   />
                   {comic.rating && (
-                    <Badge className="absolute top-2 right-2 bg-black/70 text-amber-400 gap-1 text-xs">
+                    <Badge className="absolute top-2 right-2 gap-1 bg-black/70 text-xs text-amber-400">
                       <Star className="h-3 w-3 fill-current" />
                       <span>{comic.rating}</span>
                     </Badge>
                   )}
                 </div>
-                <h3 className="font-semibold text-sm line-clamp-1 group-hover:text-accent-foreground transition-colors pt-1">
+                <h3 className="line-clamp-1 pt-1 text-sm font-semibold transition-colors group-hover:text-accent-foreground">
                   {comic.title}
                 </h3>
-                <div className="flex items-center justify-between text-xs text-muted-foreground group-hover:text-accent-foreground/80 transition-colors">
+                <div className="flex items-center justify-between text-xs text-muted-foreground transition-colors group-hover:text-accent-foreground/80">
                   <span className="capitalize">{comic.type || "Manga"}</span>
                   <span>{comic.status || "Ongoing"}</span>
                 </div>
@@ -113,13 +121,15 @@ export function BrowseComicGrid() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-12 space-y-2">
-            <BookOpen className="h-10 w-10 text-muted-foreground/50 mx-auto" />
+          <div className="space-y-2 py-12 text-center">
+            <BookOpen className="mx-auto h-10 w-10 text-muted-foreground/50" />
             <p className="text-sm font-medium">Belum ada komik ditemukan.</p>
-            <p className="text-xs text-muted-foreground">Coba ubah kata kunci pencarian atau filter genre Anda.</p>
+            <p className="text-xs text-muted-foreground">
+              Coba ubah kata kunci pencarian atau filter genre Anda.
+            </p>
           </div>
         )}
       </CardContent>
     </Card>
-  );
+  )
 }

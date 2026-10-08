@@ -1,75 +1,80 @@
-import { useState, useEffect } from "react";
-import { useAdminGenres } from "./use-admin-genres";
-import { useImageUpload } from "./use-image-upload";
-import type { ComicAdminItem } from "./use-admin-comics";
+import { useState, useEffect } from "react"
+import { useAdminGenres } from "./use-admin-genres"
+import { useImageUpload } from "./use-image-upload"
+import type { ComicAdminItem } from "./use-admin-comics"
 
 export interface UseComicFormProps {
-  open: boolean;
-  comic?: ComicAdminItem | null;
-  onSubmit: (formData: FormData) => Promise<boolean>;
-  onOpenChange: (open: boolean) => void;
+  open: boolean
+  comic?: ComicAdminItem | null
+  onSubmit: (formData: FormData) => Promise<boolean>
+  onOpenChange: (open: boolean) => void
 }
 
-export function useComicForm({ open, comic, onSubmit, onOpenChange }: UseComicFormProps) {
-  const { genres } = useAdminGenres();
-  const coverUpload = useImageUpload({ multiple: false });
-  const bannerUpload = useImageUpload({ multiple: false });
+export function useComicForm({
+  open,
+  comic,
+  onSubmit,
+  onOpenChange,
+}: UseComicFormProps) {
+  const { genres } = useAdminGenres()
+  const coverUpload = useImageUpload({ multiple: false })
+  const bannerUpload = useImageUpload({ multiple: false })
 
-  const [title, setTitle] = useState("");
-  const [synopsis, setSynopsis] = useState("");
-  const [type, setType] = useState("manga");
-  const [status, setStatus] = useState("ongoing");
-  const [creator, setCreator] = useState("");
-  const [selectedGenreIds, setSelectedGenreIds] = useState<string[]>([]);
+  const [title, setTitle] = useState("")
+  const [synopsis, setSynopsis] = useState("")
+  const [type, setType] = useState("manga")
+  const [status, setStatus] = useState("ongoing")
+  const [creator, setCreator] = useState("")
+  const [selectedGenreIds, setSelectedGenreIds] = useState<string[]>([])
 
   useEffect(() => {
     if (comic) {
-      setTitle(comic.title || "");
-      setSynopsis(comic.synopsis || "");
-      setType(comic.type || "manga");
-      setStatus(comic.status || "ongoing");
-      setCreator(comic.creators ? comic.creators.join(", ") : "");
-      setSelectedGenreIds(comic.genres ? comic.genres.map((g) => g.id) : []);
+      setTitle(comic.title || "")
+      setSynopsis(comic.synopsis || "")
+      setType(comic.type || "manga")
+      setStatus(comic.status || "ongoing")
+      setCreator(comic.creators ? comic.creators.join(", ") : "")
+      setSelectedGenreIds(comic.genres ? comic.genres.map((g) => g.id) : [])
     } else {
-      setTitle("");
-      setSynopsis("");
-      setType("manga");
-      setStatus("ongoing");
-      setCreator("");
-      setSelectedGenreIds([]);
-      coverUpload.clearFiles();
-      bannerUpload.clearFiles();
+      setTitle("")
+      setSynopsis("")
+      setType("manga")
+      setStatus("ongoing")
+      setCreator("")
+      setSelectedGenreIds([])
+      coverUpload.clearFiles()
+      bannerUpload.clearFiles()
     }
-  }, [comic, open]);
+  }, [comic, open])
 
   const toggleGenre = (id: string) => {
     setSelectedGenreIds((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
-  };
+    )
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("synopsis", synopsis);
-    formData.append("type", type);
-    formData.append("status", status);
-    formData.append("creator", creator);
-    formData.append("genreIds", JSON.stringify(selectedGenreIds));
+    e.preventDefault()
+    const formData = new FormData()
+    formData.append("title", title)
+    formData.append("synopsis", synopsis)
+    formData.append("type", type)
+    formData.append("status", status)
+    formData.append("creator", creator)
+    formData.append("genreIds", JSON.stringify(selectedGenreIds))
 
     if (coverUpload.files[0]) {
-      formData.append("cover", coverUpload.files[0].file);
+      formData.append("cover", coverUpload.files[0].file)
     }
     if (bannerUpload.files[0]) {
-      formData.append("banner", bannerUpload.files[0].file);
+      formData.append("banner", bannerUpload.files[0].file)
     }
 
-    const ok = await onSubmit(formData);
+    const ok = await onSubmit(formData)
     if (ok) {
-      onOpenChange(false);
+      onOpenChange(false)
     }
-  };
+  }
 
   return {
     genres,
@@ -88,5 +93,5 @@ export function useComicForm({ open, comic, onSubmit, onOpenChange }: UseComicFo
     coverUpload,
     bannerUpload,
     handleSubmit,
-  };
+  }
 }

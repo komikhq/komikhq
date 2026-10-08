@@ -1,41 +1,55 @@
-import React, { useState } from "react";
-import { ListNumbers, Plus, Trash, Image as ImageIcon } from "@phosphor-icons/react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { useAdminChapters, type ChapterItem } from "@/hooks/use-admin-chapters";
-import { ChapterFormSheet } from "./ChapterFormSheet";
-import { ChapterDeleteDialog } from "./ChapterDeleteDialog";
+import React, { useState } from "react"
+import {
+  ListNumbers,
+  Plus,
+  Trash,
+  Image as ImageIcon,
+} from "@phosphor-icons/react"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { useAdminChapters, type ChapterItem } from "@/hooks/use-admin-chapters"
+import { ChapterFormSheet } from "./ChapterFormSheet"
+import { ChapterDeleteDialog } from "./ChapterDeleteDialog"
 
 interface ChapterTableSectionProps {
-  comicId: string;
+  comicId: string
 }
 
 export function ChapterTableSection({ comicId }: ChapterTableSectionProps) {
-  const { chapters, loading, submitting, createChapterBatch, deleteChapter } = useAdminChapters(comicId);
-  const [formOpen, setFormOpen] = useState(false);
+  const { chapters, loading, submitting, createChapterBatch, deleteChapter } =
+    useAdminChapters(comicId)
+  const [formOpen, setFormOpen] = useState(false)
 
-  const [deleteOpen, setDeleteOpen] = useState(false);
-  const [deletingChapter, setDeletingChapter] = useState<ChapterItem | null>(null);
+  const [deleteOpen, setDeleteOpen] = useState(false)
+  const [deletingChapter, setDeletingChapter] = useState<ChapterItem | null>(
+    null
+  )
 
   const handleOpenDelete = (ch: ChapterItem) => {
-    setDeletingChapter(ch);
-    setDeleteOpen(true);
-  };
+    setDeletingChapter(ch)
+    setDeleteOpen(true)
+  }
 
   const handleConfirmDelete = async () => {
     if (deletingChapter) {
-      await deleteChapter(deletingChapter.id);
-      setDeleteOpen(false);
-      setDeletingChapter(null);
+      await deleteChapter(deletingChapter.id)
+      setDeleteOpen(false)
+      setDeletingChapter(null)
     }
-  };
+  }
 
   return (
-    <Card className="border-border/60 shadow-xs w-full">
-      <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <Card className="w-full border-border/60 shadow-xs">
+      <CardHeader className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <CardTitle className="text-lg font-bold flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-lg font-bold">
             <ListNumbers className="h-5 w-5 text-primary" />
             <span>Chapter Management</span>
           </CardTitle>
@@ -44,16 +58,20 @@ export function ChapterTableSection({ comicId }: ChapterTableSectionProps) {
           </CardDescription>
         </div>
 
-        <Button size="sm" className="gap-1.5 text-xs w-full sm:w-auto" onClick={() => setFormOpen(true)}>
+        <Button
+          size="sm"
+          className="w-full gap-1.5 text-xs sm:w-auto"
+          onClick={() => setFormOpen(true)}
+        >
           <Plus className="h-4 w-4" />
           <span>Add New Chapter</span>
         </Button>
       </CardHeader>
 
       <CardContent className="space-y-4">
-        <div className="rounded-xl border border-border/60 overflow-x-auto">
+        <div className="overflow-x-auto rounded-xl border border-border/60">
           <table className="w-full text-left text-xs">
-            <thead className="bg-muted/60 text-muted-foreground font-semibold border-b border-border/60">
+            <thead className="border-b border-border/60 bg-muted/60 font-semibold text-muted-foreground">
               <tr>
                 <th className="p-3">Chapter No.</th>
                 <th className="p-3">Chapter Title</th>
@@ -66,19 +84,36 @@ export function ChapterTableSection({ comicId }: ChapterTableSectionProps) {
             <tbody className="divide-y divide-border/40">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="p-6 text-center text-muted-foreground">Loading released chapters...</td>
+                  <td
+                    colSpan={6}
+                    className="p-6 text-center text-muted-foreground"
+                  >
+                    Loading released chapters...
+                  </td>
                 </tr>
               ) : chapters.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="p-6 text-center text-muted-foreground">No chapters released for this comic yet.</td>
+                  <td
+                    colSpan={6}
+                    className="p-6 text-center text-muted-foreground"
+                  >
+                    No chapters released for this comic yet.
+                  </td>
                 </tr>
               ) : (
                 chapters.map((ch) => (
-                  <tr key={ch.id} className="hover:bg-muted/30 transition-colors">
-                    <td className="p-3 font-bold text-foreground">Chapter {ch.chapterNumber}</td>
-                    <td className="p-3 text-muted-foreground">{ch.title || "-"}</td>
+                  <tr
+                    key={ch.id}
+                    className="transition-colors hover:bg-muted/30"
+                  >
+                    <td className="p-3 font-bold text-foreground">
+                      Chapter {ch.chapterNumber}
+                    </td>
+                    <td className="p-3 text-muted-foreground">
+                      {ch.title || "-"}
+                    </td>
                     <td className="p-3 font-medium">
-                      <Badge variant="outline" className="text-[10px] gap-1">
+                      <Badge variant="outline" className="gap-1 text-[10px]">
                         <ImageIcon className="h-3 w-3" />
                         <span>{ch.totalPages} Pages</span>
                       </Badge>
@@ -89,13 +124,17 @@ export function ChapterTableSection({ comicId }: ChapterTableSectionProps) {
                       </Badge>
                     </td>
                     <td className="p-3 text-muted-foreground">
-                      {new Date(ch.publishedAt).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" })}
+                      {new Date(ch.publishedAt).toLocaleDateString("en-US", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
                     </td>
                     <td className="p-3 text-right">
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-7 w-7 text-destructive hover:bg-destructive/10 cursor-pointer"
+                        className="h-7 w-7 cursor-pointer text-destructive hover:bg-destructive/10"
                         title="Delete Chapter"
                         onClick={() => handleOpenDelete(ch)}
                       >
@@ -124,5 +163,5 @@ export function ChapterTableSection({ comicId }: ChapterTableSectionProps) {
         onConfirm={handleConfirmDelete}
       />
     </Card>
-  );
+  )
 }

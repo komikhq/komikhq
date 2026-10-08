@@ -22,13 +22,13 @@ The Cloudflare Workers CI/CD platform segregates environment variables into 2 se
 
 When importing the GitHub repository `komikhq/komikhq` for the Astro frontend via **Cloudflare Dashboard > Workers & Pages > Create > Import from Git**:
 
-| Dashboard Form Field | Value / Input | Description |
-| --- | --- | --- |
-| **Project Name** | `komikhq` | Worker project name in Cloudflare Dashboard (matches repo name `komikhq/komikhq`). |
-| **Production Branch** | `main` | Primary branch triggering auto-deployments. |
-| **Build Command** | `pnpm run build` *(or `npm run build`)* | Command to execute Astro SSR build bundling. |
-| **Build Output Directory** | `dist` | Output directory generated for Cloudflare Workers. |
-| **Root Directory** | `/` (or leave blank) | Path to the Astro project directory in GitHub repo (`komikhq/komikhq`). |
+| Dashboard Form Field       | Value / Input                           | Description                                                                        |
+| -------------------------- | --------------------------------------- | ---------------------------------------------------------------------------------- |
+| **Project Name**           | `komikhq`                               | Worker project name in Cloudflare Dashboard (matches repo name `komikhq/komikhq`). |
+| **Production Branch**      | `main`                                  | Primary branch triggering auto-deployments.                                        |
+| **Build Command**          | `pnpm run build` _(or `npm run build`)_ | Command to execute Astro SSR build bundling.                                       |
+| **Build Output Directory** | `dist`                                  | Output directory generated for Cloudflare Workers.                                 |
+| **Root Directory**         | `/` (or leave blank)                    | Path to the Astro project directory in GitHub repo (`komikhq/komikhq`).            |
 
 > [!NOTE]
 > Ensure the `"name"` property in `wrangler.jsonc` matches your Cloudflare Worker project name: `"name": "komikhq"`.
@@ -38,14 +38,15 @@ When importing the GitHub repository `komikhq/komikhq` for the Astro frontend vi
 ## 3. Configuration Table (Build-Time Variables)
 
 ### Build-Time Variables & Secrets (CI Section)
+
 > [!IMPORTANT]
 > Configure these variables in **Settings > Build > Build variables & secrets** before clicking **Save and Deploy**.
 
-| Variable Name | Dashboard Type | Category | Description / Example Value |
-| --- | --- | --- | --- |
-| `PUBLIC_API_URL` | **Variable** | Public (Client) | Backend API endpoint URL (e.g., `https://api.komikhq.com`) |
-| `PUBLIC_PUSHER_KEY` | **Variable** | Public (Client) | Pusher Channels App Key for browser WebSocket connection |
-| `PUBLIC_PUSHER_CLUSTER` | **Variable** | Public (Client) | Pusher Channels Cluster (e.g., `ap1`) |
+| Variable Name           | Dashboard Type | Category        | Description / Example Value                                |
+| ----------------------- | -------------- | --------------- | ---------------------------------------------------------- |
+| `PUBLIC_API_URL`        | **Variable**   | Public (Client) | Backend API endpoint URL (e.g., `https://api.komikhq.com`) |
+| `PUBLIC_PUSHER_KEY`     | **Variable**   | Public (Client) | Pusher Channels App Key for browser WebSocket connection   |
+| `PUBLIC_PUSHER_CLUSTER` | **Variable**   | Public (Client) | Pusher Channels Cluster (e.g., `ap1`)                      |
 
 ---
 
@@ -66,7 +67,9 @@ To allow `komikhq` to communicate directly with `komikhq-api` over Cloudflare's 
 ```
 
 ### Custom Domains (`wrangler.jsonc`)
+
 Custom domains are also declared directly in `wrangler.jsonc`:
+
 ```jsonc
 "routes": [
   {

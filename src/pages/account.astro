@@ -1,15 +1,17 @@
 ---
-import RootLayout from "@/layouts/RootLayout.astro";
-import { AccountTabNav } from "@/components/account/AccountTabNav";
-import { AccountProfileView } from "@/components/account/AccountProfileView";
-import { UserCircle } from "@phosphor-icons/react";
+import RootLayout from "@/layouts/RootLayout.astro"
+import { AccountTabNav } from "@/components/account/AccountTabNav"
+import { AccountProfileView } from "@/components/account/AccountProfileView"
+import { UserCircle } from "@phosphor-icons/react"
 ---
 
 <RootLayout title="Profil Saya - KomikHQ">
-  <div class="max-w-4xl mx-auto flex flex-col gap-6 pb-20 pt-4 px-4">
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+  <div class="mx-auto flex max-w-4xl flex-col gap-6 px-4 pt-4 pb-20">
+    <div
+      class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center"
+    >
       <div>
-        <h1 class="text-2xl font-bold tracking-tight flex items-center gap-2">
+        <h1 class="flex items-center gap-2 text-2xl font-bold tracking-tight">
           <UserCircle className="h-6 w-6 text-primary" />
           <span>Account Center</span>
         </h1>
@@ -24,4 +26,3 @@ import { UserCircle } from "@phosphor-icons/react";
     <AccountProfileView client:only="react" />
   </div>
 </RootLayout>
-

@@ -1,155 +1,521 @@
-import React, { useState } from "react";
-import { Gear, HardDrives, EnvelopeSimple, Broom, CircleNotch } from "@phosphor-icons/react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { toast } from "sonner";
+import React, { useState, useEffect } from "react"
+import {
+  Gear,
+  HardDrives,
+  Broom,
+  CircleNotch,
+  ArrowsClockwise,
+  Database,
+  MagnifyingGlass,
+  CheckCircle,
+  WarningCircle,
+} from "@phosphor-icons/react"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { toast } from "sonner"
+import { API_ROUTES } from "@/constants/api-routes"
+import { apiFetch } from "@/lib/api-client"
+
+interface MaintenanceStatus {
+  "pending-views-count": number
+  "cached-search-keys-count": number
+  "kv-healthy": boolean
+  "r2-healthy": boolean
+  timestamp: string
+}
+
+interface SyncViewsResult {
+  "synced-logs": number
+  "affected-comics": number
+  timestamp: string
+}
+
+interface ClearCacheResult {
+  "cleared-keys": number
+  timestamp: string
+}
+
+interface PurgeOrphansResult {
+  "purged-count": number
+  "total-size-mb": string
+  timestamp: string
+}
 
 export function AdminPlatformSettingsCard() {
-  const [purging, setPurging] = useState(false);
-  const [lastResult, setLastResult] = useState<{
-    purgedCount: number;
-    totalSizeMB: string;
-    timestamp: string;
-  } | null>(null);
+  const [loadingStatus, setLoadingStatus] = useState(false)
+  const [status, setStatus] = useState<MaintenanceStatus | null>(null)
 
-  const getApiUrl = () => (window as any).__PUBLIC_API_URL__ || "http://localhost:8787";
+  const [syncingViews, setSyncingViews] = useState(false)
+  const [lastSyncResult, setLastSyncResult] = useState<SyncViewsResult | null>(
+    null
+  )
 
-  const handlePurgeOrphans = async () => {
-    setPurging(true);
-    const toastId = toast.loading("Scanning Cloudflare R2 bucket & comparing with database...");
+  const [clearingCache, setClearingCache] = useState(false)
+  const [lastCacheResult, setLastCacheResult] =
+    useState<ClearCacheResult | null>(null)
 
+  const [purgingOrphans, setPurgingOrphans] = useState(false)
+  const [lastPurgeResult, setLastPurgeResult] =
+    useState<PurgeOrphansResult | null>(null)
+
+  const fetchStatus = async () => {
     try {
-      const res = await fetch(`${getApiUrl()}/v1/admin/storage/purge-orphans`, {
-        method: "POST",
-        credentials: "include",
-      });
-
-      const data: any = await res.json();
-      if (res.ok && data.success) {
-        const resultObj = {
-          purgedCount: data.purgedCount || 0,
-          totalSizeMB: data.totalSizeMB || "0.00",
-          timestamp: new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit" }),
-        };
-        setLastResult(resultObj);
-
-        toast.success(
-          data.message || `Successfully purged ${resultObj.purgedCount} orphan files (${resultObj.totalSizeMB} MB freed).`,
-          { id: toastId }
-        );
-      } else {
-        toast.error(data.error || "Failed to purge R2 storage.", { id: toastId });
+      setLoadingStatus(true)
+      const res = await apiFetch<{ success: boolean; data: MaintenanceStatus }>(
+        API_ROUTES.ADMIN.SYSTEM.MAINTENANCE_STATUS
+      )
+      if (res?.data) {
+        setStatus(res.data)
       }
     } catch (err: any) {
-      toast.error(err.message || "A network error occurred while processing storage purge.", { id: toastId });
+      console.warn("Failed to fetch maintenance status:", err)
     } finally {
-      setPurging(false);
+      setLoadingStatus(false)
     }
-  };
+  }
+
+  useEffect(() => {
+    fetchStatus()
+  }, [])
+
+  const handleSyncViews = async () => {
+    setSyncingViews(true)
+    const toastId = toast.loading(
+      "Flushing pending view logs from KV to database..."
+    )
+
+    try {
+      const data = await apiFetch<{
+        success: boolean
+        message?: string
+        "synced-logs"?: number
+        "affected-comics"?: number
+      }>(API_ROUTES.ADMIN.SYSTEM.SYNC_VIEWS, {
+        method: "POST",
+      })
+
+      const syncedLogs = data["synced-logs"] ?? 0
+      const affectedComics = data["affected-comics"] ?? 0
+      const now = new Date().toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      })
+
+      setLastSyncResult({
+        "synced-logs": syncedLogs,
+        "affected-comics": affectedComics,
+        timestamp: now,
+      })
+
+      toast.success(
+        data.message ||
+          `Successfully synchronized ${syncedLogs} view logs across ${affectedComics} comics.`,
+        { id: toastId }
+      )
+      fetchStatus()
+    } catch (err: any) {
+      toast.error(err.message || "Failed to synchronize views buffer.", {
+        id: toastId,
+      })
+    } finally {
+      setSyncingViews(false)
+    }
+  }
+
+  const handleClearSearchCache = async () => {
+    setClearingCache(true)
+    const toastId = toast.loading(
+      "Invalidating search autocomplete cache in KV..."
+    )
+
+    try {
+      const data = await apiFetch<{
+        success: boolean
+        message?: string
+        "cleared-keys"?: number
+      }>(API_ROUTES.ADMIN.SYSTEM.CLEAR_SEARCH_CACHE, {
+        method: "POST",
+      })
+
+      const clearedKeys = data["cleared-keys"] ?? 0
+      const now = new Date().toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      })
+
+      setLastCacheResult({
+        "cleared-keys": clearedKeys,
+        timestamp: now,
+      })
+
+      toast.success(
+        data.message ||
+          `Search suggestion cache invalidated successfully (${clearedKeys} entries removed).`,
+        { id: toastId }
+      )
+      fetchStatus()
+    } catch (err: any) {
+      toast.error(err.message || "Failed to invalidate search cache.", {
+        id: toastId,
+      })
+    } finally {
+      setClearingCache(false)
+    }
+  }
+
+  const handlePurgeOrphans = async () => {
+    setPurgingOrphans(true)
+    const toastId = toast.loading(
+      "Scanning Cloudflare R2 bucket & comparing with database..."
+    )
+
+    try {
+      const data = await apiFetch<{
+        success: boolean
+        message?: string
+        "purged-count"?: number
+        "total-size-mb"?: string
+        purgedCount?: number
+        totalSizeMB?: string
+      }>(API_ROUTES.ADMIN.SYSTEM.PURGE_ORPHANS, {
+        method: "POST",
+      })
+
+      const purgedCount = data["purged-count"] ?? data.purgedCount ?? 0
+      const totalSizeMB = data["total-size-mb"] ?? data.totalSizeMB ?? "0.00"
+      const now = new Date().toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      })
+
+      setLastPurgeResult({
+        "purged-count": purgedCount,
+        "total-size-mb": totalSizeMB,
+        timestamp: now,
+      })
+
+      toast.success(
+        data.message ||
+          `Successfully purged ${purgedCount} orphan files (${totalSizeMB} MB freed).`,
+        { id: toastId }
+      )
+    } catch (err: any) {
+      toast.error(
+        err.message ||
+          "A network error occurred while processing storage purge.",
+        { id: toastId }
+      )
+    } finally {
+      setPurgingOrphans(false)
+    }
+  }
 
   return (
     <div className="space-y-6">
+      {/* Header and Live Diagnostics */}
       <Card className="border-border/60 shadow-xs">
-        <CardHeader>
-          <CardTitle className="text-lg font-bold flex items-center gap-2">
-            <Gear className="h-5 w-5 text-primary" />
-            <span>Platform Settings & Backend Services</span>
-          </CardTitle>
-          <CardDescription className="text-xs">
-            General application configuration, verification email provider, and media storage status.
-          </CardDescription>
+        <CardHeader className="flex flex-col gap-4 border-b border-border/40 pb-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <CardTitle className="flex items-center gap-2 text-lg font-bold">
+              <Gear className="h-5 w-5 text-primary" />
+              <span>Platform Maintenance & System Services</span>
+            </CardTitle>
+            <CardDescription className="mt-1 text-xs text-muted-foreground">
+              Real-time operational maintenance for Cloudflare KV buffer queues,
+              search cache, and R2 media storage.
+            </CardDescription>
+          </div>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={fetchStatus}
+            disabled={loadingStatus}
+            className="h-8 shrink-0 cursor-pointer gap-1.5 self-start text-xs sm:self-auto"
+          >
+            <ArrowsClockwise
+              className={`h-3.5 w-3.5 ${loadingStatus ? "animate-spin text-primary" : ""}`}
+            />
+            <span>Refresh Diagnostics</span>
+          </Button>
         </CardHeader>
 
-        <CardContent className="space-y-6 text-xs">
-          <div className="space-y-2">
-            <label className="font-semibold block text-foreground">Platform Name</label>
-            <Input defaultValue="KomikHQ - Digital Comic Platform" className="h-9 text-xs" />
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="p-4 rounded-xl border border-border/60 bg-muted/30 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="font-semibold flex items-center gap-1.5">
-                  <EnvelopeSimple className="h-4 w-4 text-sky-500" />
-                  <span>Resend Email API</span>
+        <CardContent className="pt-4 pb-4">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div className="space-y-1 rounded-lg border border-border/50 bg-muted/20 p-3">
+              <span className="block text-[11px] font-medium text-muted-foreground">
+                Cloudflare KV
+              </span>
+              <div className="flex items-center gap-1.5">
+                {status?.["kv-healthy"] ? (
+                  <CheckCircle className="h-4 w-4 text-emerald-500" />
+                ) : (
+                  <WarningCircle className="h-4 w-4 text-amber-500" />
+                )}
+                <span className="text-xs font-semibold">
+                  {status?.["kv-healthy"] ? "Operational" : "Degraded"}
                 </span>
-                <Badge variant="secondary" className="text-[10px] text-emerald-500 bg-emerald-500/10">Active</Badge>
               </div>
-              <p className="text-[11px] text-muted-foreground">
-                Delivery of registration verification and password reset emails.
-              </p>
             </div>
 
-            <div className="p-4 rounded-xl border border-border/60 bg-muted/30 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="font-semibold flex items-center gap-1.5">
-                  <HardDrives className="h-4 w-4 text-purple-500" />
-                  <span>Cloudflare R2 Bucket</span>
+            <div className="space-y-1 rounded-lg border border-border/50 bg-muted/20 p-3">
+              <span className="block text-[11px] font-medium text-muted-foreground">
+                R2 Media Storage
+              </span>
+              <div className="flex items-center gap-1.5">
+                {status?.["r2-healthy"] ? (
+                  <CheckCircle className="h-4 w-4 text-emerald-500" />
+                ) : (
+                  <WarningCircle className="h-4 w-4 text-rose-500" />
+                )}
+                <span className="text-xs font-semibold">
+                  {status?.["r2-healthy"] ? "Connected" : "Disconnected"}
                 </span>
-                <Badge variant="secondary" className="text-[10px] text-emerald-500 bg-emerald-500/10">Connected</Badge>
               </div>
-              <p className="text-[11px] text-muted-foreground">
-                Storage for user avatar images and comic media.
-              </p>
             </div>
-          </div>
 
-          <div className="pt-2 flex justify-end">
-            <Button size="sm">Save Configuration</Button>
+            <div className="space-y-1 rounded-lg border border-border/50 bg-muted/20 p-3">
+              <span className="block text-[11px] font-medium text-muted-foreground">
+                Pending View Logs
+              </span>
+              <div className="flex items-center gap-1.5">
+                <Database className="h-4 w-4 text-sky-500" />
+                <span className="font-mono text-xs font-semibold">
+                  {status ? `${status["pending-views-count"]} queued` : "..."}
+                </span>
+              </div>
+            </div>
+
+            <div className="space-y-1 rounded-lg border border-border/50 bg-muted/20 p-3">
+              <span className="block text-[11px] font-medium text-muted-foreground">
+                Cached Search Keys
+              </span>
+              <div className="flex items-center gap-1.5">
+                <MagnifyingGlass className="h-4 w-4 text-purple-500" />
+                <span className="font-mono text-xs font-semibold">
+                  {status
+                    ? `${status["cached-search-keys-count"]} cached`
+                    : "..."}
+                </span>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Manual Storage Purge Card (Cloudflare Style Layout) */}
+      {/* Action 1: Force Sync Buffered Views */}
       <Card className="border-border/60 shadow-xs">
-        <CardContent className="p-6">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-            <div className="space-y-1.5 max-w-2xl">
+        <CardContent className="p-5 sm:p-6">
+          <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
+            <div className="max-w-2xl space-y-1.5">
               <div className="flex items-center gap-2">
-                <Broom className="h-5 w-5 text-amber-500 shrink-0" />
+                <Database className="h-5 w-5 shrink-0 text-sky-500" />
+                <h3 className="text-base font-bold text-foreground">
+                  Force Sync Buffered Views (KV Buffer to Database)
+                </h3>
+                {status && status["pending-views-count"] > 0 && (
+                  <Badge
+                    variant="outline"
+                    className="border-sky-500/30 bg-sky-500/10 text-[10px] text-sky-500"
+                  >
+                    {status["pending-views-count"]} pending
+                  </Badge>
+                )}
+              </div>
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                Immediately flushes buffered view event logs from Cloudflare KV
+                (
+                <code className="font-mono text-[11px] text-primary">
+                  view_log:*
+                </code>
+                ) into PostgreSQL database and increments comic view counters
+                without waiting for the scheduled 10-minute cron job.
+              </p>
+
+              {lastSyncResult && !syncingViews && (
+                <div className="pt-2">
+                  <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-sky-500/40 bg-sky-500/10 p-2.5 text-xs">
+                    <div className="flex items-center gap-2 font-semibold text-sky-600 dark:text-sky-400">
+                      <CheckCircle className="h-4 w-4 shrink-0 text-sky-500" />
+                      <span>
+                        Sync Completed: {lastSyncResult["synced-logs"]} logs
+                        inserted across {lastSyncResult["affected-comics"]}{" "}
+                        comics
+                      </span>
+                    </div>
+                    <span className="font-mono text-[10px] text-muted-foreground">
+                      At {lastSyncResult.timestamp}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="w-full shrink-0 md:w-auto">
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-10 w-full shrink-0 cursor-pointer gap-2 border-sky-500/30 px-4 text-xs whitespace-nowrap text-sky-600 hover:bg-sky-500/10 hover:text-sky-600 md:w-auto dark:text-sky-400"
+                disabled={syncingViews}
+                onClick={handleSyncViews}
+              >
+                {syncingViews ? (
+                  <>
+                    <CircleNotch className="h-4 w-4 animate-spin text-sky-500" />
+                    <span>Syncing Views...</span>
+                  </>
+                ) : (
+                  <>
+                    <ArrowsClockwise className="h-4 w-4 text-sky-500" />
+                    <span>Sync Views to Database</span>
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Action 2: Invalidate Search Autocomplete Cache */}
+      <Card className="border-border/60 shadow-xs">
+        <CardContent className="p-5 sm:p-6">
+          <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
+            <div className="max-w-2xl space-y-1.5">
+              <div className="flex items-center gap-2">
+                <MagnifyingGlass className="h-5 w-5 shrink-0 text-purple-500" />
+                <h3 className="text-base font-bold text-foreground">
+                  Invalidate Search Autocomplete Cache
+                </h3>
+                {status && status["cached-search-keys-count"] > 0 && (
+                  <Badge
+                    variant="outline"
+                    className="border-purple-500/30 bg-purple-500/10 text-[10px] text-purple-500"
+                  >
+                    {status["cached-search-keys-count"]} cached queries
+                  </Badge>
+                )}
+              </div>
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                Clears all cached comic suggestions stored in Cloudflare KV (
+                <code className="font-mono text-[11px] text-primary">
+                  comic-search:suggestions:*
+                </code>
+                ). Useful after updating comic titles, alternative names, or
+                genres so search autocomplete reflects fresh records
+                immediately.
+              </p>
+
+              {lastCacheResult && !clearingCache && (
+                <div className="pt-2">
+                  <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-purple-500/40 bg-purple-500/10 p-2.5 text-xs">
+                    <div className="flex items-center gap-2 font-semibold text-purple-600 dark:text-purple-400">
+                      <CheckCircle className="h-4 w-4 shrink-0 text-purple-500" />
+                      <span>
+                        Cache Invalidation Completed:{" "}
+                        {lastCacheResult["cleared-keys"]} query entries cleared
+                      </span>
+                    </div>
+                    <span className="font-mono text-[10px] text-muted-foreground">
+                      At {lastCacheResult.timestamp}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="w-full shrink-0 md:w-auto">
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-10 w-full shrink-0 cursor-pointer gap-2 border-purple-500/30 px-4 text-xs whitespace-nowrap text-purple-600 hover:bg-purple-500/10 hover:text-purple-600 md:w-auto dark:text-purple-400"
+                disabled={clearingCache}
+                onClick={handleClearSearchCache}
+              >
+                {clearingCache ? (
+                  <>
+                    <CircleNotch className="h-4 w-4 animate-spin text-purple-500" />
+                    <span>Clearing Cache...</span>
+                  </>
+                ) : (
+                  <>
+                    <Broom className="h-4 w-4 text-purple-500" />
+                    <span>Invalidate Search Cache</span>
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Action 3: Manual R2 Storage Purge (Purge Orphan Images) */}
+      <Card className="border-border/60 shadow-xs">
+        <CardContent className="p-5 sm:p-6">
+          <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
+            <div className="max-w-2xl space-y-1.5">
+              <div className="flex items-center gap-2">
+                <HardDrives className="h-5 w-5 shrink-0 text-amber-500" />
                 <h3 className="text-base font-bold text-foreground">
                   Manual R2 Storage Purge (Purge Orphan Images)
                 </h3>
               </div>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Delete isolated/orphan image files in Cloudflare R2 that are no longer linked to the database due to interrupted uploads or deleted chapters.
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                Scan Cloudflare R2 bucket (
+                <code className="font-mono text-[11px] text-primary">
+                  komikhq-media
+                </code>
+                ) and compare with registered chapter pages in the database.
+                Deletes isolated/orphan image files uploaded more than 1 hour
+                ago that are no longer referenced in any chapter.
               </p>
-              <div className="pt-1 flex flex-col gap-2">
 
-                {purging && (
-                  <div className="p-3 rounded-xl border border-amber-500/40 bg-amber-500/10 flex items-center gap-2 text-amber-600 dark:text-amber-400 text-xs font-medium">
-                    <CircleNotch className="h-4 w-4 animate-spin shrink-0 text-amber-500" />
-                    <span className="shimmer shimmer-color-amber-500">
+              <div className="flex flex-col gap-2 pt-1">
+                {purgingOrphans && (
+                  <div className="flex items-center gap-2 rounded-xl border border-amber-500/40 bg-amber-500/10 p-3 text-xs font-medium text-amber-600 dark:text-amber-400">
+                    <CircleNotch className="h-4 w-4 shrink-0 animate-spin text-amber-500" />
+                    <span>
                       Scanning R2 bucket & comparing with database records...
                     </span>
                   </div>
                 )}
 
-                {!purging && lastResult && (
-                  <div className="p-3 rounded-xl border border-emerald-500/40 bg-emerald-500/10 flex flex-wrap items-center justify-between gap-2 text-xs">
-                    <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-semibold">
-                      <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-ping shrink-0" />
+                {!purgingOrphans && lastPurgeResult && (
+                  <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-emerald-500/40 bg-emerald-500/10 p-2.5 text-xs">
+                    <div className="flex items-center gap-2 font-semibold text-emerald-600 dark:text-emerald-400">
+                      <span className="inline-block h-2 w-2 shrink-0 animate-ping rounded-full bg-emerald-500" />
                       <span>
-                        Purge Completed: {lastResult.purgedCount} orphan files deleted ({lastResult.totalSizeMB} MB freed)
+                        Purge Completed: {lastPurgeResult["purged-count"]}{" "}
+                        orphan files deleted ({lastPurgeResult["total-size-mb"]}{" "}
+                        MB freed)
                       </span>
                     </div>
-                    <span className="text-[10px] text-muted-foreground font-mono">At {lastResult.timestamp}</span>
+                    <span className="font-mono text-[10px] text-muted-foreground">
+                      At {lastPurgeResult.timestamp}
+                    </span>
                   </div>
                 )}
               </div>
             </div>
 
-            <div className="shrink-0 w-full md:w-auto">
+            <div className="w-full shrink-0 md:w-auto">
               <Button
                 variant="destructive"
                 size="sm"
-                className="gap-2 text-xs w-full md:w-auto shrink-0 whitespace-nowrap h-10 px-4 cursor-pointer"
-                disabled={purging}
+                className="h-10 w-full shrink-0 cursor-pointer gap-2 px-4 text-xs whitespace-nowrap md:w-auto"
+                disabled={purgingOrphans}
                 onClick={handlePurgeOrphans}
               >
-                {purging ? (
+                {purgingOrphans ? (
                   <>
                     <CircleNotch className="h-4 w-4 animate-spin" />
                     <span>Scanning & Purging...</span>
@@ -166,5 +532,5 @@ export function AdminPlatformSettingsCard() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

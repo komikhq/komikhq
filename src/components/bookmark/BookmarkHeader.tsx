@@ -1,5 +1,5 @@
-import React from "react";
-import { BookmarkSimple } from "@phosphor-icons/react";
+import React from "react"
+import { BookmarkSimple } from "@phosphor-icons/react"
 
 export function BookmarkHeader() {
   return (
@@ -7,5 +7,5 @@ export function BookmarkHeader() {
       <BookmarkSimple className="h-6 w-6 text-primary" weight="fill" />
       <h1 className="text-2xl font-bold tracking-tight">Your Bookmarks</h1>
     </div>
-  );
+  )
 }

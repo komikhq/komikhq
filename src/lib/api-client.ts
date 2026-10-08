@@ -1,17 +1,18 @@
 export function getBaseApiUrl(): string {
   if (typeof window !== "undefined") {
-    const customUrl = (window as any).__PUBLIC_API_URL__ || import.meta.env.PUBLIC_API_URL;
+    const customUrl =
+      (window as any).__PUBLIC_API_URL__ || import.meta.env.PUBLIC_API_URL
     if (customUrl && customUrl !== "http://localhost:8787") {
-      return customUrl;
+      return customUrl
     }
 
-    const hostname = window.location.hostname;
+    const hostname = window.location.hostname
     if (hostname !== "localhost" && hostname !== "127.0.0.1") {
-      return `${window.location.protocol}//${hostname}:8787`;
+      return `${window.location.protocol}//${hostname}:8787`
     }
-    return customUrl || "http://localhost:8787";
+    return customUrl || "http://localhost:8787"
   }
-  return import.meta.env.PUBLIC_API_URL || "http://localhost:8787";
+  return import.meta.env.PUBLIC_API_URL || "http://localhost:8787"
 }
 
 export async function apiFetch<T = any>(
@@ -19,12 +20,12 @@ export async function apiFetch<T = any>(
   options?: RequestInit,
   astroLocals?: Record<string, any>
 ): Promise<T> {
-  const baseUrl = getBaseApiUrl();
-  const cleanPath = path.startsWith("/") ? path : `/${path}`;
-  const fullUrl = `${baseUrl}${cleanPath}`;
+  const baseUrl = getBaseApiUrl()
+  const cleanPath = path.startsWith("/") ? path : `/${path}`
+  const fullUrl = `${baseUrl}${cleanPath}`
 
   // 1. Server-Side Astro (SSR/SSG) Service Binding Execution
-  const serviceBinding = astroLocals?.runtime?.env?.BACKEND;
+  const serviceBinding = astroLocals?.runtime?.env?.BACKEND
   if (serviceBinding && typeof serviceBinding.fetch === "function") {
     const request = new Request(fullUrl, {
       ...options,
@@ -32,14 +33,17 @@ export async function apiFetch<T = any>(
         "Content-Type": "application/json",
         ...options?.headers,
       },
-    });
+    })
 
-    const response = await serviceBinding.fetch(request);
+    const response = await serviceBinding.fetch(request)
     if (!response.ok) {
-      const errorData = (await response.json().catch(() => ({}))) as any;
-      throw new Error(errorData?.error || `Service Binding Request Failed (${response.status})`);
+      const errorData = (await response.json().catch(() => ({}))) as any
+      throw new Error(
+        errorData?.error ||
+          `Service Binding Request Failed (${response.status})`
+      )
     }
-    return response.json() as Promise<T>;
+    return response.json() as Promise<T>
   }
 
   // 2. Client-Side Browser Hydration (Fetch over HTTP)
@@ -50,12 +54,12 @@ export async function apiFetch<T = any>(
       "Content-Type": "application/json",
       ...options?.headers,
     },
-  });
+  })
 
   if (!response.ok) {
-    const errorData = (await response.json().catch(() => ({}))) as any;
-    throw new Error(errorData?.error || `API Fetch Failed (${response.status})`);
+    const errorData = (await response.json().catch(() => ({}))) as any
+    throw new Error(errorData?.error || `API Fetch Failed (${response.status})`)
   }
 
-  return response.json() as Promise<T>;
+  return response.json() as Promise<T>
 }

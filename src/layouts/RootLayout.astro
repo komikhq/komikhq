@@ -1,19 +1,23 @@
 ---
-import "@/styles/global.css";
-import { ClientRouter } from "astro:transitions";
-import { SiteHeader } from "@/components/common/SiteHeader";
-import { BottomNav } from "@/components/common/BottomNav";
-import { Toaster } from "@/components/ui/sonner";
-import { GlobalPresenceListener } from "@/components/common/GlobalPresenceListener";
-import { SITE_NAME, SITE_DESCRIPTION } from "@/constants";
+import "@/styles/global.css"
+import { ClientRouter } from "astro:transitions"
+import { SiteHeader } from "@/components/common/SiteHeader"
+import { BottomNav } from "@/components/common/BottomNav"
+import { Toaster } from "@/components/ui/sonner"
+import { GlobalPresenceListener } from "@/components/common/GlobalPresenceListener"
+import { SITE_NAME, SITE_DESCRIPTION } from "@/constants"
 
 interface Props {
-  title?: string;
-  description?: string;
-  isReaderMode?: boolean;
+  title?: string
+  description?: string
+  isReaderMode?: boolean
 }
 
-const { title = SITE_NAME, description = SITE_DESCRIPTION, isReaderMode = false } = Astro.props;
+const {
+  title = SITE_NAME,
+  description = SITE_DESCRIPTION,
+  isReaderMode = false,
+} = Astro.props
 ---
 
 <!doctype html>
@@ -28,47 +32,62 @@ const { title = SITE_NAME, description = SITE_DESCRIPTION, isReaderMode = false 
     <ClientRouter />
 
     <script is:inline>
-      (function () {
+      ;(function () {
         function getTheme() {
           try {
-            var stored = localStorage.getItem("theme");
-            var supportDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-            if (stored === "dark" || (!stored && supportDark) || (stored === "system" && supportDark)) {
-              return "dark";
+            var stored = localStorage.getItem("theme")
+            var supportDark = window.matchMedia(
+              "(prefers-color-scheme: dark)"
+            ).matches
+            if (
+              stored === "dark" ||
+              (!stored && supportDark) ||
+              (stored === "system" && supportDark)
+            ) {
+              return "dark"
             }
-            return "light";
+            return "light"
           } catch (e) {
-            return "dark";
+            return "dark"
           }
         }
 
         function applyTheme(doc) {
-          var targetDoc = doc || document;
-          var theme = getTheme();
+          var targetDoc = doc || document
+          var theme = getTheme()
           if (theme === "dark") {
-            targetDoc.documentElement.classList.add("dark");
+            targetDoc.documentElement.classList.add("dark")
           } else {
-            targetDoc.documentElement.classList.remove("dark");
+            targetDoc.documentElement.classList.remove("dark")
           }
         }
 
-        applyTheme();
+        applyTheme()
 
         document.addEventListener("astro:before-swap", function (ev) {
-          applyTheme(ev.newDocument);
-        });
+          applyTheme(ev.newDocument)
+        })
 
         document.addEventListener("astro:after-swap", function () {
-          applyTheme();
-        });
-      })();
+          applyTheme()
+        })
+      })()
     </script>
 
-    <script is:inline define:vars={{ apiUrl: import.meta.env.PUBLIC_API_URL || "http://localhost:8787" }}>
-      window.__PUBLIC_API_URL__ = apiUrl;
+    <script
+      is:inline
+      define:vars={{
+        apiUrl: import.meta.env.PUBLIC_API_URL || "http://localhost:8787",
+      }}
+    >
+      window.__PUBLIC_API_URL__ = apiUrl
     </script>
   </head>
-  <body class={isReaderMode ? "min-h-screen bg-neutral-950 text-neutral-100 antialiased selection:bg-primary selection:text-primary-foreground" : "min-h-screen bg-background text-foreground antialiased selection:bg-primary selection:text-primary-foreground"}>
+  <body
+    class={isReaderMode
+      ? "min-h-screen bg-neutral-950 text-neutral-100 antialiased selection:bg-primary selection:text-primary-foreground"
+      : "min-h-screen bg-background text-foreground antialiased selection:bg-primary selection:text-primary-foreground"}
+  >
     <GlobalPresenceListener client:only="react" />
     <div class="relative flex min-h-screen flex-col">
       {!isReaderMode && <SiteHeader client:load />}

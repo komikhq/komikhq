@@ -1,22 +1,22 @@
-import React, { useState } from "react";
-import { PaperPlaneRight, X, EyeClosed } from "@phosphor-icons/react";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
+import React, { useState } from "react"
+import { PaperPlaneRight, X, EyeClosed } from "@phosphor-icons/react"
+import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea"
+import { Input } from "@/components/ui/input"
 
 interface CommentInputProps {
-  placeholder?: string;
-  parentId?: string | null;
-  replyToName?: string | null;
+  placeholder?: string
+  parentId?: string | null
+  replyToName?: string | null
   onSubmit: (
     content: string,
     parentId?: string | null,
     guestInfo?: { guestName?: string; guestEmail?: string; isSpoiler?: boolean }
-  ) => Promise<void>;
-  onCancelReply?: () => void;
-  autoFocus?: boolean;
-  isLoggedIn?: boolean;
-  variant?: "reader" | "default";
+  ) => Promise<void>
+  onCancelReply?: () => void
+  autoFocus?: boolean
+  isLoggedIn?: boolean
+  variant?: "reader" | "default"
 }
 
 export function CommentInput({
@@ -29,39 +29,39 @@ export function CommentInput({
   isLoggedIn = false,
   variant = "reader",
 }: CommentInputProps) {
-  const [content, setContent] = useState("");
-  const [guestName, setGuestName] = useState("");
-  const [guestEmail, setGuestEmail] = useState("");
-  const [isSpoiler, setIsSpoiler] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [content, setContent] = useState("")
+  const [guestName, setGuestName] = useState("")
+  const [guestEmail, setGuestEmail] = useState("")
+  const [isSpoiler, setIsSpoiler] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   // Load guest info from localStorage if not logged in
   React.useEffect(() => {
     if (!isLoggedIn && typeof window !== "undefined") {
       try {
-        const saved = localStorage.getItem("komikhq_guest_info");
+        const saved = localStorage.getItem("komikhq_guest_info")
         if (saved) {
-          const parsed = JSON.parse(saved);
-          if (parsed.guestName) setGuestName(parsed.guestName);
-          if (parsed.guestEmail) setGuestEmail(parsed.guestEmail);
+          const parsed = JSON.parse(saved)
+          if (parsed.guestName) setGuestName(parsed.guestName)
+          if (parsed.guestEmail) setGuestEmail(parsed.guestEmail)
         }
       } catch {
         // Ignore parsing errors
       }
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn])
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!content.trim() || isSubmitting) return;
+    e.preventDefault()
+    if (!content.trim() || isSubmitting) return
 
     if (!isLoggedIn && (!guestName.trim() || !guestEmail.trim())) {
-      alert("Nama dan Email wajib diisi untuk mengirim komentar sebagai Guest!");
-      return;
+      alert("Nama dan Email wajib diisi untuk mengirim komentar sebagai Guest!")
+      return
     }
 
     try {
-      setIsSubmitting(true);
+      setIsSubmitting(true)
 
       // Save guest info to localStorage for future comments
       if (!isLoggedIn && typeof window !== "undefined") {
@@ -72,7 +72,7 @@ export function CommentInput({
               guestName: guestName.trim(),
               guestEmail: guestEmail.trim(),
             })
-          );
+          )
         } catch {
           // Ignore localStorage errors
         }
@@ -82,35 +82,35 @@ export function CommentInput({
         guestName: !isLoggedIn ? guestName.trim() : undefined,
         guestEmail: !isLoggedIn ? guestEmail.trim() : undefined,
         isSpoiler,
-      });
-      setContent("");
-      setIsSpoiler(false);
-      if (onCancelReply) onCancelReply();
+      })
+      setContent("")
+      setIsSpoiler(false)
+      if (onCancelReply) onCancelReply()
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
 
   const inputBgClass =
     variant === "reader"
       ? "bg-neutral-950 border-neutral-800 text-neutral-100 placeholder:text-neutral-500"
-      : "bg-background border-input text-foreground placeholder:text-muted-foreground";
+      : "bg-background border-input text-foreground placeholder:text-muted-foreground"
 
   const labelClass =
     variant === "reader"
       ? "text-neutral-400 hover:text-neutral-300"
-      : "text-muted-foreground hover:text-foreground";
+      : "text-muted-foreground hover:text-foreground"
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
       {replyToName && (
-        <div className="flex items-center justify-between bg-primary/10 px-3 py-1.5 rounded-md border border-primary/20 text-xs text-primary font-medium">
+        <div className="flex items-center justify-between rounded-md border border-primary/20 bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary">
           <span>Membalas @{replyToName}</span>
           {onCancelReply && (
             <button
               type="button"
               onClick={onCancelReply}
-              className="hover:opacity-75 transition-opacity"
+              className="transition-opacity hover:opacity-75"
             >
               <X className="h-3.5 w-3.5" />
             </button>
@@ -119,14 +119,14 @@ export function CommentInput({
       )}
 
       {!isLoggedIn && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           <Input
             type="text"
             placeholder="Nama Anda (Guest)*"
             value={guestName}
             onChange={(e) => setGuestName(e.target.value)}
             required
-            className={`${inputBgClass} text-xs h-9 focus:border-primary`}
+            className={`${inputBgClass} h-9 text-xs focus:border-primary`}
           />
           <Input
             type="email"
@@ -134,7 +134,7 @@ export function CommentInput({
             value={guestEmail}
             onChange={(e) => setGuestEmail(e.target.value)}
             required
-            className={`${inputBgClass} text-xs h-9 focus:border-primary`}
+            className={`${inputBgClass} h-9 text-xs focus:border-primary`}
           />
         </div>
       )}
@@ -147,13 +147,15 @@ export function CommentInput({
         className={`${inputBgClass} min-h-[80px] text-sm focus:border-primary`}
       />
 
-      <div className="flex items-center justify-between flex-wrap gap-2">
-        <label className={`flex items-center gap-1.5 text-xs cursor-pointer select-none transition-colors ${labelClass}`}>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <label
+          className={`flex cursor-pointer items-center gap-1.5 text-xs transition-colors select-none ${labelClass}`}
+        >
           <input
             type="checkbox"
             checked={isSpoiler}
             onChange={(e) => setIsSpoiler(e.target.checked)}
-            className="rounded border-neutral-700 bg-neutral-950 text-primary focus:ring-0 focus:ring-offset-0 h-3.5 w-3.5 accent-primary"
+            className="h-3.5 w-3.5 rounded border-neutral-700 bg-neutral-950 text-primary accent-primary focus:ring-0 focus:ring-offset-0"
           />
           <EyeClosed className="h-3.5 w-3.5 text-neutral-400" />
           <span>Mengandung Spoiler</span>
@@ -175,7 +177,11 @@ export function CommentInput({
           <Button
             type="submit"
             size="sm"
-            disabled={!content.trim() || isSubmitting || (!isLoggedIn && (!guestName.trim() || !guestEmail.trim()))}
+            disabled={
+              !content.trim() ||
+              isSubmitting ||
+              (!isLoggedIn && (!guestName.trim() || !guestEmail.trim()))
+            }
             className="text-xs"
           >
             <PaperPlaneRight className="mr-1.5 h-3.5 w-3.5" />
@@ -184,5 +190,5 @@ export function CommentInput({
         </div>
       </div>
     </form>
-  );
+  )
 }

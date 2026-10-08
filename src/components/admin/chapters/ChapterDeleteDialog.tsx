@@ -1,4 +1,4 @@
-import React from "react";
+import React from "react"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -8,34 +8,42 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import type { ChapterItem } from "@/hooks/use-admin-chapters";
+} from "@/components/ui/alert-dialog"
+import type { ChapterItem } from "@/hooks/use-admin-chapters"
 
 interface ChapterDeleteDialogProps {
-  chapter: ChapterItem | null;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onConfirm: () => void;
+  chapter: ChapterItem | null
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  onConfirm: () => void
 }
 
-export function ChapterDeleteDialog({ chapter, open, onOpenChange, onConfirm }: ChapterDeleteDialogProps) {
-  if (!chapter) return null;
+export function ChapterDeleteDialog({
+  chapter,
+  open,
+  onOpenChange,
+  onConfirm,
+}: ChapterDeleteDialogProps) {
+  if (!chapter) return null
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent className="max-w-md">
         <AlertDialogHeader>
           <AlertDialogTitle className="text-base font-bold text-destructive">
-            Delete Chapter {chapter.chapterNumber} ({chapter.title || "Untitled"})?
+            Delete Chapter {chapter.chapterNumber} (
+            {chapter.title || "Untitled"})?
           </AlertDialogTitle>
           <AlertDialogDescription className="text-xs">
-            This action cannot be undone. All chapter metadata along with {chapter.totalPages} comic page images will be permanently deleted from the system.
+            This action cannot be undone. All chapter metadata along with{" "}
+            {chapter.totalPages} comic page images will be permanently deleted
+            from the system.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel className="text-xs">Cancel</AlertDialogCancel>
           <AlertDialogAction
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90 text-xs"
+            className="text-destructive-foreground bg-destructive text-xs hover:bg-destructive/90"
             onClick={onConfirm}
           >
             Delete Chapter
@@ -43,5 +51,5 @@ export function ChapterDeleteDialog({ chapter, open, onOpenChange, onConfirm }: 
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  );
+  )
 }

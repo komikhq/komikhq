@@ -1,12 +1,12 @@
 ---
-import RootLayout from "@/layouts/RootLayout.astro";
-import { AdminTabNav } from "@/components/admin/AdminTabNav";
-import { AdminGenresView } from "@/components/admin/genres/AdminGenresView";
-import { AdminFooter } from "@/components/admin/AdminFooter";
+import RootLayout from "@/layouts/RootLayout.astro"
+import { AdminTabNav } from "@/components/admin/AdminTabNav"
+import { AdminGenresView } from "@/components/admin/genres/AdminGenresView"
+import { AdminFooter } from "@/components/admin/AdminFooter"
 ---
 
 <RootLayout title="Genre Management - Admin Dashboard | KomikHQ">
-  <div class="w-full flex flex-col gap-6 pb-20 pt-4 px-4 sm:px-6 lg:px-8">
+  <div class="flex w-full flex-col gap-6 px-4 pt-4 pb-20 sm:px-6 lg:px-8">
     <AdminTabNav currentTab="genres" client:load />
 
     <AdminGenresView client:only="react" />
@@ -14,4 +14,3 @@ import { AdminFooter } from "@/components/admin/AdminFooter";
     <AdminFooter client:load />
   </div>
 </RootLayout>
-

@@ -1,8 +1,20 @@
-import React from "react";
-import { MagnifyingGlass, Funnel } from "@phosphor-icons/react";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import React from "react"
+import { MagnifyingGlass, Funnel } from "@phosphor-icons/react"
+import { Input } from "@/components/ui/input"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import {
   Combobox,
   ComboboxContent,
@@ -10,11 +22,16 @@ import {
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
-} from "@/components/ui/combobox";
-import { useBrowseFilters } from "@/hooks/use-browse-filters";
+} from "@/components/ui/combobox"
+import { useBrowseFilters } from "@/hooks/use-browse-filters"
 
 interface BrowseFilterBarProps {
-  onFilterChange?: (filters: { search: string; genre: string; status: string; sort: string }) => void;
+  onFilterChange?: (filters: {
+    search: string
+    genre: string
+    status: string
+    sort: string
+  }) => void
 }
 
 export function BrowseFilterBar({ onFilterChange }: BrowseFilterBarProps) {
@@ -28,12 +45,12 @@ export function BrowseFilterBar({ onFilterChange }: BrowseFilterBarProps) {
     handleSelectGenreItem,
     handleStatusChange,
     handleSortChange,
-  } = useBrowseFilters(onFilterChange);
+  } = useBrowseFilters(onFilterChange)
 
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-xl font-bold flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 text-xl font-bold">
           <Funnel className="h-5 w-5 text-primary" />
           <span>Filter & Pencarian Komik</span>
         </CardTitle>
@@ -42,9 +59,9 @@ export function BrowseFilterBar({ onFilterChange }: BrowseFilterBarProps) {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row">
           <div className="relative flex-1">
-            <MagnifyingGlass className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <MagnifyingGlass className="absolute top-3 left-3 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Cari judul komik..."
               value={search}
@@ -74,10 +91,7 @@ export function BrowseFilterBar({ onFilterChange }: BrowseFilterBarProps) {
             </Combobox>
           </div>
 
-          <Select
-            value={statusFilter}
-            onValueChange={handleStatusChange}
-          >
+          <Select value={statusFilter} onValueChange={handleStatusChange}>
             <SelectTrigger className="w-full sm:w-36">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
@@ -88,10 +102,7 @@ export function BrowseFilterBar({ onFilterChange }: BrowseFilterBarProps) {
             </SelectContent>
           </Select>
 
-          <Select
-            value={sortBy}
-            onValueChange={handleSortChange}
-          >
+          <Select value={sortBy} onValueChange={handleSortChange}>
             <SelectTrigger className="w-full sm:w-36">
               <SelectValue placeholder="Urutkan" />
             </SelectTrigger>
@@ -104,5 +115,5 @@ export function BrowseFilterBar({ onFilterChange }: BrowseFilterBarProps) {
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }

@@ -1,10 +1,10 @@
-import React from "react";
-import { AdminGuard } from "../AdminGuard";
-import { AdminComicDetailHeader } from "./AdminComicDetailHeader";
-import { ChapterTableSection } from "./ChapterTableSection";
+import React from "react"
+import { AdminGuard } from "../AdminGuard"
+import { AdminComicDetailHeader } from "./AdminComicDetailHeader"
+import { ChapterTableSection } from "./ChapterTableSection"
 
 interface AdminComicDetailViewProps {
-  comicId: string;
+  comicId: string
 }
 
 export function AdminComicDetailView({ comicId }: AdminComicDetailViewProps) {
@@ -15,5 +15,5 @@ export function AdminComicDetailView({ comicId }: AdminComicDetailViewProps) {
         <ChapterTableSection comicId={comicId} />
       </div>
     </AdminGuard>
-  );
+  )
 }

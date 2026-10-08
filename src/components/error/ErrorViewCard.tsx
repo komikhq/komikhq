@@ -1,16 +1,24 @@
-import React, { useId, useState } from "react";
-import { MagnifyingGlass, House, ArrowClockwise, Copy, Check, Bug, ShieldWarning } from "@phosphor-icons/react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+import React, { useId, useState } from "react"
+import {
+  MagnifyingGlass,
+  House,
+  ArrowClockwise,
+  Copy,
+  Check,
+  Bug,
+  ShieldWarning,
+} from "@phosphor-icons/react"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Badge } from "@/components/ui/badge"
 
 export interface ErrorViewCardProps {
-  code: 403 | 404 | 418 | 500 | 503;
-  title?: string;
-  description?: string;
-  error?: Error | unknown;
-  errorId?: string;
+  code: 403 | 404 | 418 | 500 | 503
+  title?: string
+  description?: string
+  error?: Error | unknown
+  errorId?: string
 }
 
 const ERROR_CONFIG = {
@@ -24,32 +32,36 @@ const ERROR_CONFIG = {
   404: {
     image: "/images/errors/404.png",
     defaultTitle: "Panel Komik Hilang!",
-    defaultDescription: "Halaman atau komik yang kamu cari tidak ditemukan atau telah dipindahkan.",
+    defaultDescription:
+      "Halaman atau komik yang kamu cari tidak ditemukan atau telah dipindahkan.",
     badgeVariant: "outline" as const,
     badgeClass: "border-indigo-500/50 text-indigo-500 bg-indigo-500/10",
   },
   418: {
     image: "/images/errors/418.png",
     defaultTitle: "I'm a Teapot!",
-    defaultDescription: "Server menolak seduh kopi karena server ini adalah teko teh.",
+    defaultDescription:
+      "Server menolak seduh kopi karena server ini adalah teko teh.",
     badgeVariant: "outline" as const,
     badgeClass: "border-emerald-500/50 text-emerald-500 bg-emerald-500/10",
   },
   500: {
     image: "/images/errors/500.png",
     defaultTitle: "Server Mengalami Emosi / Overheat!",
-    defaultDescription: "Terjadi kesalahan internal pada server KomikHQ saat memuat data.",
+    defaultDescription:
+      "Terjadi kesalahan internal pada server KomikHQ saat memuat data.",
     badgeVariant: "outline" as const,
     badgeClass: "border-rose-500/50 text-rose-500 bg-rose-500/10",
   },
   503: {
     image: "/images/errors/503.png",
     defaultTitle: "Layanan Sedang Pemeliharaan!",
-    defaultDescription: "Server KomikHQ sedang dalam perbaikan sementara. Mohon balik lagi nanti.",
+    defaultDescription:
+      "Server KomikHQ sedang dalam perbaikan sementara. Mohon balik lagi nanti.",
     badgeVariant: "outline" as const,
     badgeClass: "border-amber-500/50 text-amber-500 bg-amber-500/10",
   },
-};
+}
 
 export function ErrorViewCard({
   code,
@@ -58,35 +70,33 @@ export function ErrorViewCard({
   error,
   errorId: providedErrorId,
 }: ErrorViewCardProps) {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [copied, setCopied] = useState(false);
-  const [showDetails, setShowDetails] = useState(false);
-  const generatedErrorId = useId().replaceAll(":", "").toUpperCase();
+  const [searchQuery, setSearchQuery] = useState("")
+  const [copied, setCopied] = useState(false)
+  const [showDetails, setShowDetails] = useState(false)
+  const generatedErrorId = useId().replaceAll(":", "").toUpperCase()
 
-  const config = ERROR_CONFIG[code] || ERROR_CONFIG[500];
-  const displayTitle = title || config.defaultTitle;
-  const displayDescription = description || config.defaultDescription;
+  const config = ERROR_CONFIG[code] || ERROR_CONFIG[500]
+  const displayTitle = title || config.defaultTitle
+  const displayDescription = description || config.defaultDescription
 
   // Generate fallback unique error ID
-  const errorId =
-    providedErrorId ||
-    `ERR-${code}-${generatedErrorId}`;
+  const errorId = providedErrorId || `ERR-${code}-${generatedErrorId}`
 
   const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     if (searchQuery.trim()) {
-      window.location.href = `/search?q=${encodeURIComponent(searchQuery.trim())}`;
+      window.location.href = `/search?q=${encodeURIComponent(searchQuery.trim())}`
     }
-  };
+  }
 
   const errorMessage =
     error instanceof Error
       ? error.message
       : typeof error === "string"
-      ? error
-      : JSON.stringify(error || "Unknown Error");
+        ? error
+        : JSON.stringify(error || "Unknown Error")
 
-  const errorStack = error instanceof Error ? error.stack : null;
+  const errorStack = error instanceof Error ? error.stack : null
 
   const handleCopyLog = async () => {
     const diagnosticPayload = {
@@ -97,55 +107,57 @@ export function ErrorViewCard({
       userAgent: typeof navigator !== "undefined" ? navigator.userAgent : "N/A",
       message: errorMessage,
       stack: errorStack,
-    };
+    }
 
     try {
       await navigator.clipboard.writeText(
         JSON.stringify(diagnosticPayload, null, 2)
-      );
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      )
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
     } catch {
-      console.error("Failed to copy diagnostic log");
+      console.error("Failed to copy diagnostic log")
     }
-  };
+  }
 
   return (
-    <Card className="max-w-2xl mx-auto w-full border-border/60 bg-card/70 backdrop-blur-md shadow-xl my-8">
+    <Card className="mx-auto my-8 w-full max-w-2xl border-border/60 bg-card/70 shadow-xl backdrop-blur-md">
       <CardHeader className="flex flex-col items-center pt-8 pb-4 text-center">
         {/* Sawaratsuki Sticker Illustration */}
-        <div className="relative group cursor-pointer mb-6 transition-transform duration-300 hover:scale-105">
-          <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 via-accent/20 to-primary/20 rounded-full blur-xl opacity-50 group-hover:opacity-100 transition duration-500" />
+        <div className="group relative mb-6 cursor-pointer transition-transform duration-300 hover:scale-105">
+          <div className="absolute -inset-4 rounded-full bg-gradient-to-r from-primary/20 via-accent/20 to-primary/20 opacity-50 blur-xl transition duration-500 group-hover:opacity-100" />
           <img
             src={config.image}
             alt={`Error ${code} Sticker - Sawaratsuki`}
-            className="relative h-44 md:h-52 object-contain drop-shadow-2xl"
+            className="relative h-44 object-contain drop-shadow-2xl md:h-52"
           />
         </div>
 
         {/* Badge & Title */}
-        <Badge className={`mb-3 py-1 px-3 text-xs font-bold tracking-wider ${config.badgeClass}`}>
+        <Badge
+          className={`mb-3 px-3 py-1 text-xs font-bold tracking-wider ${config.badgeClass}`}
+        >
           ERROR CODE {code}
         </Badge>
-        <h1 className="text-2xl md:text-3xl font-extrabold text-foreground tracking-tight">
+        <h1 className="text-2xl font-extrabold tracking-tight text-foreground md:text-3xl">
           {displayTitle}
         </h1>
-        <p className="text-sm md:text-base text-muted-foreground mt-2 max-w-md leading-relaxed">
+        <p className="mt-2 max-w-md text-sm leading-relaxed text-muted-foreground md:text-base">
           {displayDescription}
         </p>
       </CardHeader>
 
       <CardContent className="space-y-6 px-6 pb-8">
         {/* Search Bar for 404 & general errors */}
-        <form onSubmit={handleSearch} className="flex gap-2 max-w-md mx-auto">
+        <form onSubmit={handleSearch} className="mx-auto flex max-w-md gap-2">
           <div className="relative flex-1">
-            <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <MagnifyingGlass className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               type="text"
               placeholder="Cari judul komik / manga..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 bg-background/80"
+              className="bg-background/80 pl-9"
             />
           </div>
           <Button type="submit" variant="default" className="font-semibold">
@@ -193,18 +205,21 @@ export function ErrorViewCard({
         </div>
 
         {/* Diagnostic Accordion / Details */}
-        <div className="border-t border-border/40 pt-4 mt-6">
+        <div className="mt-6 border-t border-border/40 pt-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
               <ShieldWarning className="h-4 w-4" />
-              <span>Reference Code: <strong className="font-mono text-foreground">{errorId}</strong></span>
+              <span>
+                Reference Code:{" "}
+                <strong className="font-mono text-foreground">{errorId}</strong>
+              </span>
             </div>
 
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setShowDetails(!showDetails)}
-              className="text-xs text-muted-foreground hover:text-foreground gap-1 h-7 px-2"
+              className="h-7 gap-1 px-2 text-xs text-muted-foreground hover:text-foreground"
             >
               <Bug className="h-3.5 w-3.5" />
               {showDetails ? "Sembunyikan Log" : "Detail Diagnosa"}
@@ -212,26 +227,31 @@ export function ErrorViewCard({
           </div>
 
           {showDetails && (
-            <div className="mt-3 p-3 rounded-md bg-muted/60 text-xs font-mono border border-border/50 space-y-2 overflow-x-auto">
+            <div className="mt-3 space-y-2 overflow-x-auto rounded-md border border-border/50 bg-muted/60 p-3 font-mono text-xs">
               <div>
-                <span className="text-muted-foreground">Error ID:</span> {errorId}
+                <span className="text-muted-foreground">Error ID:</span>{" "}
+                {errorId}
               </div>
               <div>
-                <span className="text-muted-foreground">Status Code:</span> {code}
+                <span className="text-muted-foreground">Status Code:</span>{" "}
+                {code}
               </div>
               <div>
-                <span className="text-muted-foreground">Timestamp:</span> {new Date().toLocaleString("id-ID")}
+                <span className="text-muted-foreground">Timestamp:</span>{" "}
+                {new Date().toLocaleString("id-ID")}
               </div>
               {errorMessage && (
                 <div>
                   <span className="text-muted-foreground">Message:</span>{" "}
-                  <span className="text-rose-500 dark:text-rose-400">{errorMessage}</span>
+                  <span className="text-rose-500 dark:text-rose-400">
+                    {errorMessage}
+                  </span>
                 </div>
               )}
               {errorStack && (
-                <div className="pt-2 border-t border-border/30">
-                  <div className="text-muted-foreground mb-1">Stack Trace:</div>
-                  <pre className="text-[10px] leading-normal text-muted-foreground whitespace-pre-wrap max-h-40 overflow-y-auto">
+                <div className="border-t border-border/30 pt-2">
+                  <div className="mb-1 text-muted-foreground">Stack Trace:</div>
+                  <pre className="max-h-40 overflow-y-auto text-[10px] leading-normal whitespace-pre-wrap text-muted-foreground">
                     {errorStack}
                   </pre>
                 </div>
@@ -241,5 +261,5 @@ export function ErrorViewCard({
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }

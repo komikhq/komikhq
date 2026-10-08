@@ -1,16 +1,16 @@
 ---
-import RootLayout from "@/layouts/RootLayout.astro";
-import { HomeHeroCard } from "@/components/home/HomeHeroCard";
-import { HomeTrendingSection } from "@/components/home/HomeTrendingSection";
-import { HomePopularSection } from "@/components/home/HomePopularSection";
-import { HomeLatestAddedSection } from "@/components/home/HomeLatestAddedSection";
-import { HomeGenreComicsSection } from "@/components/home/HomeGenreComicsSection";
-import { HomeTopGenresCard } from "@/components/home/HomeTopGenresCard";
-import { HomeAllGenresCard } from "@/components/home/HomeAllGenresCard";
+import RootLayout from "@/layouts/RootLayout.astro"
+import { HomeHeroCard } from "@/components/home/HomeHeroCard"
+import { HomeTrendingSection } from "@/components/home/HomeTrendingSection"
+import { HomePopularSection } from "@/components/home/HomePopularSection"
+import { HomeLatestAddedSection } from "@/components/home/HomeLatestAddedSection"
+import { HomeGenreComicsSection } from "@/components/home/HomeGenreComicsSection"
+import { HomeTopGenresCard } from "@/components/home/HomeTopGenresCard"
+import { HomeAllGenresCard } from "@/components/home/HomeAllGenresCard"
 ---
 
 <RootLayout title="KomikHQ - Baca Manga, Manhwa, Manhua Bahasa Indonesia">
-  <div class="max-w-screen-2xl mx-auto flex flex-col gap-6 pb-20 pt-4 px-4">
+  <div class="mx-auto flex max-w-screen-2xl flex-col gap-6 px-4 pt-4 pb-20">
     <HomeHeroCard client:load />
     <HomeTrendingSection client:load />
     <HomePopularSection client:load />

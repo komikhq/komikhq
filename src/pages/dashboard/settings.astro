@@ -1,13 +1,13 @@
 ---
-import RootLayout from "@/layouts/RootLayout.astro";
-import { AdminGuard } from "@/components/admin/AdminGuard";
-import { AdminTabNav } from "@/components/admin/AdminTabNav";
-import { AdminPlatformSettingsCard } from "@/components/admin/AdminPlatformSettingsCard";
-import { AdminFooter } from "@/components/admin/AdminFooter";
+import RootLayout from "@/layouts/RootLayout.astro"
+import { AdminGuard } from "@/components/admin/AdminGuard"
+import { AdminTabNav } from "@/components/admin/AdminTabNav"
+import { AdminPlatformSettingsCard } from "@/components/admin/AdminPlatformSettingsCard"
+import { AdminFooter } from "@/components/admin/AdminFooter"
 ---
 
 <RootLayout title="Platform Settings - Admin Dashboard | KomikHQ">
-  <div class="w-full flex flex-col gap-6 pb-20 pt-4 px-4 sm:px-6 lg:px-8">
+  <div class="flex w-full flex-col gap-6 px-4 pt-4 pb-20 sm:px-6 lg:px-8">
     <AdminTabNav currentTab="settings" client:load />
 
     <AdminGuard client:only="react">
@@ -17,4 +17,3 @@ import { AdminFooter } from "@/components/admin/AdminFooter";
     <AdminFooter client:load />
   </div>
 </RootLayout>
-

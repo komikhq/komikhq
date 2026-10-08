@@ -1,4 +1,4 @@
-import React from "react";
+import React from "react"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -8,18 +8,23 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import type { ComicAdminItem } from "@/hooks/use-admin-comics";
+} from "@/components/ui/alert-dialog"
+import type { ComicAdminItem } from "@/hooks/use-admin-comics"
 
 interface ComicDeleteDialogProps {
-  comic: ComicAdminItem | null;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onConfirm: () => void;
+  comic: ComicAdminItem | null
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  onConfirm: () => void
 }
 
-export function ComicDeleteDialog({ comic, open, onOpenChange, onConfirm }: ComicDeleteDialogProps) {
-  if (!comic) return null;
+export function ComicDeleteDialog({
+  comic,
+  open,
+  onOpenChange,
+  onConfirm,
+}: ComicDeleteDialogProps) {
+  if (!comic) return null
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -29,13 +34,15 @@ export function ComicDeleteDialog({ comic, open, onOpenChange, onConfirm }: Comi
             Delete Comic &quot;{comic.title}&quot;?
           </AlertDialogTitle>
           <AlertDialogDescription className="text-xs">
-            This action cannot be undone. All comic metadata, covers, banners, and chapters along with their pages in R2 will be permanently deleted.
+            This action cannot be undone. All comic metadata, covers, banners,
+            and chapters along with their pages in R2 will be permanently
+            deleted.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel className="text-xs">Cancel</AlertDialogCancel>
           <AlertDialogAction
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90 text-xs"
+            className="text-destructive-foreground bg-destructive text-xs hover:bg-destructive/90"
             onClick={onConfirm}
           >
             Delete Permanently
@@ -43,5 +50,5 @@ export function ComicDeleteDialog({ comic, open, onOpenChange, onConfirm }: Comi
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  );
+  )
 }

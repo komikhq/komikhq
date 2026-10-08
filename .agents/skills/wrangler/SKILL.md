@@ -17,16 +17,16 @@ Use the project's Wrangler version and retrieve the relevant documentation befor
 
 Use the Cloudflare MCP `docs` tool if available, or fetch the relevant linked page directly. Follow links to the specific command or product involved; avoid loading the entire reference. If a page moves, rediscover it through the [Wrangler command index](https://developers.cloudflare.com/workers/wrangler/commands/) or Cloudflare docs search.
 
-| Task | Source |
-| --- | --- |
-| Discover commands and flags, including resource management, deployments, rollback, and diagnostics | Project-local `wrangler --help` and `wrangler <command> --help`; [command reference](https://developers.cloudflare.com/workers/wrangler/commands/) |
-| Edit config or add a binding | Installed `wrangler/config-schema.json` (usually under `node_modules`); [configuration reference](https://developers.cloudflare.com/workers/wrangler/configuration/) |
-| Configure staging or production | [Environments](https://developers.cloudflare.com/workers/wrangler/environments/) |
-| Set secrets locally, in CI, or on a deployed Worker | [Secrets](https://developers.cloudflare.com/workers/configuration/secrets/) |
-| Generate binding and runtime types | [TypeScript](https://developers.cloudflare.com/workers/languages/typescript/) |
-| Run locally or choose a testing approach | [Local development](https://developers.cloudflare.com/workers/local-development/); [testing](https://developers.cloudflare.com/workers/testing/) |
-| Diagnose authentication or select an account | [General commands](https://developers.cloudflare.com/workers/wrangler/commands/general/), including `whoami`; [authentication profiles](https://developers.cloudflare.com/workers/wrangler/profiles/) |
-| Deploy an unauthenticated prototype | [Claim deployments](https://developers.cloudflare.com/workers/platform/claim-deployments/) for eligibility, expiry, and claim URL handling; use a permanent account for production or CI |
+| Task                                                                                               | Source                                                                                                                                                                                                |
+| -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Discover commands and flags, including resource management, deployments, rollback, and diagnostics | Project-local `wrangler --help` and `wrangler <command> --help`; [command reference](https://developers.cloudflare.com/workers/wrangler/commands/)                                                    |
+| Edit config or add a binding                                                                       | Installed `wrangler/config-schema.json` (usually under `node_modules`); [configuration reference](https://developers.cloudflare.com/workers/wrangler/configuration/)                                  |
+| Configure staging or production                                                                    | [Environments](https://developers.cloudflare.com/workers/wrangler/environments/)                                                                                                                      |
+| Set secrets locally, in CI, or on a deployed Worker                                                | [Secrets](https://developers.cloudflare.com/workers/configuration/secrets/)                                                                                                                           |
+| Generate binding and runtime types                                                                 | [TypeScript](https://developers.cloudflare.com/workers/languages/typescript/)                                                                                                                         |
+| Run locally or choose a testing approach                                                           | [Local development](https://developers.cloudflare.com/workers/local-development/); [testing](https://developers.cloudflare.com/workers/testing/)                                                      |
+| Diagnose authentication or select an account                                                       | [General commands](https://developers.cloudflare.com/workers/wrangler/commands/general/), including `whoami`; [authentication profiles](https://developers.cloudflare.com/workers/wrangler/profiles/) |
+| Deploy an unauthenticated prototype                                                                | [Claim deployments](https://developers.cloudflare.com/workers/platform/claim-deployments/) for eligibility, expiry, and claim URL handling; use a permanent account for production or CI              |
 
 Use installed help and schema to check whether documented features exist in the project's version. If a required feature needs an upgrade, make that dependency explicit. If retrieval is unavailable, state the gap and use available local evidence rather than inventing syntax.
 

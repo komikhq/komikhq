@@ -1,36 +1,48 @@
-import React, { useState } from "react";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter } from "@/components/ui/sheet";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { ImageUploadZone } from "@/components/admin/common/ImageUploadZone";
-import { useImageUpload } from "@/hooks/use-image-upload";
+import React, { useState } from "react"
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+  SheetFooter,
+} from "@/components/ui/sheet"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button"
+import { ImageUploadZone } from "@/components/admin/common/ImageUploadZone"
+import { useImageUpload } from "@/hooks/use-image-upload"
 
 interface ChapterFormSheetProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  open: boolean
+  onOpenChange: (open: boolean) => void
   onSubmitBatch: (
     input: { chapterNumber: string; title?: string; pages: File[] },
     onProgress?: (progress: number, stepText: string) => void
-  ) => Promise<boolean>;
-  submitting: boolean;
+  ) => Promise<boolean>
+  submitting: boolean
 }
 
-export function ChapterFormSheet({ open, onOpenChange, onSubmitBatch, submitting }: ChapterFormSheetProps) {
-  const pagesUpload = useImageUpload({ multiple: true, maxFiles: 100 });
-  const [chapterNumber, setChapterNumber] = useState("");
-  const [title, setTitle] = useState("");
-  const [progressPercent, setProgressPercent] = useState(0);
-  const [progressText, setProgressText] = useState("");
+export function ChapterFormSheet({
+  open,
+  onOpenChange,
+  onSubmitBatch,
+  submitting,
+}: ChapterFormSheetProps) {
+  const pagesUpload = useImageUpload({ multiple: true, maxFiles: 100 })
+  const [chapterNumber, setChapterNumber] = useState("")
+  const [title, setTitle] = useState("")
+  const [progressPercent, setProgressPercent] = useState(0)
+  const [progressText, setProgressText] = useState("")
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!chapterNumber.trim() || pagesUpload.files.length === 0) return;
+    e.preventDefault()
+    if (!chapterNumber.trim() || pagesUpload.files.length === 0) return
 
-    setProgressPercent(0);
-    setProgressText("Preparing upload...");
+    setProgressPercent(0)
+    setProgressText("Preparing upload...")
 
-    const files = pagesUpload.files.map((item) => item.file);
+    const files = pagesUpload.files.map((item) => item.file)
 
     const ok = await onSubmitBatch(
       {
@@ -39,54 +51,64 @@ export function ChapterFormSheet({ open, onOpenChange, onSubmitBatch, submitting
         pages: files,
       },
       (percent, stepText) => {
-        setProgressPercent(percent);
-        setProgressText(stepText);
+        setProgressPercent(percent)
+        setProgressText(stepText)
       }
-    );
+    )
 
     if (ok) {
-      setChapterNumber("");
-      setTitle("");
-      pagesUpload.clearFiles();
-      setProgressPercent(0);
-      setProgressText("");
-      onOpenChange(false);
+      setChapterNumber("")
+      setTitle("")
+      pagesUpload.clearFiles()
+      setProgressPercent(0)
+      setProgressText("")
+      onOpenChange(false)
     }
-  };
+  }
 
   return (
     <Sheet open={open} onOpenChange={(val) => !submitting && onOpenChange(val)}>
-      <SheetContent side="right" className="w-full sm:[&[data-slot=sheet-content]]:max-w-[92vw] lg:[&[data-slot=sheet-content]]:max-w-[90vw] xl:[&[data-slot=sheet-content]]:max-w-[1400px] flex flex-col h-full overflow-hidden p-0">
-        <SheetHeader className="p-6 border-b border-border/60 sticky top-0 bg-background/95 backdrop-blur z-10 shrink-0">
-          <SheetTitle className="text-lg font-bold">Add Chapter & Upload Page Images</SheetTitle>
+      <SheetContent
+        side="right"
+        className="flex h-full w-full flex-col overflow-hidden p-0 sm:[&[data-slot=sheet-content]]:max-w-[92vw] lg:[&[data-slot=sheet-content]]:max-w-[90vw] xl:[&[data-slot=sheet-content]]:max-w-[1400px]"
+      >
+        <SheetHeader className="sticky top-0 z-10 shrink-0 border-b border-border/60 bg-background/95 p-6 backdrop-blur">
+          <SheetTitle className="text-lg font-bold">
+            Add Chapter & Upload Page Images
+          </SheetTitle>
           <SheetDescription className="text-xs">
-            Upload comic page images at once to create a new chapter release with vertical webtoon/manga specifications.
+            Upload comic page images at once to create a new chapter release
+            with vertical webtoon/manga specifications.
           </SheetDescription>
         </SheetHeader>
 
-        <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
-          <div className="flex-1 overflow-y-auto p-6 space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
+          <div className="flex-1 space-y-6 overflow-y-auto p-6">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <Label className="text-xs font-semibold">Chapter Number *</Label>
+                <Label className="text-xs font-semibold">
+                  Chapter Number *
+                </Label>
                 <Input
                   required
                   disabled={submitting}
                   type="number"
                   step="0.1"
                   placeholder="e.g. 1 or 1.5"
-                  className="text-xs h-9"
+                  className="h-9 text-xs"
                   value={chapterNumber}
                   onChange={(e) => setChapterNumber(e.target.value)}
                 />
               </div>
 
               <div className="space-y-1.5">
-                <Label className="text-xs font-semibold">Chapter Title (Optional)</Label>
+                <Label className="text-xs font-semibold">
+                  Chapter Title (Optional)
+                </Label>
                 <Input
                   disabled={submitting}
                   placeholder="e.g. The Hunter Awakes"
-                  className="text-xs h-9"
+                  className="h-9 text-xs"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                 />
@@ -94,16 +116,18 @@ export function ChapterFormSheet({ open, onOpenChange, onSubmitBatch, submitting
             </div>
 
             {submitting && (
-              <div className="p-4 rounded-xl border border-primary/30 bg-primary/5 space-y-2 animate-in fade-in">
+              <div className="animate-in space-y-2 rounded-xl border border-primary/30 bg-primary/5 p-4 fade-in">
                 <div className="flex items-center justify-between text-xs font-medium">
-                  <span className="shimmer shimmer-color-primary text-foreground font-semibold">
+                  <span className="shimmer font-semibold text-foreground shimmer-color-primary">
                     {progressText || "Uploading Pages..."}
                   </span>
-                  <span className="text-primary font-bold">{progressPercent}%</span>
+                  <span className="font-bold text-primary">
+                    {progressPercent}%
+                  </span>
                 </div>
-                <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
+                <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
                   <div
-                    className="bg-primary h-2 rounded-full transition-all duration-300 ease-out"
+                    className="h-2 rounded-full bg-primary transition-all duration-300 ease-out"
                     style={{ width: `${progressPercent}%` }}
                   />
                 </div>
@@ -131,16 +155,28 @@ export function ChapterFormSheet({ open, onOpenChange, onSubmitBatch, submitting
             </div>
           </div>
 
-          <SheetFooter className="p-6 sticky bottom-0 bg-background/95 backdrop-blur border-t border-border/60 flex flex-row items-center justify-end gap-2 shrink-0 mt-auto z-10">
-            <Button type="button" variant="outline" size="sm" disabled={submitting} onClick={() => onOpenChange(false)}>
+          <SheetFooter className="sticky bottom-0 z-10 mt-auto flex shrink-0 flex-row items-center justify-end gap-2 border-t border-border/60 bg-background/95 p-6 backdrop-blur">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={submitting}
+              onClick={() => onOpenChange(false)}
+            >
               Cancel
             </Button>
-            <Button type="submit" size="sm" disabled={submitting || pagesUpload.files.length === 0}>
-              {submitting ? `Uploading... (${progressPercent}%)` : "Upload & Create Chapter"}
+            <Button
+              type="submit"
+              size="sm"
+              disabled={submitting || pagesUpload.files.length === 0}
+            >
+              {submitting
+                ? `Uploading... (${progressPercent}%)`
+                : "Upload & Create Chapter"}
             </Button>
           </SheetFooter>
         </form>
       </SheetContent>
     </Sheet>
-  );
+  )
 }

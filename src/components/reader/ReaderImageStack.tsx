@@ -1,79 +1,84 @@
-import React, { useState, useEffect, useRef } from "react";
-import { API_PREFIX, API_ROUTES } from "@/constants/api-routes";
-import { apiFetch } from "@/lib/api-client";
-import { Image, CircleNotch } from "@phosphor-icons/react";
+import React, { useState, useEffect, useRef } from "react"
+import { API_PREFIX, API_ROUTES } from "@/constants/api-routes"
+import { apiFetch } from "@/lib/api-client"
+import { Image, CircleNotch } from "@phosphor-icons/react"
 
 interface ReaderImageStackProps {
-  comicSlug?: string;
-  chapterSlug?: string;
+  comicSlug?: string
+  chapterSlug?: string
 }
 
 interface LazyChapterPageProps {
-  page: any;
-  pageIndex: number;
-  totalPages: number;
-  onPageVisible?: (pageIndex: number) => void;
+  page: any
+  pageIndex: number
+  totalPages: number
+  onPageVisible?: (pageIndex: number) => void
 }
 
-function LazyChapterPage({ page, pageIndex, totalPages, onPageVisible }: LazyChapterPageProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(pageIndex === 0);
-  const [isLoaded, setIsLoaded] = useState(false);
+function LazyChapterPage({
+  page,
+  pageIndex,
+  totalPages,
+  onPageVisible,
+}: LazyChapterPageProps) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [isVisible, setIsVisible] = useState(pageIndex === 0)
+  const [isLoaded, setIsLoaded] = useState(false)
 
   // 1. Strict Lazy Loading Observer (Loads image only when 400px near viewport)
   useEffect(() => {
-    if (isVisible) return;
+    if (isVisible) return
 
     const lazyObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setIsVisible(true);
-            lazyObserver.disconnect();
+            setIsVisible(true)
+            lazyObserver.disconnect()
           }
-        });
+        })
       },
       {
         rootMargin: "400px 0px 400px 0px",
         threshold: 0.01,
       }
-    );
+    )
 
     if (containerRef.current) {
-      lazyObserver.observe(containerRef.current);
+      lazyObserver.observe(containerRef.current)
     }
 
     return () => {
-      lazyObserver.disconnect();
-    };
-  }, [isVisible]);
+      lazyObserver.disconnect()
+    }
+  }, [isVisible])
 
   // 2. Active Page Tracking Observer for Reading History
   useEffect(() => {
-    if (!onPageVisible) return;
+    if (!onPageVisible) return
 
     const trackingObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            onPageVisible(pageIndex);
+            onPageVisible(pageIndex)
           }
-        });
+        })
       },
       {
         rootMargin: "0px 0px 0px 0px",
         threshold: 0.4,
       }
-    );
+    )
 
     if (containerRef.current) {
-      trackingObserver.observe(containerRef.current);
+      trackingObserver.observe(containerRef.current)
     }
 
     return () => {
-      trackingObserver.disconnect();
-    };
-  }, [pageIndex, onPageVisible]);
+      trackingObserver.disconnect()
+    }
+  }, [pageIndex, onPageVisible])
 
   return (
     <div
@@ -83,15 +88,17 @@ function LazyChapterPage({ page, pageIndex, totalPages, onPageVisible }: LazyCha
       {isVisible ? (
         <>
           {!isLoaded && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-neutral-900/80 text-neutral-500 gap-2">
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-neutral-900/80 text-neutral-500">
               <CircleNotch className="h-6 w-6 animate-spin text-primary" />
-              <span className="text-xs font-mono">Memuat Halaman {page.pageNumber || pageIndex + 1}...</span>
+              <span className="font-mono text-xs">
+                Memuat Halaman {page.pageNumber || pageIndex + 1}...
+              </span>
             </div>
           )}
           <img
             src={page.imageUrl}
             alt={`Halaman ${page.pageNumber || pageIndex + 1}`}
-            className={`block w-full h-auto object-contain transition-opacity duration-300 ${
+            className={`block h-auto w-full object-contain transition-opacity duration-300 ${
               isLoaded ? "opacity-100" : "opacity-0"
             }`}
             onLoad={() => setIsLoaded(true)}
@@ -100,34 +107,47 @@ function LazyChapterPage({ page, pageIndex, totalPages, onPageVisible }: LazyCha
           />
         </>
       ) : (
-        <div className="flex min-h-[220px] flex-col items-center justify-center gap-2 text-neutral-600 bg-neutral-900/80">
+        <div className="flex min-h-[220px] flex-col items-center justify-center gap-2 bg-neutral-900/80 text-neutral-600">
           <Image className="h-8 w-8 opacity-40" />
-          <span className="text-xs font-mono opacity-50">Halaman {page.pageNumber || pageIndex + 1}</span>
+          <span className="font-mono text-xs opacity-50">
+            Halaman {page.pageNumber || pageIndex + 1}
+          </span>
         </div>
       )}
 
-      <span className="absolute bottom-2 right-2 bg-black/70 text-white text-[10px] px-2 py-0.5 backdrop-blur font-mono rounded border border-neutral-800">
+      <span className="absolute right-2 bottom-2 rounded border border-neutral-800 bg-black/70 px-2 py-0.5 font-mono text-[10px] text-white backdrop-blur">
         {page.pageNumber || pageIndex + 1}/{totalPages}
       </span>
     </div>
-  );
+  )
 }
 
-export function ReaderImageStack({ comicSlug, chapterSlug }: ReaderImageStackProps) {
-  const [pages, setPages] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [chapterMeta, setChapterMeta] = useState<{ comicId: string; chapterId: string } | null>(null);
-  const debounceTimerRef = useRef<any>(null);
+export function ReaderImageStack({
+  comicSlug,
+  chapterSlug,
+}: ReaderImageStackProps) {
+  const [pages, setPages] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [chapterMeta, setChapterMeta] = useState<{
+    comicId: string
+    chapterId: string
+  } | null>(null)
+  const debounceTimerRef = useRef<any>(null)
 
   const recordView = (comicId: string, chapterId: string) => {
     apiFetch(`${API_PREFIX}/view`, {
       method: "POST",
       body: JSON.stringify({ comicId, chapterId }),
-    }).catch(() => {});
-  };
+    }).catch(() => {})
+  }
 
-  const recordHistory = (comicId: string, chapterId: string, pageNum: number, totalPagesCount: number) => {
+  const recordHistory = (
+    comicId: string,
+    chapterId: string,
+    pageNum: number,
+    totalPagesCount: number
+  ) => {
     apiFetch(API_ROUTES.HISTORY.RECORD, {
       method: "POST",
       body: JSON.stringify({
@@ -136,77 +156,93 @@ export function ReaderImageStack({ comicSlug, chapterSlug }: ReaderImageStackPro
         lastReadPage: pageNum,
         snapshotTotalPages: totalPagesCount,
       }),
-    }).catch(() => {});
-  };
+    }).catch(() => {})
+  }
 
   useEffect(() => {
-    if (!comicSlug || !chapterSlug) return;
-    let isMounted = true;
-    setIsLoading(true);
-    setError(null);
+    if (!comicSlug || !chapterSlug) return
+    let isMounted = true
+    setIsLoading(true)
+    setError(null)
 
     apiFetch(`${API_PREFIX}/comics/${comicSlug}/chapters/${chapterSlug}`)
       .then((res) => {
         if (isMounted) {
-          setPages(res.pages || []);
+          setPages(res.pages || [])
           if (res.comic?.id && res.chapter?.id) {
-            setChapterMeta({ comicId: res.comic.id, chapterId: res.chapter.id });
-            recordView(res.comic.id, res.chapter.id);
-            recordHistory(res.comic.id, res.chapter.id, 1, res.pages?.length || 1);
+            setChapterMeta({ comicId: res.comic.id, chapterId: res.chapter.id })
+            recordView(res.comic.id, res.chapter.id)
+            recordHistory(
+              res.comic.id,
+              res.chapter.id,
+              1,
+              res.pages?.length || 1
+            )
           }
         }
       })
       .catch((err) => {
         if (isMounted) {
-          setError(err.message || "Gagal memuat lembaran komik.");
+          setError(err.message || "Gagal memuat lembaran komik.")
         }
       })
       .finally(() => {
-        if (isMounted) setIsLoading(false);
-      });
+        if (isMounted) setIsLoading(false)
+      })
 
     return () => {
-      isMounted = false;
-    };
-  }, [comicSlug, chapterSlug]);
+      isMounted = false
+    }
+  }, [comicSlug, chapterSlug])
 
   const handlePageVisible = (pageIndex: number) => {
-    if (!chapterMeta || pages.length === 0) return;
-    const pageNum = pageIndex + 1;
+    if (!chapterMeta || pages.length === 0) return
+    const pageNum = pageIndex + 1
 
     if (debounceTimerRef.current) {
-      clearTimeout(debounceTimerRef.current);
+      clearTimeout(debounceTimerRef.current)
     }
 
     debounceTimerRef.current = setTimeout(() => {
-      recordHistory(chapterMeta.comicId, chapterMeta.chapterId, pageNum, pages.length);
-    }, 1500);
-  };
+      recordHistory(
+        chapterMeta.comicId,
+        chapterMeta.chapterId,
+        pageNum,
+        pages.length
+      )
+    }, 1500)
+  }
 
   if (isLoading) {
     return (
-      <main className="max-w-3xl mx-auto py-8 px-2 space-y-4">
+      <main className="mx-auto max-w-3xl space-y-4 px-2 py-8">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="w-full h-96 bg-neutral-900 animate-pulse rounded-md border border-neutral-800" />
+          <div
+            key={i}
+            className="h-96 w-full animate-pulse rounded-md border border-neutral-800 bg-neutral-900"
+          />
         ))}
       </main>
-    );
+    )
   }
 
   if (error || pages.length === 0) {
     return (
-      <main className="max-w-3xl mx-auto py-16 px-4 text-center space-y-3">
-        <Image className="h-12 w-12 mx-auto text-neutral-600" />
-        <h3 className="text-base font-bold text-neutral-300">Belum Ada Halaman Terdaftar</h3>
+      <main className="mx-auto max-w-3xl space-y-3 px-4 py-16 text-center">
+        <Image className="mx-auto h-12 w-12 text-neutral-600" />
+        <h3 className="text-base font-bold text-neutral-300">
+          Belum Ada Halaman Terdaftar
+        </h3>
         <p className="text-xs text-neutral-500">
-          {error || "Chapter ini belum memiliki lembaran gambar yang diunggah di database."}
+          {error ||
+            "Chapter ini belum memiliki lembaran gambar yang diunggah di database."}
         </p>
       </main>
-    );
+    )
   }
 
   return (
-    <main className="mx-auto max-w-3xl py-0 px-0">
+    <main className="mx-auto max-w-3xl px-0 py-0">
       {pages.map((page, idx) => (
         <LazyChapterPage
           key={page.id || idx}
@@ -217,7 +253,5 @@ export function ReaderImageStack({ comicSlug, chapterSlug }: ReaderImageStackPro
         />
       ))}
     </main>
-  );
+  )
 }
-
-

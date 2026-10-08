@@ -1,5 +1,5 @@
-import React from "react";
-import { ClockCounterClockwise } from "@phosphor-icons/react";
+import React from "react"
+import { ClockCounterClockwise } from "@phosphor-icons/react"
 
 export function HistoryHeader() {
   return (
@@ -7,5 +7,5 @@ export function HistoryHeader() {
       <ClockCounterClockwise className="h-6 w-6 text-primary" />
       <h1 className="text-2xl font-bold tracking-tight">Reading History</h1>
     </div>
-  );
+  )
 }
