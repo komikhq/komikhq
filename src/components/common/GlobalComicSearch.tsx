@@ -201,10 +201,7 @@ export function GlobalComicSearch() {
         ref={desktopContainerRef}
         className="relative hidden w-60 md:block lg:w-64"
       >
-        <form
-          onSubmit={(event) => event.preventDefault()}
-          className="relative"
-        >
+        <form onSubmit={(event) => event.preventDefault()} className="relative">
           <MagnifyingGlass className="absolute top-2.5 left-3 size-4 text-muted-foreground" />
           <Input
             type="search"

@@ -1,5 +1,5 @@
 import React from "react"
-import { AdminGuard } from "../AdminGuard"
+import { AdminGuard } from "../common/AdminGuard"
 import { GenreTableSection } from "./GenreTableSection"
 
 export function AdminGenresView() {

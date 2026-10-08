@@ -1,5 +1,5 @@
 import React from "react"
-import { AdminGuard } from "./AdminGuard"
+import { AdminGuard } from "../common/AdminGuard"
 import { AdminUserManagementCard } from "./AdminUserManagementCard"
 
 export function AdminUsersView() {

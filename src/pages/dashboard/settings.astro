@@ -1,9 +1,12 @@
 ---
 import RootLayout from "@/layouts/RootLayout.astro"
-import { AdminGuard } from "@/components/admin/AdminGuard"
-import { AdminTabNav } from "@/components/admin/AdminTabNav"
-import { AdminPlatformSettingsCard } from "@/components/admin/AdminPlatformSettingsCard"
-import { AdminFooter } from "@/components/admin/AdminFooter"
+import { AdminGuard } from "@/components/admin/common/AdminGuard"
+import { AdminTabNav } from "@/components/admin/common/AdminTabNav"
+import { AdminFooter } from "@/components/admin/common/AdminFooter"
+import { SettingsDiagnosticsCard } from "@/components/admin/settings/SettingsDiagnosticsCard"
+import { SettingsSyncViewsCard } from "@/components/admin/settings/SettingsSyncViewsCard"
+import { SettingsSearchCacheCard } from "@/components/admin/settings/SettingsSearchCacheCard"
+import { SettingsR2PurgeCard } from "@/components/admin/settings/SettingsR2PurgeCard"
 ---
 
 <RootLayout title="Platform Settings - Admin Dashboard | KomikHQ">
@@ -11,7 +14,10 @@ import { AdminFooter } from "@/components/admin/AdminFooter"
     <AdminTabNav currentTab="settings" client:load />
 
     <AdminGuard client:only="react">
-      <AdminPlatformSettingsCard client:only="react" />
+      <SettingsDiagnosticsCard client:only="react" />
+      <SettingsSyncViewsCard client:only="react" />
+      <SettingsSearchCacheCard client:only="react" />
+      <SettingsR2PurgeCard client:only="react" />
     </AdminGuard>
 
     <AdminFooter client:load />
