@@ -13,7 +13,11 @@ export function getStoredConsent(): CookieConsentPreferences | null {
     const raw = localStorage.getItem(CONSENT_STORAGE_KEY)
     if (!raw) return null
     const parsed = JSON.parse(raw)
-    if (typeof parsed === "object" && parsed !== null && typeof parsed.analytics === "boolean") {
+    if (
+      typeof parsed === "object" &&
+      parsed !== null &&
+      typeof parsed.analytics === "boolean"
+    ) {
       return {
         necessary: true,
         analytics: Boolean(parsed.analytics),
@@ -53,9 +57,10 @@ export function applyConsent(prefs: CookieConsentPreferences) {
   )
 }
 
-export function saveConsent(
-  options: { analytics: boolean; experience: boolean }
-): CookieConsentPreferences {
+export function saveConsent(options: {
+  analytics: boolean
+  experience: boolean
+}): CookieConsentPreferences {
   const prefs: CookieConsentPreferences = {
     necessary: true,
     analytics: options.analytics,

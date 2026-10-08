@@ -99,11 +99,14 @@ export function ChapterEditSheet({
                   Pages in Chapter
                 </span>
                 <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="gap-1 text-xs font-semibold">
+                  <Badge
+                    variant="outline"
+                    className="gap-1 text-xs font-semibold"
+                  >
                     <ImageIcon className="h-3.5 w-3.5 text-primary" />
                     <span>{chapter?.totalPages || 0} Pages</span>
                   </Badge>
-                  <span className="text-xs text-muted-foreground font-mono">
+                  <span className="font-mono text-xs text-muted-foreground">
                     /{chapter?.slug}
                   </span>
                 </div>
@@ -111,10 +114,10 @@ export function ChapterEditSheet({
 
               {chapter?.publishedAt && (
                 <div className="text-right">
-                  <span className="text-[11px] font-medium text-muted-foreground block">
+                  <span className="block text-[11px] font-medium text-muted-foreground">
                     Published
                   </span>
-                  <span className="text-xs text-foreground font-medium">
+                  <span className="text-xs font-medium text-foreground">
                     {new Date(chapter.publishedAt).toLocaleDateString("en-US", {
                       day: "numeric",
                       month: "short",
@@ -139,13 +142,16 @@ export function ChapterEditSheet({
                 onChange={(e) => setChapterNumber(e.target.value)}
               />
               <p className="text-[11px] text-muted-foreground">
-                Changing chapter number will update the chapter sequence and slug.
+                Changing chapter number will update the chapter sequence and
+                slug.
               </p>
             </div>
 
             {/* Chapter Title */}
             <div className="space-y-1.5">
-              <Label className="text-xs font-semibold">Chapter Title (Optional)</Label>
+              <Label className="text-xs font-semibold">
+                Chapter Title (Optional)
+              </Label>
               <Input
                 disabled={submitting}
                 placeholder="e.g. The Awakening"
@@ -190,7 +196,7 @@ export function ChapterEditSheet({
                 checked={isEarlyAccess}
                 disabled={submitting}
                 onChange={(e) => setIsEarlyAccess(e.target.checked)}
-                className="h-4 w-4 rounded border-border text-primary focus:ring-primary cursor-pointer"
+                className="h-4 w-4 cursor-pointer rounded border-border text-primary focus:ring-primary"
               />
             </div>
           </div>

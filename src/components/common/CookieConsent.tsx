@@ -60,7 +60,10 @@ export function CookieConsent() {
 
     window.addEventListener("komikhq:open-cookie-settings", handleOpenModal)
     return () => {
-      window.removeEventListener("komikhq:open-cookie-settings", handleOpenModal)
+      window.removeEventListener(
+        "komikhq:open-cookie-settings",
+        handleOpenModal
+      )
     }
   }, [])
 
@@ -98,9 +101,9 @@ export function CookieConsent() {
         <aside
           role="region"
           aria-label="Cookie Consent"
-          className="fixed right-4 bottom-4 left-4 z-50 mx-auto max-w-2xl animate-in fade-in-0 slide-in-from-bottom-5 duration-300 sm:right-6 sm:bottom-6 sm:left-auto"
+          className="fixed right-4 bottom-4 left-4 z-50 mx-auto max-w-2xl animate-in duration-300 fade-in-0 slide-in-from-bottom-5 sm:right-6 sm:bottom-6 sm:left-auto"
         >
-          <div className="flex flex-col gap-4 rounded-3xl border border-border/80 bg-background/95 p-5 shadow-2xl backdrop-blur-md ring-1 ring-foreground/5 dark:bg-popover/95 dark:ring-foreground/10">
+          <div className="flex flex-col gap-4 rounded-3xl border border-border/80 bg-background/95 p-5 shadow-2xl ring-1 ring-foreground/5 backdrop-blur-md dark:bg-popover/95 dark:ring-foreground/10">
             <div className="flex items-start gap-3.5">
               <div className="flex size-9 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                 <Cookie className="size-5" />
@@ -110,7 +113,10 @@ export function CookieConsent() {
                   Cookie & Privacy Preferences
                 </h3>
                 <p className="text-xs leading-relaxed text-muted-foreground">
-                  We use cookies to maintain core functionality (session & theme), measure readership analytics (Google Analytics), and improve reading experience (Microsoft Clarity). You can customize your choices anytime.
+                  We use cookies to maintain core functionality (session &
+                  theme), measure readership analytics (Google Analytics), and
+                  improve reading experience (Microsoft Clarity). You can
+                  customize your choices anytime.
                 </p>
               </div>
             </div>
@@ -158,7 +164,9 @@ export function CookieConsent() {
               </DialogTitle>
             </div>
             <DialogDescription className="text-xs text-muted-foreground">
-              Choose which categories of cookies you wish to allow. Essential cookies are required to preserve your authentication and site preferences.
+              Choose which categories of cookies you wish to allow. Essential
+              cookies are required to preserve your authentication and site
+              preferences.
             </DialogDescription>
           </DialogHeader>
 
@@ -170,15 +178,23 @@ export function CookieConsent() {
                   <span className="text-xs font-semibold text-foreground">
                     Strictly Necessary (Essential)
                   </span>
-                  <Badge variant="secondary" className="px-1.5 py-0 text-[10px] font-normal">
+                  <Badge
+                    variant="secondary"
+                    className="px-1.5 py-0 text-[10px] font-normal"
+                  >
                     Always Active
                   </Badge>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Required for user authentication, dark/light theme persistence, and CSRF protection. Cannot be disabled.
+                  Required for user authentication, dark/light theme
+                  persistence, and CSRF protection. Cannot be disabled.
                 </p>
               </div>
-              <Switch checked={true} disabled aria-label="Strictly Necessary Cookies" />
+              <Switch
+                checked={true}
+                disabled
+                aria-label="Strictly Necessary Cookies"
+              />
             </div>
 
             {/* 2. Google Analytics */}
@@ -191,7 +207,8 @@ export function CookieConsent() {
                   </span>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Helps us measure readership, popular manga chapters, and web performance anonymously without identifying personal details.
+                  Helps us measure readership, popular manga chapters, and web
+                  performance anonymously without identifying personal details.
                 </p>
               </div>
               <Switch
@@ -211,7 +228,8 @@ export function CookieConsent() {
                   </span>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Records anonymous scroll and tap interactions to help us detect UI bugs and refine the reader interface.
+                  Records anonymous scroll and tap interactions to help us
+                  detect UI bugs and refine the reader interface.
                 </p>
               </div>
               <Switch
@@ -255,7 +273,6 @@ export function CookieConsent() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
     </>
   )
 }

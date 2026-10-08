@@ -64,7 +64,10 @@ export function ChapterTableSection({ comicId }: ChapterTableSectionProps) {
     }
   }
 
-  const handleBulkAction = async (action: string, selectedRows: ChapterItem[]) => {
+  const handleBulkAction = async (
+    action: string,
+    selectedRows: ChapterItem[]
+  ) => {
     if (action === "delete") {
       const confirmDelete = window.confirm(
         `Are you sure you want to delete ${selectedRows.length} selected chapter(s)?`

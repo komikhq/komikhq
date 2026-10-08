@@ -3,8 +3,10 @@ import type { Column } from "@tanstack/react-table"
 import { CaretUpDown, CaretUp, CaretDown } from "@phosphor-icons/react"
 import { cn } from "cn"
 
-interface DataTableColumnHeaderProps<TData, TValue>
-  extends React.HTMLAttributes<HTMLDivElement> {
+interface DataTableColumnHeaderProps<
+  TData,
+  TValue,
+> extends React.HTMLAttributes<HTMLDivElement> {
   column: Column<TData, TValue>
   title: string
 }
@@ -15,7 +17,13 @@ export function DataTableColumnHeader<TData, TValue>({
   className,
 }: DataTableColumnHeaderProps<TData, TValue>) {
   if (!column.getCanSort()) {
-    return <div className={cn("text-xs font-semibold text-muted-foreground", className)}>{title}</div>
+    return (
+      <div
+        className={cn("text-xs font-semibold text-muted-foreground", className)}
+      >
+        {title}
+      </div>
+    )
   }
 
   const isSorted = column.getIsSorted()
@@ -24,8 +32,8 @@ export function DataTableColumnHeader<TData, TValue>({
     <button
       type="button"
       className={cn(
-        "group -ml-1 flex items-center gap-1 rounded-md px-1 py-0.5 text-xs font-semibold text-muted-foreground transition-colors hover:text-foreground cursor-pointer select-none",
-        isSorted && "text-foreground font-bold",
+        "group -ml-1 flex cursor-pointer items-center gap-1 rounded-md px-1 py-0.5 text-xs font-semibold text-muted-foreground transition-colors select-none hover:text-foreground",
+        isSorted && "font-bold text-foreground",
         className
       )}
       onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}

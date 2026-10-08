@@ -207,7 +207,8 @@ export function DataTable<TData, TValue>({
     .rows.map((row) => row.original)
 
   const handleApplyBulk = async () => {
-    if (!selectedBulkAction || selectedRows.length === 0 || !onBulkAction) return
+    if (!selectedBulkAction || selectedRows.length === 0 || !onBulkAction)
+      return
     setBulkSubmitting(true)
     try {
       await onBulkAction(selectedBulkAction, selectedRows)
@@ -227,7 +228,7 @@ export function DataTable<TData, TValue>({
     ? serverPagination!.totalPages
     : table.getPageCount()
   const totalEntries = isServer
-    ? serverPagination!.totalRecords ?? data.length
+    ? (serverPagination!.totalRecords ?? data.length)
     : data.length
 
   const currentPageSize = table.getState().pagination.pageSize
@@ -269,7 +270,7 @@ export function DataTable<TData, TValue>({
               onValueChange={setSelectedBulkAction}
               disabled={bulkSubmitting}
             >
-              <SelectTrigger className="h-8 w-44 text-xs bg-background">
+              <SelectTrigger className="h-8 w-44 bg-background text-xs">
                 <SelectValue placeholder="Bulk Actions" />
               </SelectTrigger>
               <SelectContent>
@@ -284,9 +285,11 @@ export function DataTable<TData, TValue>({
               type="button"
               size="sm"
               variant="outline"
-              className="h-8 text-xs cursor-pointer bg-background hover:bg-accent"
+              className="h-8 cursor-pointer bg-background text-xs hover:bg-accent"
               disabled={
-                !selectedBulkAction || selectedRows.length === 0 || bulkSubmitting
+                !selectedBulkAction ||
+                selectedRows.length === 0 ||
+                bulkSubmitting
               }
               onClick={handleApplyBulk}
             >
@@ -296,14 +299,17 @@ export function DataTable<TData, TValue>({
 
           {selectedRows.length > 0 && (
             <div className="flex items-center gap-2 text-xs">
-              <Badge variant="secondary" className="text-[11px] font-semibold text-primary">
+              <Badge
+                variant="secondary"
+                className="text-[11px] font-semibold text-primary"
+              >
                 {selectedRows.length} of {data.length} selected
               </Badge>
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="h-7 px-2 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer"
+                className="h-7 cursor-pointer px-2 text-[11px] text-muted-foreground hover:text-foreground"
                 onClick={() => table.resetRowSelection()}
               >
                 Clear Selection
@@ -350,7 +356,7 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="transition-colors hover:bg-muted/30 border-border/40 data-[state=selected]:bg-primary/5"
+                  className="border-border/40 transition-colors hover:bg-muted/30 data-[state=selected]:bg-primary/5"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="p-3">
@@ -378,11 +384,11 @@ export function DataTable<TData, TValue>({
 
       {/* Advanced Pagination Bar */}
       {enablePagination && (totalEntries > 0 || isServer) && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground px-1 pt-1">
+        <div className="flex flex-col items-center justify-between gap-3 px-1 pt-1 text-xs text-muted-foreground sm:flex-row">
           <div>
             Showing {startEntry} to {endEntry} of {totalEntries} entries
             {selectedRows.length > 0 && (
-              <span className="text-primary font-medium ml-1.5">
+              <span className="ml-1.5 font-medium text-primary">
                 ({selectedRows.length} selected)
               </span>
             )}
@@ -399,7 +405,7 @@ export function DataTable<TData, TValue>({
                   value={`${table.getState().pagination.pageSize}`}
                   onValueChange={(val) => table.setPageSize(Number(val))}
                 >
-                  <SelectTrigger className="h-8 w-16 text-xs bg-background">
+                  <SelectTrigger className="h-8 w-16 bg-background text-xs">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent side="top">
