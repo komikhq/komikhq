@@ -9,6 +9,7 @@ import {
   MagnifyingGlass,
   CheckCircle,
   WarningCircle,
+  ChartLineUp,
 } from "@phosphor-icons/react"
 import {
   Card,
@@ -24,16 +25,27 @@ import { API_ROUTES } from "@/constants/api-routes"
 import { apiFetch } from "@/lib/api-client"
 
 interface MaintenanceStatus {
-  "pending-views-count": number
   "cached-search-keys-count": number
   "kv-healthy": boolean
+  "kv-views-healthy"?: boolean
+  "ae-healthy"?: boolean
+  "last-synced-at"?: string | null
+  "cached-rankings-count"?: number
   "r2-healthy": boolean
   timestamp: string
 }
 
 interface SyncViewsResult {
-  "synced-logs": number
-  "affected-comics": number
+  "synced-chapters"?: number
+  "synced-comics"?: number
+  "total-views-added"?: number
+  "synced-logs"?: number
+  "affected-comics"?: number
+  rankings?: {
+    dailyCount: number
+    weeklyCount: number
+    popularCount: number
+  }
   timestamp: string
 }
 
@@ -88,21 +100,30 @@ export function AdminPlatformSettingsCard() {
   const handleSyncViews = async () => {
     setSyncingViews(true)
     const toastId = toast.loading(
-      "Flushing pending view logs from KV to database..."
+      "Syncing view deltas from Analytics Engine & refreshing rankings..."
     )
 
     try {
       const data = await apiFetch<{
         success: boolean
         message?: string
+        "synced-chapters"?: number
+        "synced-comics"?: number
+        "total-views-added"?: number
         "synced-logs"?: number
         "affected-comics"?: number
+        rankings?: {
+          dailyCount: number
+          weeklyCount: number
+          popularCount: number
+        }
       }>(API_ROUTES.ADMIN.SYSTEM.SYNC_VIEWS, {
         method: "POST",
       })
 
-      const syncedLogs = data["synced-logs"] ?? 0
-      const affectedComics = data["affected-comics"] ?? 0
+      const syncedChapters = data["synced-chapters"] ?? 0
+      const syncedComics = data["synced-comics"] ?? data["affected-comics"] ?? 0
+      const totalViewsAdded = data["total-views-added"] ?? data["synced-logs"] ?? 0
       const now = new Date().toLocaleTimeString("en-US", {
         hour: "2-digit",
         minute: "2-digit",
@@ -110,19 +131,23 @@ export function AdminPlatformSettingsCard() {
       })
 
       setLastSyncResult({
-        "synced-logs": syncedLogs,
-        "affected-comics": affectedComics,
+        "synced-chapters": syncedChapters,
+        "synced-comics": syncedComics,
+        "total-views-added": totalViewsAdded,
+        "synced-logs": totalViewsAdded,
+        "affected-comics": syncedComics,
+        rankings: data.rankings,
         timestamp: now,
       })
 
       toast.success(
         data.message ||
-          `Successfully synchronized ${syncedLogs} view logs across ${affectedComics} comics.`,
+          `Successfully synchronized ${syncedChapters} chapters across ${syncedComics} comics (+${totalViewsAdded} views). Rankings refreshed.`,
         { id: toastId }
       )
       fetchStatus()
     } catch (err: any) {
-      toast.error(err.message || "Failed to synchronize views buffer.", {
+      toast.error(err.message || "Failed to synchronize views delta.", {
         id: toastId,
       })
     } finally {
@@ -254,7 +279,7 @@ export function AdminPlatformSettingsCard() {
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <div className="space-y-1 rounded-lg border border-border/50 bg-muted/20 p-3">
               <span className="block text-[11px] font-medium text-muted-foreground">
-                Cloudflare KV
+                Cloudflare KV (App)
               </span>
               <div className="flex items-center gap-1.5">
                 {status?.["kv-healthy"] ? (
@@ -265,6 +290,27 @@ export function AdminPlatformSettingsCard() {
                 <span className="text-xs font-semibold">
                   {status?.["kv-healthy"] ? "Operational" : "Degraded"}
                 </span>
+              </div>
+            </div>
+
+            <div className="space-y-1 rounded-lg border border-border/50 bg-muted/20 p-3">
+              <span className="block text-[11px] font-medium text-muted-foreground">
+                KV Views & Rankings
+              </span>
+              <div className="flex items-center gap-1.5">
+                {status?.["kv-views-healthy"] ? (
+                  <CheckCircle className="h-4 w-4 text-emerald-500" />
+                ) : (
+                  <WarningCircle className="h-4 w-4 text-amber-500" />
+                )}
+                <span className="text-xs font-semibold">
+                  {status?.["kv-views-healthy"] ? "Operational" : "Degraded"}
+                </span>
+                {status?.["cached-rankings-count"] ? (
+                  <span className="text-[10px] text-muted-foreground font-mono">
+                    ({status["cached-rankings-count"]} cached)
+                  </span>
+                ) : null}
               </div>
             </div>
 
@@ -286,18 +332,6 @@ export function AdminPlatformSettingsCard() {
 
             <div className="space-y-1 rounded-lg border border-border/50 bg-muted/20 p-3">
               <span className="block text-[11px] font-medium text-muted-foreground">
-                Pending View Logs
-              </span>
-              <div className="flex items-center gap-1.5">
-                <Database className="h-4 w-4 text-sky-500" />
-                <span className="font-mono text-xs font-semibold">
-                  {status ? `${status["pending-views-count"]} queued` : "..."}
-                </span>
-              </div>
-            </div>
-
-            <div className="space-y-1 rounded-lg border border-border/50 bg-muted/20 p-3">
-              <span className="block text-[11px] font-medium text-muted-foreground">
                 Cached Search Keys
               </span>
               <div className="flex items-center gap-1.5">
@@ -313,33 +347,37 @@ export function AdminPlatformSettingsCard() {
         </CardContent>
       </Card>
 
-      {/* Action 1: Force Sync Buffered Views */}
+      {/* Action 1: Force Sync Views Delta & Refresh Rankings */}
       <Card className="border-border/60 shadow-xs">
         <CardContent className="p-5 sm:p-6">
           <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
             <div className="max-w-2xl space-y-1.5">
               <div className="flex items-center gap-2">
-                <Database className="h-5 w-5 shrink-0 text-sky-500" />
+                <ChartLineUp className="h-5 w-5 shrink-0 text-sky-500" />
                 <h3 className="text-base font-bold text-foreground">
-                  Force Sync Buffered Views (KV Buffer to Database)
+                  Force Sync Views Delta & Refresh Rankings
                 </h3>
-                {status && status["pending-views-count"] > 0 && (
+                {status?.["last-synced-at"] ? (
                   <Badge
                     variant="outline"
-                    className="border-sky-500/30 bg-sky-500/10 text-[10px] text-sky-500"
+                    className="border-sky-500/30 bg-sky-500/10 text-[10px] text-sky-500 font-mono"
                   >
-                    {status["pending-views-count"]} pending
+                    Last Sync: {new Date(status["last-synced-at"]).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
+                  </Badge>
+                ) : (
+                  <Badge
+                    variant="outline"
+                    className="border-emerald-500/30 bg-emerald-500/10 text-[10px] text-emerald-500"
+                  >
+                    AE Active
                   </Badge>
                 )}
               </div>
               <p className="text-xs leading-relaxed text-muted-foreground">
-                Immediately flushes buffered view event logs from Cloudflare KV
-                (
-                <code className="font-mono text-[11px] text-primary">
-                  view_log:*
-                </code>
-                ) into PostgreSQL database and increments comic view counters
-                without waiting for the scheduled 10-minute cron job.
+                Immediately queries view delta events from Cloudflare Analytics Engine,
+                accumulates <code className="font-mono text-[11px] text-primary">totalViews</code> counters
+                on PostgreSQL chapters &amp; comics, and refreshes Daily, Weekly &amp; Popular rankings
+                in KV without waiting for the scheduled 6-hour cron job.
               </p>
 
               {lastSyncResult && !syncingViews && (
@@ -348,9 +386,7 @@ export function AdminPlatformSettingsCard() {
                     <div className="flex items-center gap-2 font-semibold text-sky-600 dark:text-sky-400">
                       <CheckCircle className="h-4 w-4 shrink-0 text-sky-500" />
                       <span>
-                        Sync Completed: {lastSyncResult["synced-logs"]} logs
-                        inserted across {lastSyncResult["affected-comics"]}{" "}
-                        comics
+                        Sync Completed: {lastSyncResult["synced-chapters"] ?? 0} chapters, {lastSyncResult["synced-comics"] ?? lastSyncResult["affected-comics"] ?? 0} comics updated (+{lastSyncResult["total-views-added"] ?? lastSyncResult["synced-logs"] ?? 0} views). Rankings refreshed.
                       </span>
                     </div>
                     <span className="font-mono text-[10px] text-muted-foreground">
@@ -372,12 +408,12 @@ export function AdminPlatformSettingsCard() {
                 {syncingViews ? (
                   <>
                     <CircleNotch className="h-4 w-4 animate-spin text-sky-500" />
-                    <span>Syncing Views...</span>
+                    <span>Syncing &amp; Refreshing...</span>
                   </>
                 ) : (
                   <>
                     <ArrowsClockwise className="h-4 w-4 text-sky-500" />
-                    <span>Sync Views to Database</span>
+                    <span>Sync Views &amp; Refresh Rankings</span>
                   </>
                 )}
               </Button>
