@@ -5,7 +5,7 @@ import { AdminUsersView } from "@/components/admin/users/AdminUsersView"
 import { AdminFooter } from "@/components/admin/common/AdminFooter"
 ---
 
-<RootLayout title="User Management - Admin Dashboard | KomikHQ">
+<RootLayout title="User Management - Admin Dashboard | KomikHQ" noIndex={true}>
   <div class="flex w-full flex-col gap-6 px-4 pt-4 pb-20 sm:px-6 lg:px-8">
     <AdminTabNav currentTab="users" client:load />
 

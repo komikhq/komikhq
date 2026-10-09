@@ -5,9 +5,19 @@ import { ReaderImageStack } from "@/components/reader/ReaderImageStack"
 import { ReaderFooterNav } from "@/components/reader/ReaderFooterNav"
 
 const { slug, chapterSlug } = Astro.params
+
+const formattedSlug = slug
+  ? slug.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())
+  : "Comic"
+const formattedChapter = chapterSlug
+  ? chapterSlug.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())
+  : "Chapter"
+
+const title = `Read ${formattedSlug} ${formattedChapter} in Bahasa Indonesia | KomikHQ`
+const description = `Read ${formattedSlug} ${formattedChapter} in Bahasa Indonesia online in high quality with distraction-free scrolling on KomikHQ.`
 ---
 
-<RootLayout title={`Baca ${slug} ${chapterSlug} - KomikHQ`} isReaderMode={true}>
+<RootLayout title={title} description={description} isReaderMode={true}>
   <div class="min-h-screen bg-neutral-950 pb-20 text-neutral-100">
     <ReaderHeaderBar comicSlug={slug} chapterSlug={chapterSlug} client:load />
     <ReaderImageStack comicSlug={slug} chapterSlug={chapterSlug} client:load />

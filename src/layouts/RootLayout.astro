@@ -13,14 +13,26 @@ import { SITE_NAME, SITE_DESCRIPTION } from "@/constants"
 interface Props {
   title?: string
   description?: string
+  canonicalUrl?: string
+  ogImage?: string
+  ogType?: "website" | "article" | "book"
+  noIndex?: boolean
   isReaderMode?: boolean
 }
 
 const {
-  title = SITE_NAME,
+  title = `${SITE_NAME} - Read Manga, Manhwa, Manhua in Bahasa Indonesia`,
   description = SITE_DESCRIPTION,
+  canonicalUrl = Astro.url.href,
+  ogImage = "/images/og.png",
+  ogType = "website",
+  noIndex = false,
   isReaderMode = false,
 } = Astro.props
+
+const absoluteOgImage = ogImage.startsWith("http")
+  ? ogImage
+  : new URL(ogImage, Astro.site || "https://komikhq.com").href
 ---
 
 <!doctype html>
@@ -32,6 +44,24 @@ const {
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <meta name="robots" content={noIndex ? "noindex, nofollow" : "index, follow"} />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <!-- Open Graph / Facebook / WhatsApp -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={absoluteOgImage} />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={absoluteOgImage} />
+
     <ClientRouter />
 
     <GoogleAnalytics />

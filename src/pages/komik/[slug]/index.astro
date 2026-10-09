@@ -3,11 +3,45 @@ import RootLayout from "@/layouts/RootLayout.astro"
 import { ComicHeaderCard } from "@/components/komik/ComicHeaderCard"
 import { ComicChapterList } from "@/components/komik/ComicChapterList"
 import { ComicCommentSection } from "@/components/komik/ComicCommentSection"
+import { apiFetch } from "@/lib/api-client"
+import { API_ROUTES } from "@/constants"
 
 const { slug } = Astro.params
+
+let comic: any = null
+if (slug) {
+  try {
+    const res = await apiFetch<any>(
+      API_ROUTES.COMICS.DETAIL(slug),
+      undefined,
+      Astro.locals
+    )
+    comic = res.comic || res.data || res
+  } catch {
+    comic = null
+  }
+}
+
+const formattedTitle =
+  comic?.title ||
+  (slug ? slug.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()) : "Comic")
+
+const title = `Read ${formattedTitle} in Bahasa Indonesia | KomikHQ`
+const description =
+  comic?.synopsis || comic?.description
+    ? (comic.synopsis || comic.description).slice(0, 160)
+    : `Read ${formattedTitle} manga, manhwa, and manhua in Bahasa Indonesia for free on KomikHQ.`
+
+const ogImage =
+  comic?.cover_url || comic?.coverUrl || "/images/og.png"
 ---
 
-<RootLayout title={`Detail Komik ${slug} - KomikHQ`}>
+<RootLayout
+  title={title}
+  description={description}
+  ogImage={ogImage}
+  ogType="book"
+>
   <div class="mx-auto flex max-w-screen-2xl flex-col gap-6 px-4 pt-4 pb-20">
     <ComicHeaderCard slug={slug} client:load />
     <ComicChapterList slug={slug} client:load />

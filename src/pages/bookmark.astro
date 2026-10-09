@@ -4,7 +4,7 @@ import { BookmarkHeader } from "@/components/bookmark/BookmarkHeader"
 import { BookmarkComicGrid } from "@/components/bookmark/BookmarkComicGrid"
 ---
 
-<RootLayout title="Bookmark Saya - KomikHQ">
+<RootLayout title="My Bookmarks | KomikHQ" noIndex={true}>
   <div class="mx-auto flex max-w-screen-2xl flex-col gap-6 px-4 pt-4 pb-20">
     <BookmarkHeader client:load />
     <BookmarkComicGrid client:load />

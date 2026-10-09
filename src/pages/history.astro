@@ -4,7 +4,7 @@ import { HistoryHeader } from "@/components/history/HistoryHeader"
 import { HistoryList } from "@/components/history/HistoryList"
 ---
 
-<RootLayout title="Riwayat Baca - KomikHQ">
+<RootLayout title="Reading History | KomikHQ" noIndex={true}>
   <div class="mx-auto flex max-w-screen-2xl flex-col gap-6 px-4 pt-4 pb-20">
     <HistoryHeader client:load />
     <HistoryList client:load />
