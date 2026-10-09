@@ -49,11 +49,14 @@ function isJunkEntry(path: string): boolean {
 function parseImageFilename(
   filename: string
 ): { sortKey: number; ext: string } | null {
-  const match = filename.match(/^(\d+)\.(webp|png|jpe?g|gif|avif)$/i)
+  const match = filename.match(/^(\d+)\.([^.]+)$/)
   if (!match) return null
+  const ext = match[2].toLowerCase()
+  if (!IMAGE_EXTENSIONS.has(ext)) return null
+
   return {
     sortKey: parseInt(match[1], 10),
-    ext: match[2].toLowerCase(),
+    ext,
   }
 }
 

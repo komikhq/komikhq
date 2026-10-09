@@ -36,6 +36,14 @@ export function CookieConsent() {
   const [analyticsEnabled, setAnalyticsEnabled] = useState(true)
   const [experienceEnabled, setExperienceEnabled] = useState(true)
 
+  const syncPreferences = React.useCallback(
+    (preferences: CookieConsentPreferences) => {
+      setAnalyticsEnabled(preferences.analytics)
+      setExperienceEnabled(preferences.experience)
+    },
+    []
+  )
+
   useEffect(() => {
     setMounted(true)
     const stored = getStoredConsent()
@@ -44,16 +52,14 @@ export function CookieConsent() {
       setShowBanner(true)
     } else {
       // Sync state with stored values
-      setAnalyticsEnabled(stored.analytics)
-      setExperienceEnabled(stored.experience)
+      syncPreferences(stored)
     }
 
     // Allow opening preferences from anywhere (e.g. footer link)
     const handleOpenModal = () => {
       const current = getStoredConsent()
       if (current) {
-        setAnalyticsEnabled(current.analytics)
-        setExperienceEnabled(current.experience)
+        syncPreferences(current)
       }
       setShowPreferences(true)
     }
@@ -65,7 +71,7 @@ export function CookieConsent() {
         handleOpenModal
       )
     }
-  }, [])
+  }, [syncPreferences])
 
   const handleAcceptAll = () => {
     saveConsent({ analytics: true, experience: true })
