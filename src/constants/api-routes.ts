@@ -17,6 +17,8 @@ export const API_ROUTES = {
         ? `${API_PREFIX}/comics/browse?${query}`
         : `${API_PREFIX}/comics/browse`,
     DETAIL: (slug: string) => `${API_PREFIX}/comics/${slug}`,
+    CHAPTER_DETAIL: (slug: string, chapterSlug: string) =>
+      `${API_PREFIX}/comics/${slug}/chapters/${chapterSlug}`,
   },
   SEARCH: {
     SUGGESTIONS: (query: string, limit = 6) => {

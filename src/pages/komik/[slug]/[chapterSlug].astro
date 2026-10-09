@@ -3,18 +3,47 @@ import RootLayout from "@/layouts/RootLayout.astro"
 import { ReaderHeaderBar } from "@/components/reader/ReaderHeaderBar"
 import { ReaderImageStack } from "@/components/reader/ReaderImageStack"
 import { ReaderFooterNav } from "@/components/reader/ReaderFooterNav"
+import { apiFetch } from "@/lib/api-client"
+import { API_ROUTES } from "@/constants"
 
 const { slug, chapterSlug } = Astro.params
 
-const formattedSlug = slug
-  ? slug.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())
-  : "Comic"
-const formattedChapter = chapterSlug
-  ? chapterSlug.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())
-  : "Chapter"
+interface ChapterMetadata {
+  comic?: { title?: string }
+  chapter?: { title?: string; chapterNumber?: string }
+}
 
-const title = `Read ${formattedSlug} ${formattedChapter} in Bahasa Indonesia | KomikHQ`
-const description = `Read ${formattedSlug} ${formattedChapter} in Bahasa Indonesia online in high quality with distraction-free scrolling on KomikHQ.`
+const formatSlug = (value: string | undefined, fallback: string) =>
+  value
+    ? value
+        .replace(/-/g, " ")
+        .replace(/\b\w/g, (letter) => letter.toUpperCase())
+    : fallback
+
+const formattedSlug = formatSlug(slug?.replace(/-\d{4}$/, ""), "Comic")
+const fallbackChapter = chapterSlug
+  ? `Chapter ${chapterSlug.replace(/^(chapter-|ch-)/i, "")}`
+  : "Chapter"
+let comicTitle = formattedSlug
+let chapterTitle = fallbackChapter
+
+if (slug && chapterSlug) {
+  try {
+    const data = await apiFetch<ChapterMetadata>(
+      API_ROUTES.COMICS.CHAPTER_DETAIL(slug, chapterSlug)
+    )
+    comicTitle = data.comic?.title || comicTitle
+    chapterTitle = data.chapter?.title || chapterTitle
+  } catch (error) {
+    console.warn(
+      `[ReaderPage] Failed to load chapter metadata for ${slug}/${chapterSlug}:`,
+      error
+    )
+  }
+}
+
+const title = `Read ${comicTitle} ${chapterTitle} in Bahasa Indonesia | KomikHQ`
+const description = `Read ${comicTitle} ${chapterTitle} in Bahasa Indonesia online in high quality with distraction-free scrolling on KomikHQ.`
 ---
 
 <RootLayout title={title} description={description} isReaderMode={true}>
