@@ -21,6 +21,25 @@ export function useAdminChapters(comicId: string) {
   const getApiUrl = () =>
     (window as any).__PUBLIC_API_URL__ || "http://localhost:8787"
 
+  const getImageDimensions = async (file: File) => {
+    if (typeof createImageBitmap !== "function") return null
+
+    try {
+      const image = await createImageBitmap(file)
+      try {
+        return { width: image.width, height: image.height }
+      } finally {
+        image.close()
+      }
+    } catch (error) {
+      console.warn(
+        `[ChapterUpload] Could not read dimensions for ${file.name}:`,
+        error
+      )
+      return null
+    }
+  }
+
   const fetchChapters = useCallback(async () => {
     if (!comicId) return
     setLoading(true)
@@ -92,6 +111,7 @@ export function useAdminChapters(comicId: string) {
         const percent = 10 + Math.floor(((i + 1) / total) * 80)
 
         onProgress?.(percent, `Uploading page ${pageNum} of ${total}...`)
+        const dimensions = await getImageDimensions(pageFile)
 
         let uploaded = false
         let lastErr = ""
@@ -101,6 +121,10 @@ export function useAdminChapters(comicId: string) {
             const pageFormData = new FormData()
             pageFormData.append("pageNumber", pageNum.toString())
             pageFormData.append("file", pageFile)
+            if (dimensions) {
+              pageFormData.append("width", dimensions.width.toString())
+              pageFormData.append("height", dimensions.height.toString())
+            }
 
             const pageRes = await fetch(
               `${getApiUrl()}/v1/admin/comics/${comicId}/chapters/${chapterId}/pages/upload`,

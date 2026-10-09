@@ -24,11 +24,22 @@ function LazyChapterPage({
   const containerRef = useRef<HTMLDivElement>(null)
   const [isVisible, setIsVisible] = useState(pageIndex === 0)
   const [isLoaded, setIsLoaded] = useState(false)
+  const imageWidth =
+    Number.isInteger(page.width) && page.width > 0 ? page.width : undefined
+  const imageHeight =
+    Number.isInteger(page.height) && page.height > 0 ? page.height : undefined
+  const hasDimensions = imageWidth !== undefined && imageHeight !== undefined
 
-  // 1. Strict Lazy Loading Observer (Loads image only when 400px near viewport)
   useEffect(() => {
     if (isVisible) return
 
+    const viewportHeight = window.innerHeight
+    const preloadAhead = Math.round(
+      Math.min(1200, Math.max(700, viewportHeight))
+    )
+    const preloadBehind = Math.round(
+      Math.min(500, Math.max(300, viewportHeight * 0.5))
+    )
     const lazyObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -39,7 +50,7 @@ function LazyChapterPage({
         })
       },
       {
-        rootMargin: "400px 0px 400px 0px",
+        rootMargin: `${preloadBehind}px 0px ${preloadAhead}px 0px`,
         threshold: 0.01,
       }
     )
@@ -84,6 +95,12 @@ function LazyChapterPage({
     <div
       ref={containerRef}
       className="relative w-full overflow-hidden bg-neutral-950 transition-colors"
+      style={{
+        aspectRatio: hasDimensions
+          ? `${imageWidth} / ${imageHeight}`
+          : undefined,
+        minHeight: hasDimensions ? undefined : "70svh",
+      }}
     >
       {isVisible ? (
         <>
@@ -98,16 +115,18 @@ function LazyChapterPage({
           <img
             src={page.imageUrl}
             alt={`Halaman ${page.pageNumber || pageIndex + 1}`}
+            width={imageWidth}
+            height={imageHeight}
             className={`block h-auto w-full object-contain transition-opacity duration-300 ${
               isLoaded ? "opacity-100" : "opacity-0"
             }`}
             onLoad={() => setIsLoaded(true)}
-            loading="lazy"
             decoding="async"
+            fetchPriority={pageIndex === 0 ? "high" : "auto"}
           />
         </>
       ) : (
-        <div className="flex min-h-[220px] flex-col items-center justify-center gap-2 bg-neutral-900/80 text-neutral-600">
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-neutral-900/80 text-neutral-600">
           <Image className="h-8 w-8 opacity-40" />
           <span className="font-mono text-xs opacity-50">
             Halaman {page.pageNumber || pageIndex + 1}
