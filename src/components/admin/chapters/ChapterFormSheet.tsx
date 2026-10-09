@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useCallback } from "react"
 import {
   Sheet,
   SheetContent,
@@ -10,8 +10,12 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { ImageUploadZone } from "@/components/admin/common/ImageUploadZone"
 import { useImageUpload } from "@/hooks/use-image-upload"
+import { extractZipToFiles, isZipFile } from "@/lib/zip-utils"
+import { toast } from "sonner"
+import { FileZip, CircleNotch } from "@phosphor-icons/react"
 
 interface ChapterFormSheetProps {
   open: boolean
@@ -34,6 +38,84 @@ export function ChapterFormSheet({
   const [title, setTitle] = useState("")
   const [progressPercent, setProgressPercent] = useState(0)
   const [progressText, setProgressText] = useState("")
+  const [zipExtracting, setZipExtracting] = useState(false)
+  const [zipInfo, setZipInfo] = useState<{
+    filename: string
+    pages: number
+    skipped: number
+  } | null>(null)
+
+  const handleZipFile = useCallback(
+    async (zipFile: File) => {
+      setZipExtracting(true)
+      setZipInfo(null)
+
+      try {
+        const result = await extractZipToFiles(zipFile)
+
+        pagesUpload.addFilesRaw(result.files)
+
+        setZipInfo({
+          filename: zipFile.name,
+          pages: result.files.length,
+          skipped: result.skippedCount,
+        })
+
+        toast.success(
+          `Extracted ${result.files.length} pages from "${zipFile.name}"`
+        )
+
+        if (result.skippedCount > 0) {
+          toast.info(
+            `${result.skippedCount} non-image file(s) were skipped.`
+          )
+        }
+      } catch (err: any) {
+        toast.error(err.message || "Failed to extract ZIP file.")
+      } finally {
+        setZipExtracting(false)
+      }
+    },
+    [pagesUpload]
+  )
+
+  /**
+   * Intercept file selection: if a ZIP is detected, extract it.
+   * Regular images pass through to normal addFiles.
+   */
+  const handleFilesSelected = useCallback(
+    (fileList: FileList) => {
+      const files = Array.from(fileList)
+      const zipFiles = files.filter(isZipFile)
+      const imageFiles = files.filter((f) => !isZipFile(f))
+
+      // Add regular images normally
+      if (imageFiles.length > 0) {
+        pagesUpload.addFiles(imageFiles)
+      }
+
+      // Extract ZIP files
+      for (const zip of zipFiles) {
+        handleZipFile(zip)
+      }
+    },
+    [pagesUpload, handleZipFile]
+  )
+
+  /**
+   * Intercept drop: detect ZIP among dropped files.
+   */
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+
+      if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        handleFilesSelected(e.dataTransfer.files)
+      }
+    },
+    [handleFilesSelected]
+  )
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -62,6 +144,7 @@ export function ChapterFormSheet({
       pagesUpload.clearFiles()
       setProgressPercent(0)
       setProgressText("")
+      setZipInfo(null)
       onOpenChange(false)
     }
   }
@@ -78,7 +161,8 @@ export function ChapterFormSheet({
           </SheetTitle>
           <SheetDescription className="text-xs">
             Upload comic page images at once to create a new chapter release
-            with vertical webtoon/manga specifications.
+            with vertical webtoon/manga specifications. You can also drop a
+            <strong> .zip</strong> file from komikhq-clipper.
           </SheetDescription>
         </SheetHeader>
 
@@ -134,6 +218,61 @@ export function ChapterFormSheet({
               </div>
             )}
 
+            {/* ZIP Extraction Progress */}
+            {zipExtracting && (
+              <div className="flex items-center gap-3 rounded-xl border border-amber-500/30 bg-amber-500/5 p-4 animate-in fade-in">
+                <CircleNotch className="h-5 w-5 shrink-0 animate-spin text-amber-500" />
+                <div className="space-y-0.5">
+                  <p className="text-xs font-semibold text-foreground">
+                    Extracting ZIP file...
+                  </p>
+                  <p className="text-[11px] text-muted-foreground">
+                    Parsing and sorting page images from the archive.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* ZIP Success Info */}
+            {zipInfo && !zipExtracting && (
+              <div className="flex items-center gap-3 rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-3.5 animate-in fade-in">
+                <FileZip className="h-5 w-5 shrink-0 text-emerald-500" />
+                <div className="min-w-0 flex-1 space-y-0.5">
+                  <p className="truncate text-xs font-semibold text-foreground">
+                    {zipInfo.filename}
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <Badge
+                      variant="outline"
+                      className="border-emerald-500/30 bg-emerald-500/10 text-[10px] text-emerald-600 dark:text-emerald-400"
+                    >
+                      {zipInfo.pages} pages extracted
+                    </Badge>
+                    {zipInfo.skipped > 0 && (
+                      <Badge
+                        variant="outline"
+                        className="text-[10px] text-muted-foreground"
+                      >
+                        {zipInfo.skipped} skipped
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 text-[11px] text-muted-foreground"
+                  onClick={() => {
+                    pagesUpload.clearFiles()
+                    setZipInfo(null)
+                  }}
+                >
+                  Clear
+                </Button>
+              </div>
+            )}
+
             <div className="space-y-2">
               <Label className="text-xs font-semibold">
                 Comic Page Images ({pagesUpload.files.length} Selected)
@@ -141,16 +280,18 @@ export function ChapterFormSheet({
               <ImageUploadZone
                 files={pagesUpload.files}
                 isDragging={pagesUpload.isDragging}
-                onDrop={pagesUpload.handleDrop}
+                onDrop={handleDrop}
                 onDragOver={pagesUpload.handleDragOver}
                 onDragLeave={pagesUpload.handleDragLeave}
-                onFilesSelected={pagesUpload.addFiles}
+                onFilesSelected={handleFilesSelected}
                 onRemove={pagesUpload.removeFile}
                 multiple={true}
-                label="Drag Multiple Comic Page Images At Once"
+                label="Drag Images or Drop a .zip from komikhq-clipper"
+                allowUrlUpload={false}
+                acceptExtra=".zip,application/zip"
                 aspectRatioHint="Vertical Scroll"
                 recommendedSize="Width 720–1080 px"
-                maxSizeHint="Max 10 MB/file"
+                maxSizeHint="Supports .zip"
               />
             </div>
           </div>

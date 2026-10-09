@@ -151,9 +151,6 @@ export function ComicFormSheet({
                 </h3>
 
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold">
-                    Poster Cover *
-                  </Label>
                   <ImageUploadZone
                     files={form.coverUpload.files}
                     isDragging={form.coverUpload.isDragging}
@@ -162,18 +159,19 @@ export function ComicFormSheet({
                     onDragLeave={form.coverUpload.handleDragLeave}
                     onFilesSelected={form.coverUpload.addFiles}
                     onRemove={form.coverUpload.removeFile}
-                    label="Upload Poster Cover"
+                    label="Poster Cover *"
                     existingPreviewUrl={comic?.coverUrl}
                     aspectRatioHint="3:4 Ratio"
                     recommendedSize="600 × 800 px"
                     maxSizeHint="Max 5 MB"
+                    uploadMode={form.coverUpload.uploadMode}
+                    onUploadModeChange={form.coverUpload.setUploadMode}
+                    urlValue={form.coverUpload.urlInput}
+                    onUrlChange={form.coverUpload.setUrlInput}
                   />
                 </div>
 
                 <div className="space-y-1.5 pt-2">
-                  <Label className="text-xs font-semibold">
-                    Header Banner (Optional)
-                  </Label>
                   <ImageUploadZone
                     files={form.bannerUpload.files}
                     isDragging={form.bannerUpload.isDragging}
@@ -182,11 +180,15 @@ export function ComicFormSheet({
                     onDragLeave={form.bannerUpload.handleDragLeave}
                     onFilesSelected={form.bannerUpload.addFiles}
                     onRemove={form.bannerUpload.removeFile}
-                    label="Upload Header Banner"
+                    label="Header Banner (Optional)"
                     existingPreviewUrl={comic?.bannerUrl}
                     aspectRatioHint="16:9 Ratio"
                     recommendedSize="1200 × 400 px"
                     maxSizeHint="Max 8 MB"
+                    uploadMode={form.bannerUpload.uploadMode}
+                    onUploadModeChange={form.bannerUpload.setUploadMode}
+                    urlValue={form.bannerUpload.urlInput}
+                    onUrlChange={form.bannerUpload.setUrlInput}
                   />
                 </div>
               </div>

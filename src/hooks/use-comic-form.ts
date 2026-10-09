@@ -63,10 +63,15 @@ export function useComicForm({
     formData.append("creator", creator)
     formData.append("genreIds", JSON.stringify(selectedGenreIds))
 
-    if (coverUpload.files[0]) {
+    if (coverUpload.uploadMode === "url" && coverUpload.urlInput.trim()) {
+      formData.append("coverUrlSource", coverUpload.urlInput.trim())
+    } else if (coverUpload.files[0]) {
       formData.append("cover", coverUpload.files[0].file)
     }
-    if (bannerUpload.files[0]) {
+
+    if (bannerUpload.uploadMode === "url" && bannerUpload.urlInput.trim()) {
+      formData.append("bannerUrlSource", bannerUpload.urlInput.trim())
+    } else if (bannerUpload.files[0]) {
       formData.append("banner", bannerUpload.files[0].file)
     }
 
