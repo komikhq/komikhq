@@ -1,18 +1,26 @@
-export function getBaseApiUrl(): string {
-  if (typeof window !== "undefined") {
-    const customUrl =
-      (window as any).__PUBLIC_API_URL__ || import.meta.env.PUBLIC_API_URL
-    if (customUrl && customUrl !== "http://localhost:8787") {
-      return customUrl
-    }
+export function getBaseApiUrl(astroLocals?: Record<string, any>): string {
+  const configuredUrl =
+    typeof window === "undefined"
+      ? astroLocals?.runtime?.env?.PUBLIC_API_URL
+      : (window as any).__PUBLIC_API_URL__ ?? import.meta.env.PUBLIC_API_URL
 
-    const hostname = window.location.hostname
-    if (hostname !== "localhost" && hostname !== "127.0.0.1") {
-      return `${window.location.protocol}//${hostname}:8787`
-    }
-    return customUrl || "http://localhost:8787"
+  if (typeof configuredUrl !== "string" || configuredUrl.trim() === "") {
+    const environment = typeof window === "undefined" ? "runtime" : "build"
+    throw new Error(`PUBLIC_API_URL is required in the ${environment} environment`)
   }
-  return import.meta.env.PUBLIC_API_URL || "http://localhost:8787"
+
+  let parsedUrl: URL
+  try {
+    parsedUrl = new URL(configuredUrl)
+  } catch {
+    throw new Error("PUBLIC_API_URL must be an absolute HTTP(S) URL")
+  }
+
+  if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
+    throw new Error("PUBLIC_API_URL must be an absolute HTTP(S) URL")
+  }
+
+  return configuredUrl.replace(/\/+$/, "")
 }
 
 export async function apiFetch<T = any>(
@@ -20,7 +28,7 @@ export async function apiFetch<T = any>(
   options?: RequestInit,
   astroLocals?: Record<string, any>
 ): Promise<T> {
-  const baseUrl = getBaseApiUrl()
+  const baseUrl = getBaseApiUrl(astroLocals)
   const cleanPath = path.startsWith("/") ? path : `/${path}`
   const fullUrl = `${baseUrl}${cleanPath}`
 

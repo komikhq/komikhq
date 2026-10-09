@@ -38,7 +38,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { toast } from "sonner"
-import { API_BASE_URL } from "@/constants"
+import { getBaseApiUrl } from "@/lib/api-client"
 
 export interface UserItem {
   id: string
@@ -69,7 +69,7 @@ export function AdminUserManagementCard() {
     setIsLoading(true)
     try {
       const res = await fetch(
-        `${API_BASE_URL}/v1/admin/users?q=${encodeURIComponent(search)}`,
+        `${getBaseApiUrl()}/v1/admin/users?q=${encodeURIComponent(search)}`,
         {
           credentials: "include",
         }
@@ -104,7 +104,7 @@ export function AdminUserManagementCard() {
     if (!editingUser) return
     try {
       const res = await fetch(
-        `${API_BASE_URL}/v1/admin/users/${editingUser.id}`,
+        `${getBaseApiUrl()}/v1/admin/users/${editingUser.id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -133,7 +133,7 @@ export function AdminUserManagementCard() {
     if (!deleteTarget) return
     try {
       const res = await fetch(
-        `${API_BASE_URL}/v1/admin/users/${deleteTarget.id}`,
+        `${getBaseApiUrl()}/v1/admin/users/${deleteTarget.id}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -159,7 +159,7 @@ export function AdminUserManagementCard() {
       return
     }
     try {
-      const res = await fetch(`${API_BASE_URL}/v1/admin/users`, {
+      const res = await fetch(`${getBaseApiUrl()}/v1/admin/users`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

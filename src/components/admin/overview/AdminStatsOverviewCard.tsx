@@ -13,7 +13,7 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card"
-import { API_BASE_URL } from "@/constants"
+import { getBaseApiUrl } from "@/lib/api-client"
 
 interface SystemStats {
   totalUsers: number
@@ -32,7 +32,7 @@ export function AdminStatsOverviewCard() {
     const fetchStats = async () => {
       setIsLoading(true)
       try {
-        const res = await fetch(`${API_BASE_URL}/v1/admin/stats`, {
+        const res = await fetch(`${getBaseApiUrl()}/v1/admin/stats`, {
           credentials: "include",
         })
         if (!res.ok) throw new Error("Failed to fetch statistics")
