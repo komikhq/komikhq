@@ -33,6 +33,10 @@ This repository contains the Astro-powered web application. The companion API is
 - Choose a light or dark appearance.
 - Read without intrusive advertisements.
 
+## Tools for comic readers
+
+[KomikHQ Clipper](https://github.com/komikhq/komikhq-clipper) is a companion browser extension for comic archiving. On supported chapter pages, it detects chapter images and packages them into a sequentially named ZIP file. It is available from the [Microsoft Edge Add-ons store](https://microsoftedge.microsoft.com/addons/detail/majmeimedakmbcfdcebjkbnmbjmdiggc) and [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/komikhq-clipper/).
+
 ---
 
 ## How the project is built
