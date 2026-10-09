@@ -7,7 +7,10 @@ import { AdminFooter } from "@/components/admin/common/AdminFooter"
 const { id } = Astro.params
 ---
 
-<RootLayout title="Comic Chapter Management - Admin Dashboard | KomikHQ" noIndex={true}>
+<RootLayout
+  title="Comic Chapter Management - Admin Dashboard | KomikHQ"
+  noIndex={true}
+>
   <div class="flex w-full flex-col gap-6 px-4 pt-4 pb-20 sm:px-6 lg:px-8">
     <AdminTabNav currentTab="comics" client:load />
 

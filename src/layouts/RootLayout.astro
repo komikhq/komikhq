@@ -44,7 +44,10 @@ const absoluteOgImage = ogImage.startsWith("http")
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="robots" content={noIndex ? "noindex, nofollow" : "index, follow"} />
+    <meta
+      name="robots"
+      content={noIndex ? "noindex, nofollow" : "index, follow"}
+    />
     <link rel="canonical" href={canonicalUrl} />
 
     <!-- Open Graph / Facebook / WhatsApp -->

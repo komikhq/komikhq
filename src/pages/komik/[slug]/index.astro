@@ -24,7 +24,9 @@ if (slug) {
 
 const formattedTitle =
   comic?.title ||
-  (slug ? slug.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()) : "Comic")
+  (slug
+    ? slug.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())
+    : "Comic")
 
 const title = `Read ${formattedTitle} in Bahasa Indonesia | KomikHQ`
 const description =
@@ -32,8 +34,7 @@ const description =
     ? (comic.synopsis || comic.description).slice(0, 160)
     : `Read ${formattedTitle} manga, manhwa, and manhua in Bahasa Indonesia for free on KomikHQ.`
 
-const ogImage =
-  comic?.cover_url || comic?.coverUrl || "/images/og.png"
+const ogImage = comic?.cover_url || comic?.coverUrl || "/images/og.png"
 ---
 
 <RootLayout

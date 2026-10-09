@@ -66,9 +66,7 @@ export function ChapterFormSheet({
         )
 
         if (result.skippedCount > 0) {
-          toast.info(
-            `${result.skippedCount} non-image file(s) were skipped.`
-          )
+          toast.info(`${result.skippedCount} non-image file(s) were skipped.`)
         }
       } catch (err: any) {
         toast.error(err.message || "Failed to extract ZIP file.")
@@ -220,7 +218,7 @@ export function ChapterFormSheet({
 
             {/* ZIP Extraction Progress */}
             {zipExtracting && (
-              <div className="flex items-center gap-3 rounded-xl border border-amber-500/30 bg-amber-500/5 p-4 animate-in fade-in">
+              <div className="flex animate-in items-center gap-3 rounded-xl border border-amber-500/30 bg-amber-500/5 p-4 fade-in">
                 <CircleNotch className="h-5 w-5 shrink-0 animate-spin text-amber-500" />
                 <div className="space-y-0.5">
                   <p className="text-xs font-semibold text-foreground">
@@ -235,7 +233,7 @@ export function ChapterFormSheet({
 
             {/* ZIP Success Info */}
             {zipInfo && !zipExtracting && (
-              <div className="flex items-center gap-3 rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-3.5 animate-in fade-in">
+              <div className="flex animate-in items-center gap-3 rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-3.5 fade-in">
                 <FileZip className="h-5 w-5 shrink-0 text-emerald-500" />
                 <div className="min-w-0 flex-1 space-y-0.5">
                   <p className="truncate text-xs font-semibold text-foreground">

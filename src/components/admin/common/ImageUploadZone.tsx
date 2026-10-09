@@ -1,5 +1,11 @@
 import React, { useState } from "react"
-import { UploadSimple, X, Link as LinkIcon, Image as ImageIcon, WarningCircle } from "@phosphor-icons/react"
+import {
+  UploadSimple,
+  X,
+  Link as LinkIcon,
+  Image as ImageIcon,
+  WarningCircle,
+} from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
@@ -63,7 +69,8 @@ export function ImageUploadZone({
     }
   }
 
-  const urlValue = controlledUrlValue !== undefined ? controlledUrlValue : internalUrlValue
+  const urlValue =
+    controlledUrlValue !== undefined ? controlledUrlValue : internalUrlValue
   const handleUrlChange = (val: string) => {
     setUrlImageError(false)
     if (onUrlChange) {
@@ -79,14 +86,14 @@ export function ImageUploadZone({
       {allowUrlUpload && !multiple && (
         <div className="flex items-center justify-between gap-2">
           <span className="text-xs font-semibold text-foreground">{label}</span>
-          <div className="flex items-center rounded-lg bg-muted/60 p-0.5 text-[11px] font-medium border border-border/40">
+          <div className="flex items-center rounded-lg border border-border/40 bg-muted/60 p-0.5 text-[11px] font-medium">
             <button
               type="button"
               onClick={() => setMode("file")}
               className={cn(
-                "flex items-center gap-1.5 px-2.5 py-1 rounded-md transition-all cursor-pointer",
+                "flex cursor-pointer items-center gap-1.5 rounded-md px-2.5 py-1 transition-all",
                 mode === "file"
-                  ? "bg-background text-foreground shadow-xs font-semibold"
+                  ? "bg-background font-semibold text-foreground shadow-xs"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
@@ -97,9 +104,9 @@ export function ImageUploadZone({
               type="button"
               onClick={() => setMode("url")}
               className={cn(
-                "flex items-center gap-1.5 px-2.5 py-1 rounded-md transition-all cursor-pointer",
+                "flex cursor-pointer items-center gap-1.5 rounded-md px-2.5 py-1 transition-all",
                 mode === "url"
-                  ? "bg-background text-foreground shadow-xs font-semibold"
+                  ? "bg-background font-semibold text-foreground shadow-xs"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
@@ -131,7 +138,9 @@ export function ImageUploadZone({
               accept={acceptExtra ? `image/*,${acceptExtra}` : "image/*"}
               multiple={multiple}
               className="hidden"
-              onChange={(e) => e.target.files && onFilesSelected(e.target.files)}
+              onChange={(e) =>
+                e.target.files && onFilesSelected(e.target.files)
+              }
             />
             <div className="rounded-full bg-primary/10 p-2 text-primary">
               <UploadSimple className="h-4 w-4" />
@@ -253,27 +262,28 @@ export function ImageUploadZone({
                 value={urlValue}
                 onChange={(e) => handleUrlChange(e.target.value)}
                 placeholder="https://example.com/images/cover.jpg"
-                className="pl-9 pr-8 text-xs h-9 rounded-lg"
+                className="h-9 rounded-lg pr-8 pl-9 text-xs"
               />
               {urlValue && (
                 <button
                   type="button"
                   onClick={() => handleUrlChange("")}
-                  className="absolute right-2.5 text-muted-foreground hover:text-foreground cursor-pointer"
+                  className="absolute right-2.5 cursor-pointer text-muted-foreground hover:text-foreground"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
               )}
             </div>
             <p className="text-[11px] text-muted-foreground">
-              Paste the image URL from another website. The server will download and store it directly into R2.
+              Paste the image URL from another website. The server will download
+              and store it directly into R2.
             </p>
           </div>
 
           {/* URL Live Preview */}
           {urlValue && (
             <div className="flex items-center gap-3 rounded-lg border border-border/60 bg-background/80 p-2.5">
-              <div className="relative h-20 w-16 shrink-0 overflow-hidden rounded-md border border-border/60 bg-muted flex items-center justify-center">
+              <div className="relative flex h-20 w-16 shrink-0 items-center justify-center overflow-hidden rounded-md border border-border/60 bg-muted">
                 {!urlImageError ? (
                   <img
                     src={urlValue}
@@ -289,7 +299,7 @@ export function ImageUploadZone({
                 <div className="flex items-center gap-1.5">
                   <Badge
                     variant="outline"
-                    className="bg-primary/10 text-primary border-primary/20 text-[10px]"
+                    className="border-primary/20 bg-primary/10 text-[10px] text-primary"
                   >
                     URL Source
                   </Badge>
@@ -299,13 +309,14 @@ export function ImageUploadZone({
                     </span>
                   )}
                 </div>
-                <p className="truncate text-xs font-mono text-muted-foreground">
+                <p className="truncate font-mono text-xs text-muted-foreground">
                   {urlValue}
                 </p>
                 {urlImageError && (
                   <p className="flex items-center gap-1 text-[10px] text-amber-500">
                     <WarningCircle className="h-3 w-3 shrink-0" />
-                    Preview blocked by browser, but server will download it on submit.
+                    Preview blocked by browser, but server will download it on
+                    submit.
                   </p>
                 )}
               </div>
