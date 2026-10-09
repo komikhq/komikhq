@@ -74,4 +74,10 @@ export const API_ROUTES = {
     AUTH: `${API_PREFIX}/realtime/auth`,
   },
   VIEW: `${API_PREFIX}/view`,
+  SITEMAPS: {
+    COMICS: (limit = 50000) => `${API_PREFIX}/sitemaps/comics?limit=${limit}`,
+    CHAPTERS: (page = 1, limit = 50000) =>
+      `${API_PREFIX}/sitemaps/chapters?page=${page}&limit=${limit}`,
+    SUMMARY: `${API_PREFIX}/sitemaps/summary`,
+  },
 } as const

@@ -14,6 +14,10 @@ export const GET: APIRoute = async () => {
     <loc>${SITE_URL}/sitemap-comics.xml</loc>
     <lastmod>${now}</lastmod>
   </sitemap>
+  <sitemap>
+    <loc>${SITE_URL}/sitemap-chapters.xml</loc>
+    <lastmod>${now}</lastmod>
+  </sitemap>
 </sitemapindex>`
 
   return new Response(xml.trim(), {
