@@ -1,7 +1,7 @@
-export function getBaseApiUrl(astroLocals?: Record<string, any>): string {
+export function getBaseApiUrl(): string {
   const configuredUrl =
     typeof window === "undefined"
-      ? astroLocals?.runtime?.env?.PUBLIC_API_URL
+      ? import.meta.env.PUBLIC_API_URL
       : (window as any).__PUBLIC_API_URL__ ?? import.meta.env.PUBLIC_API_URL
 
   if (typeof configuredUrl !== "string" || configuredUrl.trim() === "") {
@@ -28,14 +28,15 @@ export async function apiFetch<T = any>(
   options?: RequestInit,
   astroLocals?: Record<string, any>
 ): Promise<T> {
-  const baseUrl = getBaseApiUrl(astroLocals)
   const cleanPath = path.startsWith("/") ? path : `/${path}`
-  const fullUrl = `${baseUrl}${cleanPath}`
-
-  // 1. Server-Side Astro (SSR/SSG) Service Binding Execution
   const serviceBinding = astroLocals?.runtime?.env?.BACKEND
-  if (serviceBinding && typeof serviceBinding.fetch === "function") {
-    const request = new Request(fullUrl, {
+
+  if (astroLocals) {
+    if (!serviceBinding || typeof serviceBinding.fetch !== "function") {
+      throw new Error("BACKEND service binding is required for server-side API requests")
+    }
+
+    const request = new Request(`https://service-binding.invalid${cleanPath}`, {
       ...options,
       headers: {
         "Content-Type": "application/json",
@@ -54,7 +55,7 @@ export async function apiFetch<T = any>(
     return response.json() as Promise<T>
   }
 
-  // 2. Client-Side Browser Hydration (Fetch over HTTP)
+  const fullUrl = `${getBaseApiUrl()}${cleanPath}`
   const response = await fetch(fullUrl, {
     ...options,
     credentials: "include",

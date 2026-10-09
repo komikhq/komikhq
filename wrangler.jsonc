@@ -23,6 +23,13 @@
     "binding": "ASSETS"
   },
 
+  "services": [
+    {
+      "binding": "BACKEND",
+      "service": "komikhq-api"
+    }
+  ],
+
   "vars": {
     "BETTER_AUTH_URL": "https://api.komikhq.com",
     "PUBLIC_API_URL": "https://api.komikhq.com"
@@ -31,11 +38,4 @@
   "observability": {
     "enabled": true
   }
-
-  // "services": [
-  //   {
-  //     "binding": "BACKEND",
-  //     "service": "komikhq-api"
-  //   }
-  // ]
 }
