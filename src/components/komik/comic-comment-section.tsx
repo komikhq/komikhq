@@ -1,5 +1,5 @@
 import React from "react"
-import { CommentSection } from "@/components/comment/CommentSection"
+import { CommentSection } from "@/components/comment/comment-section"
 import { useComicDetail } from "@/hooks/use-comic-detail"
 
 interface ComicCommentSectionProps {

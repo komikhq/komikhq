@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Logo } from "@/components/common/Logo"
+import { Logo } from "@/components/common/logo"
 import { SITE_NAME, SITE_TAGLINE, SITE_CONTACT_EMAIL } from "@/constants/site"
 import {
   Cookie,

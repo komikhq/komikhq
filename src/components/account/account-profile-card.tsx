@@ -22,7 +22,7 @@ import { Badge } from "@/components/ui/badge"
 import { useAuthContext } from "@/components/auth/auth-context"
 import { useUpdateUserName } from "@/hooks/use-update-user-name"
 import { useUploadAvatar } from "@/hooks/use-upload-avatar"
-import { AvatarCropDialog } from "./AvatarCropDialog"
+import { AvatarCropDialog } from "./avatar-crop-dialog"
 
 export function AccountProfileCard() {
   const { user, isPending, handleSignOut, refetch } = useAuthContext()

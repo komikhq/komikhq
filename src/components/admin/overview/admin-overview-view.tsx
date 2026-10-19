@@ -1,6 +1,6 @@
 import React from "react"
-import { AdminGuard } from "../common/AdminGuard"
-import { AdminStatsOverviewCard } from "./AdminStatsOverviewCard"
+import { AdminGuard } from "../common/admin-guard"
+import { AdminStatsOverviewCard } from "./admin-stats-overview-card"
 
 export function AdminOverviewView() {
   return (

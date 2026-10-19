@@ -18,8 +18,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { ImageUploadZone } from "@/components/admin/common/ImageUploadZone"
-import { GenreComboboxPicker } from "./GenreComboboxPicker"
+import { ImageUploadZone } from "@/components/admin/common/image-upload-zone"
+import { GenreComboboxPicker } from "./genre-combobox-picker"
 import { useComicForm } from "@/hooks/use-comic-form"
 import type { ComicAdminItem } from "@/hooks/use-admin-comics"
 

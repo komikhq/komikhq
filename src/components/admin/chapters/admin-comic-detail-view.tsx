@@ -1,7 +1,7 @@
 import React from "react"
-import { AdminGuard } from "../common/AdminGuard"
-import { AdminComicDetailHeader } from "./AdminComicDetailHeader"
-import { ChapterTableSection } from "./ChapterTableSection"
+import { AdminGuard } from "../common/admin-guard"
+import { AdminComicDetailHeader } from "./admin-comic-detail-header"
+import { ChapterTableSection } from "./chapter-table-section"
 
 interface AdminComicDetailViewProps {
   comicId: string

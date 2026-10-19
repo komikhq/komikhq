@@ -1,7 +1,7 @@
 import React from "react"
-import { AuthGuard } from "@/components/auth/AuthGuard"
-import { AccountProfileCard } from "./AccountProfileCard"
-import { AccountIdentityCard } from "./AccountIdentityCard"
+import { AuthGuard } from "@/components/auth/auth-guard"
+import { AccountProfileCard } from "./account-profile-card"
+import { AccountIdentityCard } from "./account-identity-card"
 
 export function AccountProfileView() {
   return (

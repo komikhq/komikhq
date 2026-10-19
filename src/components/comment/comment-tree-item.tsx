@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { ThumbsUp, ChatCircleText, User } from "@phosphor-icons/react"
-import { CommentInput } from "./CommentInput"
-import { SpoilerText } from "./SpoilerText"
+import { CommentInput } from "./comment-input"
+import { SpoilerText } from "./spoiler-text"
 import { API_ROUTES } from "@/constants"
 import { apiFetch } from "@/lib/api-client"
 
@@ -47,7 +47,7 @@ interface CommentTreeItemProps {
   variant?: "reader" | "default"
 }
 
-import { CommentDeleteDialog } from "./CommentDeleteDialog"
+import { CommentDeleteDialog } from "./comment-delete-dialog"
 
 export function CommentTreeItem({
   comment,

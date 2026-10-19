@@ -1,6 +1,6 @@
 import React from "react"
-import { AdminGuard } from "../common/AdminGuard"
-import { AdminUserManagementCard } from "./AdminUserManagementCard"
+import { AdminGuard } from "../common/admin-guard"
+import { AdminUserManagementCard } from "./admin-user-management-card"
 
 export function AdminUsersView() {
   return (

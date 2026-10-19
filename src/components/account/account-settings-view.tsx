@@ -1,9 +1,9 @@
 import React from "react"
-import { AuthGuard } from "@/components/auth/AuthGuard"
-import { AccountThemeCard } from "./AccountThemeCard"
-import { AccountPreferencesCard } from "./AccountPreferencesCard"
-import { AccountPasswordCard } from "./AccountPasswordCard"
-import { AccountDangerZoneCard } from "./AccountDangerZoneCard"
+import { AuthGuard } from "@/components/auth/auth-guard"
+import { AccountThemeCard } from "./account-theme-card"
+import { AccountPreferencesCard } from "./account-preferences-card"
+import { AccountPasswordCard } from "./account-password-card"
+import { AccountDangerZoneCard } from "./account-danger-zone-card"
 
 export function AccountSettingsView() {
   return (

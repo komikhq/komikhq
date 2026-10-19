@@ -1,7 +1,9 @@
+
 import js from "@eslint/js"
 import globals from "globals"
 import reactHooks from "eslint-plugin-react-hooks"
 import reactRefresh from "eslint-plugin-react-refresh"
+import checkFile from "eslint-plugin-check-file"
 import tseslint from "typescript-eslint"
 import { defineConfig, globalIgnores } from "eslint/config"
 
@@ -15,6 +17,9 @@ export default defineConfig([
   ]),
   {
     files: ["**/*.{ts,tsx}"],
+    plugins: {
+      "check-file": checkFile,
+    },
     extends: [
       js.configs.recommended,
       tseslint.configs.recommended,
@@ -33,6 +38,15 @@ export default defineConfig([
         {
           argsIgnorePattern: "^_",
           varsIgnorePattern: "^_",
+        },
+      ],
+      "check-file/filename-naming-convention": [
+        "error",
+        {
+          "src/**/*.{js,ts,jsx,tsx}": "KEBAB_CASE",
+        },
+        {
+          ignoreMiddleExtensions: true,
         },
       ],
     },

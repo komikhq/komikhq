@@ -31,9 +31,9 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { HEADER_NAV_ITEMS, SITE_NAME, type NavItem } from "@/constants"
 import { useAuth } from "@/hooks/use-auth"
-import { ThemeToggle } from "@/components/common/ThemeToggle"
-import { Logo } from "@/components/common/Logo"
-import { GlobalComicSearch } from "@/components/common/GlobalComicSearch"
+import { ThemeToggle } from "@/components/common/theme-toggle"
+import { Logo } from "@/components/common/logo"
+import { GlobalComicSearch } from "@/components/common/global-comic-search"
 
 const HEADER_NAV_ICONS: Record<string, Icon> = {
   House,

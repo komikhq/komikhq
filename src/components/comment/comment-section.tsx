@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react"
 import { ChatCircleText } from "@phosphor-icons/react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { CommentInput } from "./CommentInput"
-import { CommentTreeItem, type CommentData } from "./CommentTreeItem"
-import { CommentReportModal } from "./CommentReportModal"
+import { CommentInput } from "./comment-input"
+import { CommentTreeItem, type CommentData } from "./comment-tree-item"
+import { CommentReportModal } from "./comment-report-modal"
 import { API_ROUTES } from "@/constants"
 import { apiFetch, getBaseApiUrl } from "@/lib/api-client"
 

@@ -1,8 +1,8 @@
 ---
-import RootLayout from "@/layouts/RootLayout.astro"
-import { ComicHeaderCard } from "@/components/komik/ComicHeaderCard"
-import { ComicChapterList } from "@/components/komik/ComicChapterList"
-import { ComicCommentSection } from "@/components/komik/ComicCommentSection"
+import RootLayout from "@/layouts/root-layout.astro"
+import { ComicHeaderCard } from "@/components/komik/comic-header-card"
+import { ComicChapterList } from "@/components/komik/comic-chapter-list"
+import { ComicCommentSection } from "@/components/komik/comic-comment-section"
 import { apiFetch } from "@/lib/api-client"
 import { API_ROUTES } from "@/constants"
 
@@ -12,9 +12,7 @@ let comic: any = null
 if (slug) {
   try {
     const res = await apiFetch<any>(
-      API_ROUTES.COMICS.DETAIL(slug),
-      undefined,
-      Astro.locals
+      API_ROUTES.COMICS.DETAIL(slug)
     )
     comic = res.comic || res.data || res
   } catch {

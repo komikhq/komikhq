@@ -1,6 +1,6 @@
 import React from "react"
 import { useRequireAdmin } from "@/hooks/use-require-admin"
-import { AuthProvider } from "@/components/auth/AuthContext"
+import { AuthProvider } from "@/components/auth/auth-provider"
 
 interface AdminGuardProps {
   children: React.ReactNode

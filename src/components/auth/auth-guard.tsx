@@ -1,6 +1,6 @@
 import React from "react"
 import { useRequireAuth } from "@/hooks/use-require-auth"
-import { AuthProvider } from "./AuthContext"
+import { AuthProvider } from "./auth-provider"
 
 interface AuthGuardProps {
   children: React.ReactNode

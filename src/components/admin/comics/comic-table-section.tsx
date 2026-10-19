@@ -26,8 +26,8 @@ import {
 } from "@/components/ui/select"
 import { toast } from "sonner"
 import { useAdminComics, type ComicAdminItem } from "@/hooks/use-admin-comics"
-import { ComicFormSheet } from "./ComicFormSheet"
-import { ComicDeleteDialog } from "./ComicDeleteDialog"
+import { ComicFormSheet } from "./comic-form-sheet"
+import { ComicDeleteDialog } from "./comic-delete-dialog"
 
 import { DataTable } from "@/components/ui/data-table"
 import type { ColumnDef } from "@tanstack/react-table"

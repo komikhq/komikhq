@@ -1,2 +1,2 @@
-export { default as GoogleAnalytics } from "./GoogleAnalytics.astro"
-export { default as MicrosoftClarity } from "./MicrosoftClarity.astro"
+export { default as GoogleAnalytics } from "./google-analytics.astro"
+export { default as MicrosoftClarity } from "./microsoft-clarity.astro"
