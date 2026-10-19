@@ -4,16 +4,14 @@ import {
   BookOpenIcon as BookOpen,
   EyeIcon as Eye,
   ShieldWarningIcon as ShieldWarning,
-  ArrowsClockwiseIcon as ArrowsClockwise,
 } from "@phosphor-icons/react"
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from "@/components/ui/card"
-import { getBaseApiUrl } from "@/lib/api-client"
+import { administrationApi } from "@/lib/sdk-client"
 
 interface SystemStats {
   totalUsers: number
@@ -32,12 +30,8 @@ export function AdminStatsOverviewCard() {
     const fetchStats = async () => {
       setIsLoading(true)
       try {
-        const res = await fetch(`${getBaseApiUrl()}/v1/admin/stats`, {
-          credentials: "include",
-        })
-        if (!res.ok) throw new Error("Failed to fetch statistics")
-        const json = (await res.json()) as any
-        const data = json.data || json
+        const json: any = await administrationApi.adminGetPlatformStats()
+        const data = json?.data || json
         setStatsData(data)
       } catch (e) {
         console.error("Failed to fetch admin stats:", e)
@@ -98,22 +92,22 @@ export function AdminStatsOverviewCard() {
             className="border-border/60 shadow-xs transition-all hover:border-primary/40"
           >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-xs font-semibold text-muted-foreground">
+              <CardTitle className="text-xs font-medium text-muted-foreground">
                 {stat.title}
               </CardTitle>
-              {isLoading ? (
-                <ArrowsClockwise className="h-4 w-4 animate-spin text-muted-foreground" />
-              ) : (
-                <Icon className={`h-4 w-4 ${stat.color}`} />
-              )}
+              <div
+                className={`rounded-md border border-border/40 bg-muted/40 p-1.5 ${stat.color}`}
+              >
+                <Icon className="h-4 w-4" />
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold tracking-tight">
+              <div className="text-2xl font-black tracking-tight">
                 {stat.value}
               </div>
-              <CardDescription className="pt-1 text-[11px] text-muted-foreground">
+              <p className="mt-1 text-[11px] text-muted-foreground">
                 {stat.change}
-              </CardDescription>
+              </p>
             </CardContent>
           </Card>
         )

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
-import { API_ROUTES } from "@/constants"
-import { apiFetch } from "@/lib/api-client"
+import { comicsApi, bookmarksApi } from "@/lib/sdk-client"
+import { invalidateCache } from "@/lib/coalescing-fetch"
 
 export interface ComicDetailData {
   comic: any
@@ -9,25 +9,47 @@ export interface ComicDetailData {
   chapters: any[]
 }
 
-export function useComicDetail(slug?: string) {
+export function useComicDetail(slug?: string, initialData?: ComicDetailData | null) {
   const [bookmarked, setBookmarked] = useState(false)
-  const [comicData, setComicData] = useState<ComicDetailData | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [comicData, setComicData] = useState<ComicDetailData | null>(initialData ?? null)
+  const [isLoading, setIsLoading] = useState(!initialData)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!slug) return
+    // If initialData was provided by SSR, skip the fetch on first mount
+    if (initialData) {
+      // Still check bookmark status for authenticated users
+      if (initialData.comic?.id) {
+        bookmarksApi
+          .listBookmarks()
+          .then((res: any) => {
+            if (res.bookmarks) {
+              const isSaved = res.bookmarks.some(
+                (b: any) => b.comic.id === initialData.comic.id
+              )
+              setBookmarked(isSaved)
+            }
+          })
+          .catch(() => {})
+      }
+      return
+    }
+
+    // No initialData — fetch from SDK (fallback for client-side navigation)
     let isMounted = true
     setIsLoading(true)
     setError(null)
 
-    apiFetch(API_ROUTES.COMICS.DETAIL(slug))
-      .then((data) => {
+    comicsApi
+      .getComicBySlug({ slug })
+      .then((data: any) => {
         if (isMounted) {
           setComicData(data)
           if (data.comic?.id) {
-            apiFetch(API_ROUTES.BOOKMARKS.LIST)
-              .then((res) => {
+            bookmarksApi
+              .listBookmarks()
+              .then((res: any) => {
                 if (isMounted && res.bookmarks) {
                   const isSaved = res.bookmarks.some(
                     (b: any) => b.comic.id === data.comic.id
@@ -39,9 +61,9 @@ export function useComicDetail(slug?: string) {
           }
         }
       })
-      .catch((err) => {
+      .catch((err: any) => {
         if (isMounted) {
-          setError(err.message || "Gagal memuat detail komik.")
+          setError(err.message || "Failed to load comic details.")
         }
       })
       .finally(() => {
@@ -61,15 +83,13 @@ export function useComicDetail(slug?: string) {
 
     try {
       if (nextState) {
-        await apiFetch(API_ROUTES.BOOKMARKS.ADD, {
-          method: "POST",
-          body: JSON.stringify({ comicId: targetComicId, status: "reading" }),
+        await bookmarksApi.saveBookmark({
+          saveBookmarkRequest: { comicId: targetComicId, status: "reading" },
         })
       } else {
-        await apiFetch(API_ROUTES.BOOKMARKS.REMOVE(targetComicId), {
-          method: "DELETE",
-        })
+        await bookmarksApi.removeBookmark({ comicId: targetComicId })
       }
+      invalidateCache("/bookmarks")
     } catch {
       // Rollback on failure
       setBookmarked(!nextState)

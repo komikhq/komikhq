@@ -5,8 +5,8 @@ import {
 } from "@phosphor-icons/react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { COMMON_GENRES, type GenreDefinition, API_ROUTES } from "@/constants"
-import { apiFetch } from "@/lib/api-client"
+import { COMMON_GENRES, type GenreDefinition } from "@/constants"
+import { comicsApi } from "@/lib/sdk-client"
 
 export function HomeGenreComicsSection() {
   const [comicsByGenre, setComicsByGenre] = useState<Record<string, any[]>>({})
@@ -17,8 +17,9 @@ export function HomeGenreComicsSection() {
     setIsLoading(true)
 
     // Fetch browse catalog to categorize comics by genre
-    apiFetch(API_ROUTES.COMICS.BROWSE("limit=100"))
-      .then((data) => {
+    comicsApi
+      .browseComics({ limit: "100" })
+      .then((data: any) => {
         if (!isMounted) return
         const comics: any[] = data.comics || []
         const map: Record<string, any[]> = {}
@@ -101,14 +102,14 @@ export function HomeGenreComicsSection() {
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
               <CardTitle className="flex items-center gap-2 text-xl font-bold">
                 <Tag className="h-5 w-5 text-primary" />
-                <span>Komik {genre.name}</span>
+                <span>{genre.name} Comics</span>
               </CardTitle>
 
               <a
                 href={`/browse?genre=${genre.slug}`}
                 className="flex items-center gap-1 text-xs font-medium text-primary transition-all hover:underline"
               >
-                <span>Lihat Semua</span>
+                <span>View All</span>
                 <ArrowRight className="h-3.5 w-3.5" />
               </a>
             </CardHeader>
@@ -143,7 +144,7 @@ export function HomeGenreComicsSection() {
                           {comic.type || "Manga"}
                         </span>
                         <span>
-                          {(comic.totalViews || 0).toLocaleString("id-ID")}{" "}
+                          {(comic.totalViews || 0).toLocaleString("en-US")}{" "}
                           views
                         </span>
                       </div>
@@ -153,7 +154,7 @@ export function HomeGenreComicsSection() {
               ) : (
                 <div className="space-y-1 py-6 text-center">
                   <p className="text-xs text-muted-foreground">
-                    Belum ada komik untuk genre {genre.name}.
+                    No comics available for the {genre.name} genre yet.
                   </p>
                 </div>
               )}

@@ -93,12 +93,12 @@ export function AccountProfileCard() {
     return (
       <Card className="space-y-4 p-6 text-center">
         <WarningCircle className="mx-auto h-12 w-12 text-destructive" />
-        <h2 className="text-xl font-bold">Sesi Tidak Ditemukan</h2>
+        <h2 className="text-xl font-bold">Session Not Found</h2>
         <p className="text-sm text-muted-foreground">
-          Silakan masuk ke akun Anda terlebih dahulu.
+          Please sign in to your account first.
         </p>
         <a href="/login">
-          <Button className="w-full">Masuk Sekarang</Button>
+          <Button className="w-full">Sign In Now</Button>
         </a>
       </Card>
     )
@@ -124,9 +124,9 @@ export function AccountProfileCard() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-4">
           <div>
-            <CardTitle className="text-2xl font-bold">Profil Akun</CardTitle>
+            <CardTitle className="text-2xl font-bold">Account Profile</CardTitle>
             <CardDescription>
-              Kelola profil dan informasi akun KomikHQ Anda.
+              Manage your KomikHQ profile and account details.
             </CardDescription>
           </div>
           <Button
@@ -136,7 +136,7 @@ export function AccountProfileCard() {
             className="gap-1.5"
           >
             <SignOut className="h-4 w-4" />
-            <span>Keluar</span>
+            <span>Sign Out</span>
           </Button>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -146,10 +146,10 @@ export function AccountProfileCard() {
                 <ShieldCheck className="h-5 w-5 text-primary" />
                 <div>
                   <p className="text-xs font-semibold text-primary">
-                    Akses Administrator
+                    Administrator Access
                   </p>
                   <p className="text-[11px] text-muted-foreground">
-                    Kelola komik & sistem di Dashboard
+                    Manage comics & system in Dashboard
                   </p>
                 </div>
               </div>
@@ -158,7 +158,7 @@ export function AccountProfileCard() {
                 onClick={() => (window.location.href = "/dashboard")}
                 className="h-8 text-xs font-semibold"
               >
-                Dashboard Admin
+                Admin Dashboard
               </Button>
             </div>
           )}
@@ -180,7 +180,7 @@ export function AccountProfileCard() {
               </Avatar>
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 rounded-full bg-black/60 text-xs font-semibold text-white opacity-0 transition-opacity group-hover:opacity-100">
                 <PencilSimple className="h-5 w-5" />
-                <span>Ubah</span>
+                <span>Change</span>
               </div>
             </div>
 
@@ -202,7 +202,7 @@ export function AccountProfileCard() {
                       className="h-8 w-8 text-emerald-500 hover:bg-emerald-500/10"
                       onClick={handleSaveName}
                       disabled={isSavingName}
-                      title="Simpan Nama"
+                      title="Save Name"
                     >
                       <Check className="h-4 w-4" />
                     </Button>
@@ -212,7 +212,7 @@ export function AccountProfileCard() {
                       className="h-8 w-8 text-muted-foreground"
                       onClick={cancelEditing}
                       disabled={isSavingName}
-                      title="Batal"
+                      title="Cancel"
                     >
                       <X className="h-4 w-4" />
                     </Button>
@@ -225,7 +225,7 @@ export function AccountProfileCard() {
                       variant="ghost"
                       className="h-7 w-7 text-muted-foreground hover:text-foreground"
                       onClick={() => startEditing(user.name || "")}
-                      title="Ubah nama tampilan"
+                      title="Edit display name"
                     >
                       <PencilSimple className="h-4 w-4" />
                     </Button>
@@ -253,7 +253,7 @@ export function AccountProfileCard() {
                 >
                   <UploadSimple className="mr-2 h-4 w-4" />
                   <span>
-                    {isUploading ? "Mengunggah..." : "Ubah Foto Profil"}
+                    {isUploading ? "Uploading..." : "Change Profile Picture"}
                   </span>
                 </Button>
               </div>

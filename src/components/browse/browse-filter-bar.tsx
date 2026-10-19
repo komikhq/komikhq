@@ -54,10 +54,10 @@ export function BrowseFilterBar({ onFilterChange }: BrowseFilterBarProps) {
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-xl font-bold">
           <Funnel className="h-5 w-5 text-primary" />
-          <span>Filter & Pencarian Komik</span>
+          <span>Filter & Browse Comics</span>
         </CardTitle>
         <CardDescription>
-          Cari dan saring judul manga, manhwa, dan manhua sesuai keinginan Anda.
+          Search and filter manga, manhwa, and manhua titles to your preference.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -65,7 +65,7 @@ export function BrowseFilterBar({ onFilterChange }: BrowseFilterBarProps) {
           <div className="relative flex-1">
             <MagnifyingGlass className="absolute top-3 left-3 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Cari judul komik..."
+              placeholder="Search comic titles..."
               value={search}
               onChange={(e) => handleSearchChange(e.target.value)}
               className="pl-9"
@@ -79,9 +79,9 @@ export function BrowseFilterBar({ onFilterChange }: BrowseFilterBarProps) {
               onValueChange={handleSelectGenreItem}
               itemToStringLabel={(item: any) => item?.name || ""}
             >
-              <ComboboxInput placeholder="Semua Genre" />
+              <ComboboxInput placeholder="All Genres" />
               <ComboboxContent>
-                <ComboboxEmpty>Genre tidak ditemukan.</ComboboxEmpty>
+                <ComboboxEmpty>Genre not found.</ComboboxEmpty>
                 <ComboboxList>
                   {genreItems.map((item) => (
                     <ComboboxItem key={item.slug} value={item}>
@@ -98,7 +98,7 @@ export function BrowseFilterBar({ onFilterChange }: BrowseFilterBarProps) {
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Semua Status</SelectItem>
+              <SelectItem value="all">All Status</SelectItem>
               <SelectItem value="ongoing">Ongoing</SelectItem>
               <SelectItem value="completed">Completed</SelectItem>
             </SelectContent>
@@ -106,12 +106,12 @@ export function BrowseFilterBar({ onFilterChange }: BrowseFilterBarProps) {
 
           <Select value={sortBy} onValueChange={handleSortChange}>
             <SelectTrigger className="w-full sm:w-36">
-              <SelectValue placeholder="Urutkan" />
+              <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="latest">Terbaru</SelectItem>
-              <SelectItem value="oldest">Terlama</SelectItem>
-              <SelectItem value="popular">Terpopuler</SelectItem>
+              <SelectItem value="latest">Latest</SelectItem>
+              <SelectItem value="oldest">Oldest</SelectItem>
+              <SelectItem value="popular">Most Popular</SelectItem>
             </SelectContent>
           </Select>
         </div>

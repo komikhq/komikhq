@@ -24,16 +24,16 @@ export interface ErrorViewCardProps {
 const ERROR_CONFIG = {
   403: {
     image: "/images/errors/403.png",
-    defaultTitle: "Akses Dibatasi!",
-    defaultDescription: "Kamu tidak memiliki izin untuk membuka halaman ini.",
+    defaultTitle: "Access Restricted!",
+    defaultDescription: "You do not have permission to view this page.",
     badgeVariant: "outline" as const,
     badgeClass: "border-amber-500/50 text-amber-500 bg-amber-500/10",
   },
   404: {
     image: "/images/errors/404.png",
-    defaultTitle: "Panel Komik Hilang!",
+    defaultTitle: "Comic Panel Not Found!",
     defaultDescription:
-      "Halaman atau komik yang kamu cari tidak ditemukan atau telah dipindahkan.",
+      "The page or comic you are looking for does not exist or has been moved.",
     badgeVariant: "outline" as const,
     badgeClass: "border-indigo-500/50 text-indigo-500 bg-indigo-500/10",
   },
@@ -41,23 +41,23 @@ const ERROR_CONFIG = {
     image: "/images/errors/418.png",
     defaultTitle: "I'm a Teapot!",
     defaultDescription:
-      "Server menolak seduh kopi karena server ini adalah teko teh.",
+      "The server refuses the attempt to brew coffee because it is a teapot.",
     badgeVariant: "outline" as const,
     badgeClass: "border-emerald-500/50 text-emerald-500 bg-emerald-500/10",
   },
   500: {
     image: "/images/errors/500.png",
-    defaultTitle: "Server Mengalami Emosi / Overheat!",
+    defaultTitle: "Internal Server Error!",
     defaultDescription:
-      "Terjadi kesalahan internal pada server KomikHQ saat memuat data.",
+      "An unexpected server error occurred while loading data.",
     badgeVariant: "outline" as const,
     badgeClass: "border-rose-500/50 text-rose-500 bg-rose-500/10",
   },
   503: {
     image: "/images/errors/503.png",
-    defaultTitle: "Layanan Sedang Pemeliharaan!",
+    defaultTitle: "Service Unavailable!",
     defaultDescription:
-      "Server KomikHQ sedang dalam perbaikan sementara. Mohon balik lagi nanti.",
+      "KomikHQ servers are currently undergoing maintenance. Please check back shortly.",
     badgeVariant: "outline" as const,
     badgeClass: "border-amber-500/50 text-amber-500 bg-amber-500/10",
   },
@@ -154,14 +154,14 @@ export function ErrorViewCard({
             <MagnifyingGlass className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               type="text"
-              placeholder="Cari judul komik / manga..."
+              placeholder="Search comic / manga titles..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="bg-background/80 pl-9"
             />
           </div>
           <Button type="submit" variant="default" className="font-semibold">
-            Cari
+            Search
           </Button>
         </form>
 
@@ -173,7 +173,7 @@ export function ErrorViewCard({
             className="gap-2 font-medium"
           >
             <House className="h-4 w-4" />
-            Ke Beranda
+            Back to Home
           </Button>
 
           <Button
@@ -182,7 +182,7 @@ export function ErrorViewCard({
             className="gap-2 font-medium"
           >
             <ArrowClockwise className="h-4 w-4" />
-            Coba Lagi
+            Try Again
           </Button>
 
           <Button
@@ -193,12 +193,12 @@ export function ErrorViewCard({
             {copied ? (
               <>
                 <Check className="h-4 w-4 text-emerald-500" />
-                Tercopy!
+                Copied!
               </>
             ) : (
               <>
                 <Copy className="h-4 w-4" />
-                Salin Log Error
+                Copy Error Log
               </>
             )}
           </Button>
@@ -222,7 +222,7 @@ export function ErrorViewCard({
               className="h-7 gap-1 px-2 text-xs text-muted-foreground hover:text-foreground"
             >
               <Bug className="h-3.5 w-3.5" />
-              {showDetails ? "Sembunyikan Log" : "Detail Diagnosa"}
+              {showDetails ? "Hide Logs" : "Diagnostic Details"}
             </Button>
           </div>
 
@@ -238,7 +238,7 @@ export function ErrorViewCard({
               </div>
               <div>
                 <span className="text-muted-foreground">Timestamp:</span>{" "}
-                {new Date().toLocaleString("id-ID")}
+                {new Date().toLocaleString("en-US")}
               </div>
               {errorMessage && (
                 <div>

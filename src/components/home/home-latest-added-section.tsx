@@ -7,8 +7,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
-import { API_ROUTES } from "@/constants"
-import { apiFetch } from "@/lib/api-client"
+import { comicsApi } from "@/lib/sdk-client"
 
 export function HomeLatestAddedSection() {
   const [selectedType, setSelectedType] = useState<string>("all")
@@ -24,13 +23,11 @@ export function HomeLatestAddedSection() {
       setIsFetching(true)
     }
 
-    const typeQuery = selectedType !== "all" ? `&type=${selectedType}` : ""
-    const endpoint = API_ROUTES.COMICS.BROWSE(
-      `limit=12&sort=latest${typeQuery}`
-    )
+    const typeParam = selectedType !== "all" ? selectedType : undefined
 
-    apiFetch(endpoint)
-      .then((data) => {
+    comicsApi
+      .browseComics({ limit: "12", sort: "latest", type: typeParam })
+      .then((data: any) => {
         if (isMounted) {
           setLatestComics(data.comics || [])
         }
@@ -67,10 +64,10 @@ export function HomeLatestAddedSection() {
             <div className="rounded-lg bg-primary/10 p-1.5 text-primary">
               <Clock className="h-5 w-5" />
             </div>
-            <span>Baru Ditambahkan</span>
+            <span>Recently Added</span>
           </CardTitle>
           <p className="text-xs text-muted-foreground">
-            Update chapter dan komik rilis terbaru yang siap dibaca
+            Latest chapter updates and newly released comics ready to read
           </p>
         </div>
 
@@ -85,7 +82,7 @@ export function HomeLatestAddedSection() {
                 value="all"
                 className="px-2.5 py-1 text-xs transition-all duration-200 ease-out data-[state=active]:scale-[1.02] data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
               >
-                Semua
+                All
               </TabsTrigger>
               <TabsTrigger
                 value="manga"
@@ -112,7 +109,7 @@ export function HomeLatestAddedSection() {
             href="/browse?sort=latest"
             className="hidden shrink-0 items-center gap-1 text-xs font-medium text-primary transition-all hover:underline md:flex"
           >
-            <span>Semua</span>
+            <span>View All</span>
             <ArrowRight className="h-3.5 w-3.5" />
           </a>
         </div>
@@ -188,7 +185,7 @@ export function HomeLatestAddedSection() {
                             {comic.status || "Ongoing"}
                           </span>
                           <span>
-                            {(comic.totalViews || 0).toLocaleString("id-ID")}{" "}
+                            {(comic.totalViews || 0).toLocaleString("en-US")}{" "}
                             views
                           </span>
                         </div>
@@ -201,7 +198,7 @@ export function HomeLatestAddedSection() {
               <div className="space-y-2 py-10 text-center">
                 <BookOpen className="mx-auto h-10 w-10 text-muted-foreground/40" />
                 <p className="text-sm font-medium text-muted-foreground">
-                  Belum ada komik baru ditambahkan untuk kategori ini.
+                  No new comics have been added for this category yet.
                 </p>
               </div>
             )}

@@ -4,8 +4,7 @@ import {
   BookOpenIcon as BookOpen,
 } from "@phosphor-icons/react"
 import { Card } from "@/components/ui/card"
-import { API_ROUTES } from "@/constants"
-import { apiFetch } from "@/lib/api-client"
+import { readingHistoryApi } from "@/lib/sdk-client"
 
 export function HistoryList() {
   const [history, setHistory] = useState<any[]>([])
@@ -15,8 +14,9 @@ export function HistoryList() {
     let isMounted = true
     setIsLoading(true)
 
-    apiFetch(API_ROUTES.HISTORY.LIST)
-      .then((data) => {
+    readingHistoryApi
+      .listReadingHistory()
+      .then((data: any) => {
         if (isMounted) {
           setHistory(data.history || [])
         }
@@ -54,8 +54,7 @@ export function HistoryList() {
       <Card className="p-8 text-center">
         <Clock className="mx-auto mb-3 h-10 w-10 text-muted-foreground/40" />
         <p className="text-sm font-medium text-muted-foreground">
-          Belum ada riwayat bacaan. Chapter yang terakhir Anda baca akan tampil
-          di sini.
+          No reading history yet. Chapters you read will appear here.
         </p>
       </Card>
     )
@@ -84,12 +83,12 @@ export function HistoryList() {
             <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground transition-colors group-hover:text-accent-foreground/80">
               <BookOpen className="h-3.5 w-3.5 shrink-0" />
               <span className="truncate">
-                Chapter {item.chapter?.chapterNumber || "Terakhir"}
+                Chapter {item.chapter?.chapterNumber || "Latest"}
               </span>
             </p>
             {item.lastReadPage && (
               <p className="mt-0.5 text-[11px] text-muted-foreground/70 transition-colors group-hover:text-accent-foreground/70">
-                Halaman {item.lastReadPage} / {item.snapshotTotalPages || 1}
+                Page {item.lastReadPage} of {item.snapshotTotalPages || 1}
               </p>
             )}
           </div>

@@ -20,16 +20,16 @@ export function AccountThemeCard() {
 
   const handleSelectTheme = (newTheme: Theme, label: string) => {
     setTheme(newTheme)
-    toast.info(`Tema aplikasi diubah ke: ${label}`)
+    toast.info(`Application theme changed to: ${label}`)
   }
 
   const themeOptions: { value: Theme; label: string; icon: React.ReactNode }[] =
     [
-      { value: "light", label: "Terang", icon: <Sun className="h-4 w-4" /> },
-      { value: "dark", label: "Gelap", icon: <Moon className="h-4 w-4" /> },
+      { value: "light", label: "Light", icon: <Sun className="h-4 w-4" /> },
+      { value: "dark", label: "Dark", icon: <Moon className="h-4 w-4" /> },
       {
         value: "system",
-        label: "Sistem",
+        label: "System",
         icon: <Desktop className="h-4 w-4" />,
       },
     ]
@@ -38,10 +38,10 @@ export function AccountThemeCard() {
     <Card>
       <CardHeader className="pb-3">
         <CardTitle className="text-lg font-bold">
-          Preferensi Tampilan (Tema)
+          Theme Preferences
         </CardTitle>
         <CardDescription>
-          Pilih preferensi tema antarmuka aplikasi KomikHQ.
+          Choose your preferred KomikHQ interface theme.
         </CardDescription>
       </CardHeader>
       <CardContent>

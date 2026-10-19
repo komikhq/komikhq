@@ -21,7 +21,7 @@ interface Props {
 }
 
 const {
-  title = `${SITE_NAME} - Read Manga, Manhwa, Manhua in Bahasa Indonesia`,
+  title = `${SITE_NAME} - Read Manga, Manhwa, and Manhua Online`,
   description = SITE_DESCRIPTION,
   canonicalUrl = Astro.url.href,
   ogImage = "/images/og.png",
@@ -113,14 +113,6 @@ const absoluteOgImage = ogImage.startsWith("http")
       })()
     </script>
 
-    <script
-      is:inline
-      define:vars={{
-        apiUrl: import.meta.env.PUBLIC_API_URL || "http://localhost:8787",
-      }}
-    >
-      window.__PUBLIC_API_URL__ = apiUrl
-    </script>
   </head>
   <body
     class={isReaderMode

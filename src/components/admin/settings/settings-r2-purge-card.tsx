@@ -7,8 +7,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
-import { API_ROUTES } from "@/constants/api-routes"
-import { apiFetch } from "@/lib/api-client"
+import { administrationApi } from "@/lib/sdk-client"
 
 interface PurgeOrphansResult {
   "purged-count": number
@@ -28,19 +27,10 @@ export function SettingsR2PurgeCard() {
     )
 
     try {
-      const data = await apiFetch<{
-        success: boolean
-        message?: string
-        "purged-count"?: number
-        "total-size-mb"?: string
-        purgedCount?: number
-        totalSizeMB?: string
-      }>(API_ROUTES.ADMIN.SYSTEM.PURGE_ORPHANS, {
-        method: "POST",
-      })
+      const data: any = await administrationApi.purgeOrphanedStorageFiles()
 
-      const purgedCount = data["purged-count"] ?? data.purgedCount ?? 0
-      const totalSizeMB = data["total-size-mb"] ?? data.totalSizeMB ?? "0.00"
+      const purgedCount = data?.["purged-count"] ?? data?.purgedCount ?? 0
+      const totalSizeMB = data?.["total-size-mb"] ?? data?.totalSizeMB ?? "0.00"
       const now = new Date().toLocaleTimeString("en-US", {
         hour: "2-digit",
         minute: "2-digit",
@@ -54,7 +44,7 @@ export function SettingsR2PurgeCard() {
       })
 
       toast.success(
-        data.message ||
+        data?.message ||
           `Successfully purged ${purgedCount} orphan files (${totalSizeMB} MB freed).`,
         { id: toastId }
       )

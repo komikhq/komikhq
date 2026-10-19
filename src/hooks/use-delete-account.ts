@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { toast } from "sonner"
 import { useAuth } from "./use-auth"
-import { API_ROUTES } from "@/constants/api-routes"
-import { getBaseApiUrl } from "@/lib/api-client"
+import { usersApi } from "@/lib/sdk-client"
 
 export function useDeleteAccount() {
   const { user, handleSignOut } = useAuth()
@@ -14,16 +13,10 @@ export function useDeleteAccount() {
   useEffect(() => {
     async function fetchProfileInfo() {
       try {
-        const baseUrl = getBaseApiUrl()
-        const res = await fetch(`${baseUrl}${API_ROUTES.USER.PROFILE}`, {
-          credentials: "include",
-        })
-        if (res.ok) {
-          const data = (await res.json()) as { hasPassword?: boolean }
-          setHasPassword(Boolean(data.hasPassword))
-        }
+        const data: any = await usersApi.getUserProfile()
+        setHasPassword(Boolean(data?.hasPassword))
       } catch (e) {
-        console.error("Gagal memuat profil akun:", e)
+        console.error("Failed to load account profile:", e)
       }
     }
     fetchProfileInfo()
@@ -42,7 +35,7 @@ export function useDeleteAccount() {
 
     if (hasPassword) {
       if (!confirmInput) {
-        setDeleteError("Kata sandi konfirmasi wajib diisi.")
+        setDeleteError("Confirmation password is required.")
         setIsDeleting(false)
         return false
       }
@@ -52,7 +45,7 @@ export function useDeleteAccount() {
         !confirmInput ||
         confirmInput.toLowerCase().trim() !== user?.email?.toLowerCase().trim()
       ) {
-        setDeleteError("Alamat email konfirmasi tidak sesuai.")
+        setDeleteError("Confirmation email does not match.")
         setIsDeleting(false)
         return false
       }
@@ -60,27 +53,15 @@ export function useDeleteAccount() {
     }
 
     try {
-      const baseUrl = getBaseApiUrl()
-      const res = await fetch(`${baseUrl}${API_ROUTES.USER.PROFILE}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(payload),
+      await usersApi.deleteUserAccount({
+        deleteUserAccountRequest: payload,
       })
 
-      const data = (await res.json().catch(() => ({}))) as any
-
-      if (!res.ok) {
-        throw new Error(data.error || "Gagal menghapus akun.")
-      }
-
-      toast.success("Akun Anda telah berhasil dihapus permanen.")
+      toast.success("Your account has been permanently deleted.")
       await handleSignOut()
       return true
     } catch (err: any) {
-      setDeleteError(err.message || "Gagal menghapus akun.")
+      setDeleteError(err.message || "Failed to delete account.")
       setIsDeleting(false)
       return false
     }

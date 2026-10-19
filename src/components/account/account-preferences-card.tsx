@@ -11,20 +11,20 @@ export function AccountPreferencesCard() {
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg font-bold">Pengaturan Aplikasi</CardTitle>
+        <CardTitle className="text-lg font-bold">App Preferences</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex items-center justify-between py-2">
           <div className="flex items-start gap-3">
             <Globe className="mt-0.5 h-5 w-5 text-primary" />
             <div>
-              <h4 className="text-sm font-semibold">Bahasa Konten</h4>
+              <h4 className="text-sm font-semibold">Content Language</h4>
               <p className="text-xs text-muted-foreground">
-                Bahasa antarmuka dan metadata utama.
+                Primary interface and catalog language.
               </p>
             </div>
           </div>
-          <Badge variant="outline">Bahasa Indonesia</Badge>
+          <Badge variant="outline">English</Badge>
         </div>
 
         <Separator />
@@ -33,13 +33,13 @@ export function AccountPreferencesCard() {
           <div className="flex items-start gap-3">
             <Bell className="mt-0.5 h-5 w-5 text-primary" />
             <div>
-              <h4 className="text-sm font-semibold">Notifikasi Bab Baru</h4>
+              <h4 className="text-sm font-semibold">New Chapter Notifications</h4>
               <p className="text-xs text-muted-foreground">
-                Pemberitahuan saat bab komik favorit dirilis.
+                Alerts when favorite comic chapters are released.
               </p>
             </div>
           </div>
-          <Badge variant="secondary">Aktif</Badge>
+          <Badge variant="secondary">Active</Badge>
         </div>
 
         <Separator />
@@ -48,13 +48,13 @@ export function AccountPreferencesCard() {
           <div className="flex items-start gap-3">
             <Shield className="mt-0.5 h-5 w-5 text-primary" />
             <div>
-              <h4 className="text-sm font-semibold">Privasi Data</h4>
+              <h4 className="text-sm font-semibold">Data Privacy</h4>
               <p className="text-xs text-muted-foreground">
-                Sinkronisasi riwayat baca dan bookmark aman.
+                Secure synchronization of reading history and bookmarks.
               </p>
             </div>
           </div>
-          <Badge variant="outline">Aktif</Badge>
+          <Badge variant="outline">Active</Badge>
         </div>
       </CardContent>
     </Card>

@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { toast } from "sonner"
 import { authClient } from "@/lib/auth-client"
-import { getBaseApiUrl } from "@/lib/api-client"
-import { API_ROUTES } from "@/constants/api-routes"
+import { usersApi } from "@/lib/sdk-client"
 
 export function useAccountPassword() {
   const [hasPassword, setHasPassword] = useState<boolean | null>(null)
@@ -21,16 +20,10 @@ export function useAccountPassword() {
   useEffect(() => {
     async function fetchProfileData() {
       try {
-        const baseUrl = getBaseApiUrl()
-        const res = await fetch(`${baseUrl}${API_ROUTES.USER.PROFILE}`, {
-          credentials: "include",
-        })
-        if (res.ok) {
-          const data = (await res.json()) as { hasPassword?: boolean }
-          setHasPassword(Boolean(data.hasPassword))
-        }
+        const data: any = await usersApi.getUserProfile()
+        setHasPassword(Boolean(data?.hasPassword))
       } catch (e) {
-        console.error("Gagal memuat status password user:", e)
+        console.error("Failed to load password status:", e)
       } finally {
         setIsLoadingProfile(false)
       }
@@ -44,13 +37,13 @@ export function useAccountPassword() {
       setErrorMsg(null)
 
       if (newPassword.length < 8) {
-        const msg = "Kata sandi baru harus memiliki minimal 8 karakter."
+        const msg = "New password must be at least 8 characters long."
         setErrorMsg(msg)
         return false
       }
 
       if (newPassword !== confirmPassword) {
-        const msg = "Konfirmasi kata sandi tidak sesuai dengan kata sandi baru."
+        const msg = "Password confirmation does not match the new password."
         setErrorMsg(msg)
         return false
       }
@@ -60,7 +53,7 @@ export function useAccountPassword() {
       try {
         if (hasPassword) {
           if (!currentPassword) {
-            const msg = "Kata sandi saat ini wajib diisi."
+            const msg = "Current password is required."
             setErrorMsg(msg)
             setIsSubmitting(false)
             return false
@@ -75,13 +68,13 @@ export function useAccountPassword() {
           if (error) {
             const msg =
               error.message ||
-              "Gagal mengubah kata sandi. Periksa kata sandi saat ini Anda."
+              "Failed to change password. Please check your current password."
             setErrorMsg(msg)
             setIsSubmitting(false)
             return false
           }
 
-          toast.success("Kata sandi berhasil diperbarui!")
+          toast.success("Password updated successfully!")
           setCurrentPassword("")
           setNewPassword("")
           setConfirmPassword("")
@@ -92,14 +85,14 @@ export function useAccountPassword() {
           })
 
           if (error) {
-            const msg = error.message || "Gagal membuat kata sandi baru."
+            const msg = error.message || "Failed to set new password."
             setErrorMsg(msg)
             setIsSubmitting(false)
             return false
           }
 
           toast.success(
-            "Kata sandi baru berhasil dibuat! Anda sekarang bisa masuk via email & kata sandi."
+            "New password set successfully! You can now log in using email & password."
           )
           setHasPassword(true)
           setNewPassword("")
@@ -108,7 +101,7 @@ export function useAccountPassword() {
         }
       } catch (err: any) {
         const msg =
-          err.message || "Terjadi kesalahan saat memproses kata sandi."
+          err.message || "An error occurred while processing password."
         setErrorMsg(msg)
         return false
       } finally {

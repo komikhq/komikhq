@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { toast } from "sonner"
 import { sortGenresByNaturalName } from "@/lib/sort-genres"
+import { administrationApi } from "@/lib/sdk-client"
 
 export interface GenreItem {
   id: string
@@ -24,20 +25,14 @@ export function useAdminGenres() {
   const [editDesc, setEditDesc] = useState("")
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
 
-  const getApiUrl = () =>
-    (window as any).__PUBLIC_API_URL__ || "http://localhost:8787"
-
   const fetchGenres = useCallback(async () => {
     setLoading(true)
     try {
-      const res = await fetch(`${getApiUrl()}/v1/admin/genres`, {
-        credentials: "include",
-      })
-      const data: any = await res.json()
-      if (res.ok && data.genres) {
+      const data: any = await administrationApi.adminListGenres()
+      if (data && data.genres) {
         setGenres(sortGenresByNaturalName(data.genres))
       } else {
-        toast.error(data.error || "Failed to fetch genre list")
+        toast.error("Failed to fetch genre list")
       }
     } catch (err: any) {
       toast.error(err.message || "Network error occurred")
@@ -55,20 +50,16 @@ export function useAdminGenres() {
     if (!newName.trim()) return
     setSubmitting(true)
     try {
-      const res = await fetch(`${getApiUrl()}/v1/admin/genres`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ name: newName, description: newDesc }),
+      const data: any = await administrationApi.adminCreateGenre({
+        adminCreateGenreRequest: { name: newName, description: newDesc },
       })
-      const data: any = await res.json()
-      if (res.ok && data.success) {
+      if (data && data.success) {
         toast.success(`Genre "${newName}" successfully added.`)
         setNewName("")
         setNewDesc("")
         fetchGenres()
       } else {
-        toast.error(data.error || "Failed to create new genre")
+        toast.error("Failed to create new genre")
       }
     } catch (err: any) {
       toast.error(err.message || "Failed to create genre")
@@ -92,19 +83,16 @@ export function useAdminGenres() {
     if (!editName.trim()) return
     setSubmitting(true)
     try {
-      const res = await fetch(`${getApiUrl()}/v1/admin/genres/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ name: editName, description: editDesc }),
+      const data: any = await administrationApi.adminUpdateGenre({
+        id,
+        adminUpdateGenreRequest: { name: editName, description: editDesc },
       })
-      const data: any = await res.json()
-      if (res.ok && data.success) {
+      if (data && data.success) {
         toast.success("Genre successfully updated.")
         setExpandedId(null)
         fetchGenres()
       } else {
-        toast.error(data.error || "Failed to edit genre")
+        toast.error("Failed to edit genre")
       }
     } catch (err: any) {
       toast.error(err.message || "Failed to edit genre")
@@ -115,18 +103,14 @@ export function useAdminGenres() {
 
   const handleDeleteConfirm = async (id: string) => {
     try {
-      const res = await fetch(`${getApiUrl()}/v1/admin/genres/${id}`, {
-        method: "DELETE",
-        credentials: "include",
-      })
-      const data: any = await res.json()
-      if (res.ok && data.success) {
+      const data: any = await administrationApi.adminDeleteGenre({ id })
+      if (data && data.success) {
         toast.success(data.message || "Genre successfully deleted")
         setConfirmDeleteId(null)
         if (expandedId === id) setExpandedId(null)
         fetchGenres()
       } else {
-        toast.error(data.error || "Failed to delete genre")
+        toast.error("Failed to delete genre")
       }
     } catch (err: any) {
       toast.error(err.message || "Failed to delete genre")

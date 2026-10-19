@@ -20,11 +20,11 @@ interface CommentReportModalProps {
 }
 
 const REPORT_REASONS = [
-  { id: "SPAM", label: "Spam atau Iklan Promosi" },
-  { id: "HARASSMENT", label: "Ujaran Kebencian / Pelecehan / SARA" },
-  { id: "SPOILER", label: "Spoiler Alur Cerita Tanpa Tag Sensor" },
-  { id: "NSFW", label: "Konten Dewasa / Tidak Layak" },
-  { id: "OTHER", label: "Lainnya (Jelaskan di bawah)" },
+  { id: "SPAM", label: "Spam or promotional advertising" },
+  { id: "HARASSMENT", label: "Hate speech / Harassment / Discrimination" },
+  { id: "SPOILER", label: "Story spoiler without spoiler tag" },
+  { id: "NSFW", label: "Adult or inappropriate content" },
+  { id: "OTHER", label: "Other (explain below)" },
 ]
 
 export function CommentReportModal({
@@ -46,7 +46,7 @@ export function CommentReportModal({
     if (isSubmitting) return
 
     if (!isLoggedIn && (!guestName.trim() || !guestEmail.trim())) {
-      alert("Nama dan Email wajib diisi untuk mengirim laporan!")
+      alert("Name and Email are required to submit a report!")
       return
     }
 
@@ -58,7 +58,7 @@ export function CommentReportModal({
       })
       onClose()
     } catch (err: any) {
-      alert(err.message || "Gagal mengirim laporan")
+      alert(err.message || "Failed to submit report")
     } finally {
       setIsSubmitting(false)
     }
@@ -70,7 +70,7 @@ export function CommentReportModal({
         <div className="flex items-center justify-between border-b border-neutral-800 pb-3">
           <div className="flex items-center gap-2 text-base font-bold text-amber-400">
             <Warning className="h-5 w-5 shrink-0" />
-            <span>Laporkan Komentar</span>
+            <span>Report Comment</span>
           </div>
           <button
             onClick={onClose}
@@ -84,12 +84,12 @@ export function CommentReportModal({
           {!isLoggedIn && (
             <div className="space-y-2">
               <p className="font-semibold text-neutral-300">
-                Identitas Pelapor (Guest)
+                Reporter Identity (Guest)
               </p>
               <div className="grid grid-cols-2 gap-2">
                 <Input
                   type="text"
-                  placeholder="Nama Anda*"
+                  placeholder="Your Name*"
                   value={guestName}
                   onChange={(e) => setGuestName(e.target.value)}
                   required
@@ -97,7 +97,7 @@ export function CommentReportModal({
                 />
                 <Input
                   type="email"
-                  placeholder="Email Anda*"
+                  placeholder="Your Email*"
                   value={guestEmail}
                   onChange={(e) => setGuestEmail(e.target.value)}
                   required
@@ -109,7 +109,7 @@ export function CommentReportModal({
 
           <div className="space-y-2">
             <p className="font-semibold text-neutral-300">
-              Pilih Alasan Pelaporan:
+              Select Reason for Report:
             </p>
             <div className="space-y-1.5">
               {REPORT_REASONS.map((r) => (
@@ -133,10 +133,10 @@ export function CommentReportModal({
 
           <div className="space-y-1">
             <label className="font-semibold text-neutral-300">
-              Penjelasan Tambahan (Opsional):
+              Additional Details (Optional):
             </label>
             <Textarea
-              placeholder="Berikan keterangan detail jika diperlukan..."
+              placeholder="Provide more context if necessary..."
               value={details}
               onChange={(e) => setDetails(e.target.value)}
               className="min-h-[60px] border-neutral-800 bg-neutral-950 text-xs"
@@ -151,7 +151,7 @@ export function CommentReportModal({
               onClick={onClose}
               disabled={isSubmitting}
             >
-              Batal
+              Cancel
             </Button>
             <Button
               type="submit"
@@ -160,7 +160,7 @@ export function CommentReportModal({
               disabled={isSubmitting}
             >
               <PaperPlaneRight className="mr-1.5 h-3.5 w-3.5" />
-              {isSubmitting ? "Mengirim..." : "Kirim Laporan"}
+              {isSubmitting ? "Sending..." : "Submit Report"}
             </Button>
           </div>
         </form>

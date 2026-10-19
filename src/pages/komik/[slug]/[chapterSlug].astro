@@ -3,14 +3,15 @@ import RootLayout from "@/layouts/root-layout.astro"
 import { ReaderHeaderBar } from "@/components/reader/reader-header-bar"
 import { ReaderImageStack } from "@/components/reader/reader-image-stack"
 import { ReaderFooterNav } from "@/components/reader/reader-footer-nav"
-import { apiFetch } from "@/lib/api-client"
-import { API_ROUTES } from "@/constants"
+import { chaptersApi } from "@/lib/sdk-client"
 
 const { slug, chapterSlug } = Astro.params
 
-interface ChapterMetadata {
-  comic?: { title?: string }
-  chapter?: { title?: string; chapterNumber?: string }
+interface ChapterData {
+  comic?: { title?: string; id?: string }
+  chapter?: { title?: string; chapterNumber?: string; id?: string }
+  pages?: any[]
+  allChapters?: any[]
 }
 
 const formatSlug = (value: string | undefined, fallback: string) =>
@@ -26,14 +27,16 @@ const fallbackChapter = chapterSlug
   : "Chapter"
 let comicTitle = formattedSlug
 let chapterTitle = fallbackChapter
+let chapterData: ChapterData | null = null
 
 if (slug && chapterSlug) {
   try {
-    const data = await apiFetch<ChapterMetadata>(
-      API_ROUTES.COMICS.CHAPTER_DETAIL(slug, chapterSlug)
-    )
-    comicTitle = data.comic?.title || comicTitle
-    chapterTitle = data.chapter?.title || chapterTitle
+    chapterData = (await chaptersApi.getPublicChapter({
+      slug,
+      chapterSlug,
+    })) as unknown as ChapterData
+    comicTitle = chapterData?.comic?.title || comicTitle
+    chapterTitle = chapterData?.chapter?.title || chapterTitle
   } catch (error) {
     console.warn(
       `[ReaderPage] Failed to load chapter metadata for ${slug}/${chapterSlug}:`,
@@ -42,14 +45,14 @@ if (slug && chapterSlug) {
   }
 }
 
-const title = `Read ${comicTitle} ${chapterTitle} in Bahasa Indonesia | KomikHQ`
-const description = `Read ${comicTitle} ${chapterTitle} in Bahasa Indonesia online in high quality with distraction-free scrolling on KomikHQ.`
+const title = `Read ${comicTitle} ${chapterTitle} Online | KomikHQ`
+const description = `Read ${comicTitle} ${chapterTitle} online in high quality with distraction-free scrolling on KomikHQ.`
 ---
 
 <RootLayout title={title} description={description} isReaderMode={true}>
   <div class="min-h-screen bg-neutral-950 pb-20 text-neutral-100">
-    <ReaderHeaderBar comicSlug={slug} chapterSlug={chapterSlug} client:load />
-    <ReaderImageStack comicSlug={slug} chapterSlug={chapterSlug} client:load />
-    <ReaderFooterNav comicSlug={slug} chapterSlug={chapterSlug} client:load />
+    <ReaderHeaderBar comicSlug={slug} chapterSlug={chapterSlug} initialData={chapterData} client:load />
+    <ReaderImageStack comicSlug={slug} chapterSlug={chapterSlug} initialData={chapterData} client:load />
+    <ReaderFooterNav comicSlug={slug} chapterSlug={chapterSlug} initialData={chapterData} client:load />
   </div>
 </RootLayout>

@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react"
-import { API_PREFIX, API_ROUTES } from "@/constants/api-routes"
-import { apiFetch } from "@/lib/api-client"
+import { chaptersApi, viewsApi, readingHistoryApi } from "@/lib/sdk-client"
 import {
   ImageIcon as Image,
   CircleNotchIcon as CircleNotch,
@@ -9,6 +8,7 @@ import {
 interface ReaderImageStackProps {
   comicSlug?: string
   chapterSlug?: string
+  initialData?: any
 }
 
 interface LazyChapterPageProps {
@@ -67,7 +67,7 @@ function LazyChapterPage({
     }
   }, [isVisible])
 
-  // 2. Active Page Tracking Observer for Reading History
+  // Active Page Tracking Observer for Reading History
   useEffect(() => {
     if (!onPageVisible) return
 
@@ -111,13 +111,13 @@ function LazyChapterPage({
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-neutral-900/80 text-neutral-500">
               <CircleNotch className="h-6 w-6 animate-spin text-primary" />
               <span className="font-mono text-xs">
-                Memuat Halaman {page.pageNumber || pageIndex + 1}...
+                Loading Page {page.pageNumber || pageIndex + 1}...
               </span>
             </div>
           )}
           <img
             src={page.imageUrl}
-            alt={`Halaman ${page.pageNumber || pageIndex + 1}`}
+            alt={`Page ${page.pageNumber || pageIndex + 1}`}
             width={imageWidth}
             height={imageHeight}
             className={`block h-auto w-full object-contain transition-opacity duration-300 ${
@@ -132,7 +132,7 @@ function LazyChapterPage({
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-neutral-900/80 text-neutral-600">
           <Image className="h-8 w-8 opacity-40" />
           <span className="font-mono text-xs opacity-50">
-            Halaman {page.pageNumber || pageIndex + 1}
+            Page {page.pageNumber || pageIndex + 1}
           </span>
         </div>
       )}
@@ -147,21 +147,28 @@ function LazyChapterPage({
 export function ReaderImageStack({
   comicSlug,
   chapterSlug,
+  initialData,
 }: ReaderImageStackProps) {
-  const [pages, setPages] = useState<any[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [pages, setPages] = useState<any[]>(initialData?.pages ?? [])
+  const [isLoading, setIsLoading] = useState(!initialData)
   const [error, setError] = useState<string | null>(null)
   const [chapterMeta, setChapterMeta] = useState<{
     comicId: string
     chapterId: string
-  } | null>(null)
+  } | null>(
+    initialData?.comic?.id && initialData?.chapter?.id
+      ? { comicId: initialData.comic.id, chapterId: initialData.chapter.id }
+      : null
+  )
   const debounceTimerRef = useRef<any>(null)
+  const viewRecordedRef = useRef(false)
 
   const recordView = (comicId: string, chapterId: string) => {
-    apiFetch(`${API_PREFIX}/view`, {
-      method: "POST",
-      body: JSON.stringify({ comicId, chapterId }),
-    }).catch(() => {})
+    viewsApi
+      .recordComicView({
+        recordComicViewRequest: { comicId, chapterId },
+      })
+      .catch(() => {})
   }
 
   const recordHistory = (
@@ -170,25 +177,42 @@ export function ReaderImageStack({
     pageNum: number,
     totalPagesCount: number
   ) => {
-    apiFetch(API_ROUTES.HISTORY.RECORD, {
-      method: "POST",
-      body: JSON.stringify({
-        comicId,
-        chapterId,
-        lastReadPage: pageNum,
-        snapshotTotalPages: totalPagesCount,
-      }),
-    }).catch(() => {})
+    readingHistoryApi
+      .recordReadingProgress({
+        recordReadingProgressRequest: {
+          comicId,
+          chapterId,
+          lastReadPage: pageNum,
+          snapshotTotalPages: totalPagesCount,
+        },
+      })
+      .catch(() => {})
   }
 
+  // If initialData was provided, fire view/history tracking on mount
   useEffect(() => {
-    if (!comicSlug || !chapterSlug) return
+    if (initialData?.comic?.id && initialData?.chapter?.id && !viewRecordedRef.current) {
+      viewRecordedRef.current = true
+      recordView(initialData.comic.id, initialData.chapter.id)
+      recordHistory(
+        initialData.comic.id,
+        initialData.chapter.id,
+        1,
+        initialData.pages?.length || 1
+      )
+    }
+  }, [])
+
+  useEffect(() => {
+    // Skip fetch if initialData was provided by SSR
+    if (initialData || !comicSlug || !chapterSlug) return
     let isMounted = true
     setIsLoading(true)
     setError(null)
 
-    apiFetch(`${API_PREFIX}/comics/${comicSlug}/chapters/${chapterSlug}`)
-      .then((res) => {
+    chaptersApi
+      .getPublicChapter({ slug: comicSlug, chapterSlug })
+      .then((res: any) => {
         if (isMounted) {
           setPages(res.pages || [])
           if (res.comic?.id && res.chapter?.id) {
@@ -203,9 +227,9 @@ export function ReaderImageStack({
           }
         }
       })
-      .catch((err) => {
+      .catch((err: any) => {
         if (isMounted) {
-          setError(err.message || "Gagal memuat lembaran komik.")
+          setError(err.message || "Failed to load chapter pages.")
         }
       })
       .finally(() => {
@@ -253,11 +277,11 @@ export function ReaderImageStack({
       <main className="mx-auto max-w-3xl space-y-3 px-4 py-16 text-center">
         <Image className="mx-auto h-12 w-12 text-neutral-600" />
         <h3 className="text-base font-bold text-neutral-300">
-          Belum Ada Halaman Terdaftar
+          No Pages Available
         </h3>
         <p className="text-xs text-neutral-500">
           {error ||
-            "Chapter ini belum memiliki lembaran gambar yang diunggah di database."}
+            "This chapter does not have any uploaded pages in the database yet."}
         </p>
       </main>
     )

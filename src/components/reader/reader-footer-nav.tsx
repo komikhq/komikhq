@@ -5,19 +5,20 @@ import {
 } from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { CommentSection } from "@/components/comment/comment-section"
-import { API_PREFIX } from "@/constants/api-routes"
-import { apiFetch } from "@/lib/api-client"
+import { chaptersApi } from "@/lib/sdk-client"
 
 interface ReaderFooterNavProps {
   comicSlug?: string
   chapterSlug?: string
+  initialData?: any
 }
 
 export function ReaderFooterNav({
   comicSlug,
   chapterSlug,
+  initialData,
 }: ReaderFooterNavProps) {
-  const [data, setData] = useState<any>(null)
+  const [data, setData] = useState<any>(initialData ?? null)
   const [navData, setNavData] = useState<{
     prevSlug: string | null
     nextSlug: string | null
@@ -26,25 +27,34 @@ export function ReaderFooterNav({
     nextSlug: null,
   })
 
+  // Derive navigation from chapter data
   useEffect(() => {
-    if (!comicSlug || !chapterSlug) return
+    const source = data
+    if (!source) return
 
-    apiFetch(`${API_PREFIX}/comics/${comicSlug}/chapters/${chapterSlug}`)
-      .then((res) => {
+    const allChapters: any[] = source.allChapters || []
+    const currentIndex = allChapters.findIndex(
+      (c) => c.slug === chapterSlug
+    )
+
+    const prev =
+      currentIndex > 0 ? allChapters[currentIndex - 1].slug : null
+    const next =
+      currentIndex >= 0 && currentIndex < allChapters.length - 1
+        ? allChapters[currentIndex + 1].slug
+        : null
+
+    setNavData({ prevSlug: prev, nextSlug: next })
+  }, [data, chapterSlug])
+
+  useEffect(() => {
+    // Skip fetch if initialData was provided by SSR
+    if (initialData || !comicSlug || !chapterSlug) return
+
+    chaptersApi
+      .getPublicChapter({ slug: comicSlug, chapterSlug })
+      .then((res: any) => {
         setData(res)
-        const allChapters: any[] = res.allChapters || []
-        const currentIndex = allChapters.findIndex(
-          (c) => c.slug === chapterSlug
-        )
-
-        const prev =
-          currentIndex > 0 ? allChapters[currentIndex - 1].slug : null
-        const next =
-          currentIndex >= 0 && currentIndex < allChapters.length - 1
-            ? allChapters[currentIndex + 1].slug
-            : null
-
-        setNavData({ prevSlug: prev, nextSlug: next })
       })
       .catch(() => {
         setNavData({ prevSlug: null, nextSlug: null })
@@ -63,7 +73,7 @@ export function ReaderFooterNav({
             }
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Chapter Sebelumnya
+            Previous Chapter
           </Button>
         ) : (
           <Button
@@ -72,7 +82,7 @@ export function ReaderFooterNav({
             className="border-neutral-800 bg-neutral-900/50 text-neutral-500"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Chapter Pertama
+            First Chapter
           </Button>
         )}
 
@@ -83,7 +93,7 @@ export function ReaderFooterNav({
               (window.location.href = `/komik/${comicSlug}/${navData.nextSlug}`)
             }
           >
-            Chapter Selanjutnya
+            Next Chapter
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         ) : (
@@ -91,7 +101,7 @@ export function ReaderFooterNav({
             disabled
             className="border-neutral-800 bg-neutral-900/50 text-neutral-500"
           >
-            Chapter Terakhir
+            Last Chapter
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         )}

@@ -5,8 +5,7 @@ import {
 } from "@phosphor-icons/react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { API_ROUTES } from "@/constants"
-import { apiFetch } from "@/lib/api-client"
+import { genresApi, comicsApi } from "@/lib/sdk-client"
 import { BROWSE_FILTERS_CHANGE_EVENT } from "@/hooks/use-browse-filters"
 
 export function BrowseComicGrid() {
@@ -26,19 +25,25 @@ export function BrowseComicGrid() {
 
         if (genre) {
           if (!genreCache) {
-            const response = await apiFetch<{
-              genres: Array<{ id: string; slug: string }>
-            }>(API_ROUTES.GENRES)
+            const response = (await genresApi.listGenres()) as any
             genreCache = response.genres || []
           }
-          const matchedGenre = genreCache.find(
+          const matchedGenre = genreCache!.find(
             (item) => item.slug === genre || item.id === genre
           )
           if (matchedGenre) params.set("genre", matchedGenre.id)
         }
 
-        const endpoint = API_ROUTES.COMICS.BROWSE(params.toString())
-        const response = await apiFetch(endpoint)
+        const response = (await comicsApi.browseComics({
+          search: params.get("search") || undefined,
+          q: params.get("q") || undefined,
+          genre: params.get("genre") || undefined,
+          status: params.get("status") || undefined,
+          type: params.get("type") || undefined,
+          sort: params.get("sort") || undefined,
+          page: params.get("page") || undefined,
+          limit: params.get("limit") || undefined,
+        })) as any
         if (isMounted && currentRequestId === requestId) {
           setComics(response.comics || response.data || [])
         }
@@ -74,7 +79,7 @@ export function BrowseComicGrid() {
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-xl font-bold">
           <BookOpen className="h-5 w-5 text-primary" />
-          <span>Katalog Komik</span>
+          <span>Comic Catalog</span>
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -126,9 +131,9 @@ export function BrowseComicGrid() {
         ) : (
           <div className="space-y-2 py-12 text-center">
             <BookOpen className="mx-auto h-10 w-10 text-muted-foreground/50" />
-            <p className="text-sm font-medium">Belum ada komik ditemukan.</p>
+            <p className="text-sm font-medium">No comics found.</p>
             <p className="text-xs text-muted-foreground">
-              Coba ubah kata kunci pencarian atau filter genre Anda.
+              Try adjusting your search keywords or genre filters.
             </p>
           </div>
         )}

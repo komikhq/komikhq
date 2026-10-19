@@ -54,16 +54,15 @@ export function AccountDangerZoneCard() {
             <span>Danger Zone</span>
           </CardTitle>
           <CardDescription className="text-xs">
-            Tindakan akun ini permanen dan tidak dapat dibatalkan.
+            Account deletion is permanent and cannot be undone.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex flex-col justify-between gap-4 py-2 sm:flex-row sm:items-center">
             <div>
-              <h4 className="text-sm font-semibold">Hapus Akun Permanen</h4>
+              <h4 className="text-sm font-semibold">Permanently Delete Account</h4>
               <p className="text-xs text-muted-foreground">
-                Menghapus akun Anda dari KomikHQ beserta bookmark dan riwayat
-                baca.
+                Permanently removes your KomikHQ account, bookmarks, and reading history.
               </p>
               {deleteError && (
                 <p className="mt-1 text-xs font-medium text-destructive">
@@ -78,32 +77,30 @@ export function AccountDangerZoneCard() {
                   <AlertDialogTrigger asChild>
                     <Button variant="destructive" className="shrink-0 gap-2">
                       <Trash className="h-4 w-4" />
-                      <span>Hapus Akun</span>
+                      <span>Delete Account</span>
                     </Button>
                   </AlertDialogTrigger>
                 </TooltipTrigger>
                 <TooltipContent side="left">
-                  Hapus akun secara permanen
+                  Permanently delete account
                 </TooltipContent>
               </Tooltip>
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle className="flex items-center gap-2 text-destructive">
                     <Warning className="h-5 w-5" />
-                    <span>Apakah Anda yakin ingin menghapus akun?</span>
+                    <span>Are you sure you want to delete your account?</span>
                   </AlertDialogTitle>
                   <AlertDialogDescription>
-                    Tindakan ini tidak dapat dibatalkan. Ini akan menghapus akun
-                    KomikHQ Anda secara permanen beserta seluruh preferensi,
-                    riwayat baca, dan bookmark.
+                    This action cannot be undone. This will permanently delete your KomikHQ account and remove all preferences, reading history, and bookmarks.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
 
                 <div className="space-y-2 py-2">
                   <Label htmlFor="deleteConfirmInput">
                     {hasPassword
-                      ? "Masukkan Kata Sandi Saat Ini untuk Mengonfirmasi:"
-                      : `Ketik alamat email Anda (${user?.email || "email Anda"}) untuk mengonfirmasi:`}
+                      ? "Enter your current password to confirm:"
+                      : `Type your email address (${user?.email || "your email"}) to confirm:`}
                   </Label>
                   <Input
                     id="deleteConfirmInput"
@@ -124,7 +121,7 @@ export function AccountDangerZoneCard() {
 
                 <AlertDialogFooter className="mt-2">
                   <AlertDialogCancel disabled={isDeleting}>
-                    Batal
+                    Cancel
                   </AlertDialogCancel>
                   <AlertDialogAction
                     variant="destructive"
@@ -137,10 +134,10 @@ export function AccountDangerZoneCard() {
                     {isDeleting ? (
                       <>
                         <CircleNotch className="mr-2 h-4 w-4 animate-spin" />
-                        <span>Menghapus...</span>
+                        <span>Deleting...</span>
                       </>
                     ) : (
-                      <span>Ya, Hapus Akun Saya</span>
+                      <span>Yes, Delete My Account</span>
                     )}
                   </AlertDialogAction>
                 </AlertDialogFooter>

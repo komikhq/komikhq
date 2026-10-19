@@ -6,6 +6,7 @@ import {
 } from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { administrationApi } from "@/lib/sdk-client"
 
 interface AdminComicDetailHeaderProps {
   comicId: string
@@ -20,13 +21,8 @@ export function AdminComicDetailHeader({
   useEffect(() => {
     async function fetchDetail() {
       try {
-        const apiUrl =
-          (window as any).__PUBLIC_API_URL__ || "http://localhost:8787"
-        const res = await fetch(`${apiUrl}/v1/admin/comics/${comicId}`, {
-          credentials: "include",
-        })
-        const data: any = await res.json()
-        if (res.ok && data.comic) {
+        const data: any = await administrationApi.adminGetComic({ id: comicId })
+        if (data && data.comic) {
           setComic(data)
         }
       } catch (err) {

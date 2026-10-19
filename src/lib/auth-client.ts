@@ -1,10 +1,9 @@
 import { createAuthClient } from "better-auth/react"
-import { getBaseApiUrl } from "./api-client"
-import { API_PREFIX } from "@/constants/api-routes"
+import { BASE_PATH } from "@komikhq/komikhq-typescript"
 
 export const authClient = createAuthClient({
-  baseURL: getBaseApiUrl(),
-  basePath: `${API_PREFIX}/auth`,
+  baseURL: BASE_PATH,
+  basePath: "/v1/auth",
   fetchOptions: {
     credentials: "include",
   },

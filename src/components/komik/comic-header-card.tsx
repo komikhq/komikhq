@@ -22,6 +22,7 @@ import { useComicDetail } from "@/hooks/use-comic-detail"
 
 interface ComicHeaderCardProps {
   slug?: string
+  initialData?: any
 }
 
 function useClampedText<T extends HTMLElement>(
@@ -50,7 +51,7 @@ function useClampedText<T extends HTMLElement>(
   return { elementRef, isClamped }
 }
 
-export function ComicHeaderCard({ slug }: ComicHeaderCardProps) {
+export function ComicHeaderCard({ slug, initialData }: ComicHeaderCardProps) {
   const {
     comicData,
     isLoading,
@@ -59,7 +60,7 @@ export function ComicHeaderCard({ slug }: ComicHeaderCardProps) {
     toggleBookmark,
     handleReadFirstChapter,
     handleNavigateCatalog,
-  } = useComicDetail(slug)
+  } = useComicDetail(slug, initialData)
   const comicTitle = comicData?.comic?.title ?? ""
   const comicSynopsis =
     comicData?.comic?.synopsis || "No synopsis available for this comic."

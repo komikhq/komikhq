@@ -1,20 +1,18 @@
 import { CommentSection } from "@/components/comment/comment-section"
-import { useComicDetail } from "@/hooks/use-comic-detail"
 
 interface ComicCommentSectionProps {
   slug?: string
+  comicId?: string
 }
 
-export function ComicCommentSection({ slug }: ComicCommentSectionProps) {
-  const { comicData, isLoading } = useComicDetail(slug)
-
-  if (isLoading || !comicData?.comic?.id) {
+export function ComicCommentSection({ comicId }: ComicCommentSectionProps) {
+  if (!comicId) {
     return null
   }
 
   return (
     <section className="mt-2">
-      <CommentSection comicId={comicData.comic.id} variant="default" />
+      <CommentSection comicId={comicId} variant="default" />
     </section>
   )
 }

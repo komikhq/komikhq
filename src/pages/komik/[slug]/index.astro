@@ -3,32 +3,31 @@ import RootLayout from "@/layouts/root-layout.astro"
 import { ComicHeaderCard } from "@/components/komik/comic-header-card"
 import { ComicChapterList } from "@/components/komik/comic-chapter-list"
 import { ComicCommentSection } from "@/components/komik/comic-comment-section"
-import { apiFetch } from "@/lib/api-client"
-import { API_ROUTES } from "@/constants"
+import { comicsApi } from "@/lib/sdk-client"
 
 const { slug } = Astro.params
 
-let comic: any = null
+let comicData: any = null
 if (slug) {
   try {
-    const res = await apiFetch<any>(API_ROUTES.COMICS.DETAIL(slug))
-    comic = res.comic || res.data || res
+    comicData = await comicsApi.getComicBySlug({ slug })
   } catch {
-    comic = null
+    comicData = null
   }
 }
 
+const comic = comicData?.comic || comicData
 const formattedTitle =
   comic?.title ||
   (slug
-    ? slug.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())
+    ? slug.replace(/-/g, " ").replace(/\b\w/g, (l: string) => l.toUpperCase())
     : "Comic")
 
-const title = `Read ${formattedTitle} in Bahasa Indonesia | KomikHQ`
+const title = `Read ${formattedTitle} Online | KomikHQ`
 const description =
   comic?.synopsis || comic?.description
     ? (comic.synopsis || comic.description).slice(0, 160)
-    : `Read ${formattedTitle} manga, manhwa, and manhua in Bahasa Indonesia for free on KomikHQ.`
+    : `Read ${formattedTitle} manga, manhwa, and manhua for free on KomikHQ.`
 
 const ogImage = comic?.cover_url || comic?.coverUrl || "/images/og.png"
 ---
@@ -40,8 +39,8 @@ const ogImage = comic?.cover_url || comic?.coverUrl || "/images/og.png"
   ogType="book"
 >
   <div class="mx-auto flex max-w-screen-2xl flex-col gap-6 px-4 pt-4 pb-20">
-    <ComicHeaderCard slug={slug} client:load />
-    <ComicChapterList slug={slug} client:load />
-    <ComicCommentSection slug={slug} client:load />
+    <ComicHeaderCard slug={slug} initialData={comicData} client:load />
+    <ComicChapterList slug={slug} initialChapters={comicData?.chapters} client:load />
+    <ComicCommentSection slug={slug} comicId={comic?.id} client:load />
   </div>
 </RootLayout>

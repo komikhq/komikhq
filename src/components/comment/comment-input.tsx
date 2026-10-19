@@ -24,7 +24,7 @@ interface CommentInputProps {
 }
 
 export function CommentInput({
-  placeholder = "Tulis komentar Anda...",
+  placeholder = "Write your comment...",
   parentId,
   replyToName,
   onSubmit,
@@ -60,7 +60,7 @@ export function CommentInput({
     if (!content.trim() || isSubmitting) return
 
     if (!isLoggedIn && (!guestName.trim() || !guestEmail.trim())) {
-      alert("Nama dan Email wajib diisi untuk mengirim komentar sebagai Guest!")
+      alert("Name and Email are required to post a comment as Guest!")
       return
     }
 
@@ -109,7 +109,7 @@ export function CommentInput({
     <form onSubmit={handleSubmit} className="space-y-3">
       {replyToName && (
         <div className="flex items-center justify-between rounded-md border border-primary/20 bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary">
-          <span>Membalas @{replyToName}</span>
+          <span>Replying to @{replyToName}</span>
           {onCancelReply && (
             <button
               type="button"
@@ -126,7 +126,7 @@ export function CommentInput({
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           <Input
             type="text"
-            placeholder="Nama Anda (Guest)*"
+            placeholder="Your Name (Guest)*"
             value={guestName}
             onChange={(e) => setGuestName(e.target.value)}
             required
@@ -134,7 +134,7 @@ export function CommentInput({
           />
           <Input
             type="email"
-            placeholder="Email Anda (Guest)*"
+            placeholder="Your Email (Guest)*"
             value={guestEmail}
             onChange={(e) => setGuestEmail(e.target.value)}
             required
@@ -162,7 +162,7 @@ export function CommentInput({
             className="h-3.5 w-3.5 rounded border-neutral-700 bg-neutral-950 text-primary accent-primary focus:ring-0 focus:ring-offset-0"
           />
           <EyeClosed className="h-3.5 w-3.5 text-neutral-400" />
-          <span>Mengandung Spoiler</span>
+          <span>Contains Spoiler</span>
         </label>
 
         <div className="flex items-center gap-2">
@@ -175,7 +175,7 @@ export function CommentInput({
               disabled={isSubmitting}
               className="text-xs"
             >
-              Batal
+              Cancel
             </Button>
           )}
           <Button
@@ -189,7 +189,7 @@ export function CommentInput({
             className="text-xs"
           >
             <PaperPlaneRight className="mr-1.5 h-3.5 w-3.5" />
-            {isSubmitting ? "Mengirim..." : "Kirim Komentar"}
+            {isSubmitting ? "Sending..." : "Post Comment"}
           </Button>
         </div>
       </div>

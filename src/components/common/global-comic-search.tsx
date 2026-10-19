@@ -5,8 +5,7 @@ import {
   MagnifyingGlassIcon as MagnifyingGlass,
   XIcon as X,
 } from "@phosphor-icons/react"
-import { API_ROUTES } from "@/constants"
-import { apiFetch } from "@/lib/api-client"
+import { searchApi } from "@/lib/sdk-client"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -30,11 +29,6 @@ interface ComicSearchSuggestion {
   coverUrl: string | null
   type: string | null
   status: string | null
-}
-
-interface ComicSearchResponse {
-  query: string
-  suggestions: ComicSearchSuggestion[]
 }
 
 export function GlobalComicSearch() {
@@ -68,11 +62,12 @@ export function GlobalComicSearch() {
       setHasSearched(false)
       setHasError(false)
 
-      apiFetch<ComicSearchResponse>(
-        API_ROUTES.SEARCH.SUGGESTIONS(normalizedQuery, MAX_SUGGESTIONS),
-        { signal: controller.signal }
-      )
-        .then((response) => {
+      searchApi
+        .getComicSearchSuggestions(
+          { q: normalizedQuery, limit: MAX_SUGGESTIONS },
+          { signal: controller.signal }
+        )
+        .then((response: any) => {
           setSuggestions(
             Array.isArray(response.suggestions) ? response.suggestions : []
           )

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react"
 import { toast } from "sonner"
+import { administrationApi } from "@/lib/sdk-client"
 
 export interface ComicAdminItem {
   id: string
@@ -29,30 +30,21 @@ export function useAdminComics() {
   const [totalPages, setTotalPages] = useState(1)
   const [totalCount, setTotalCount] = useState(0)
 
-  const getApiUrl = () =>
-    (window as any).__PUBLIC_API_URL__ || "http://localhost:8787"
-
   const fetchComics = useCallback(async () => {
     setLoading(true)
     try {
-      const params = new URLSearchParams()
-      if (search.trim()) params.append("q", search.trim())
-      if (statusFilter && statusFilter !== "all")
-        params.append("status", statusFilter)
-      params.append("page", page.toString())
-      params.append("limit", "15")
-
-      const res = await fetch(
-        `${getApiUrl()}/v1/admin/comics?${params.toString()}`,
-        { credentials: "include" }
-      )
-      const data: any = await res.json()
-      if (res.ok && data.comics) {
+      const data: any = await administrationApi.adminListComics({
+        q: search.trim() || undefined,
+        status: statusFilter && statusFilter !== "all" ? statusFilter : undefined,
+        page: String(page),
+        limit: "15",
+      })
+      if (data && data.comics) {
         setComics(data.comics)
         setTotalPages(data.pagination?.totalPages || 1)
         setTotalCount(data.pagination?.total || 0)
       } else {
-        toast.error(data.error || "Failed to load comic catalog")
+        toast.error("Failed to load comic catalog")
       }
     } catch (err: any) {
       toast.error(err.message || "Failed to fetch comics")
@@ -68,18 +60,17 @@ export function useAdminComics() {
   const createComic = async (formData: FormData) => {
     setSubmitting(true)
     try {
-      const res = await fetch(`${getApiUrl()}/v1/admin/comics`, {
-        method: "POST",
-        credentials: "include",
-        body: formData,
-      })
-      const data: any = await res.json()
-      if (res.ok && data.success) {
+      const params: any = {}
+      for (const [key, val] of formData.entries()) {
+        params[key] = val
+      }
+      const data: any = await administrationApi.adminCreateComic(params)
+      if (data && data.success) {
         toast.success("New comic successfully added.")
         fetchComics()
         return true
       } else {
-        toast.error(data.error || "Failed to add comic")
+        toast.error("Failed to add comic")
         return false
       }
     } catch (err: any) {
@@ -93,18 +84,17 @@ export function useAdminComics() {
   const updateComic = async (id: string, formData: FormData) => {
     setSubmitting(true)
     try {
-      const res = await fetch(`${getApiUrl()}/v1/admin/comics/${id}`, {
-        method: "PUT",
-        credentials: "include",
-        body: formData,
-      })
-      const data: any = await res.json()
-      if (res.ok && data.success) {
+      const params: any = { id }
+      for (const [key, val] of formData.entries()) {
+        params[key] = val
+      }
+      const data: any = await administrationApi.adminUpdateComic(params)
+      if (data && data.success) {
         toast.success("Comic successfully updated.")
         fetchComics()
         return true
       } else {
-        toast.error(data.error || "Failed to update comic")
+        toast.error("Failed to update comic")
         return false
       }
     } catch (err: any) {
@@ -117,17 +107,13 @@ export function useAdminComics() {
 
   const deleteComic = async (id: string) => {
     try {
-      const res = await fetch(`${getApiUrl()}/v1/admin/comics/${id}`, {
-        method: "DELETE",
-        credentials: "include",
-      })
-      const data: any = await res.json()
-      if (res.ok && data.success) {
+      const data: any = await administrationApi.adminDeleteComic({ id })
+      if (data && data.success) {
         toast.success(data.message || "Comic successfully deleted.")
         fetchComics()
         return true
       } else {
-        toast.error(data.error || "Failed to delete comic")
+        toast.error("Failed to delete comic")
         return false
       }
     } catch (err: any) {

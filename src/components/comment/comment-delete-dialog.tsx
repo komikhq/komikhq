@@ -36,11 +36,10 @@ export function CommentDeleteDialog({
         <AlertDialogHeader className="space-y-2 text-left">
           <AlertDialogTitle className="flex items-center gap-2 text-base font-bold text-rose-400">
             <Trash className="h-5 w-5" />
-            <span>Hapus Komentar</span>
+            <span>Delete Comment</span>
           </AlertDialogTitle>
           <AlertDialogDescription className="text-xs text-neutral-400">
-            Apakah Anda yakin ingin menghapus komentar ini? Tindakan ini tidak
-            dapat dibatalkan.
+            Are you sure you want to delete this comment? This action cannot be undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="flex items-center justify-end gap-2 pt-4">
@@ -49,14 +48,14 @@ export function CommentDeleteDialog({
             disabled={isDeleting}
             className="h-9 rounded-xl border-neutral-800 bg-neutral-900 px-4 text-xs text-neutral-300 hover:bg-neutral-800"
           >
-            Batal
+            Cancel
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleConfirm}
             disabled={isDeleting}
             className="h-9 rounded-xl bg-rose-600 px-4 text-xs font-medium text-white transition-colors hover:bg-rose-700"
           >
-            {isDeleting ? "Menghapus..." : "Ya, Hapus"}
+            {isDeleting ? "Deleting..." : "Yes, Delete"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

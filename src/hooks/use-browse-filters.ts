@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react"
-import { API_ROUTES } from "@/constants"
-import { apiFetch } from "@/lib/api-client"
+import { genresApi } from "@/lib/sdk-client"
 import { sortGenresByNaturalName } from "@/lib/sort-genres"
 
 export interface GenreOption {
@@ -30,14 +29,15 @@ export function useBrowseFilters(
     let isMounted = true
     setIsLoadingGenres(true)
 
-    apiFetch(API_ROUTES.GENRES)
-      .then((data) => {
+    genresApi
+      .listGenres()
+      .then((data: any) => {
         if (isMounted && data.genres) {
           setGenres(sortGenresByNaturalName(data.genres))
         }
       })
-      .catch((err) => {
-        console.error("Gagal mengambil daftar genre:", err)
+      .catch((err: any) => {
+        console.error("Failed to fetch genre list:", err)
       })
       .finally(() => {
         if (isMounted) setIsLoadingGenres(false)
@@ -129,7 +129,7 @@ export function useBrowseFilters(
   }
 
   const genreItems: GenreOption[] = [
-    { slug: "all", name: "Semua Genre" },
+    { slug: "all", name: "All Genres" },
     ...genres,
   ]
 

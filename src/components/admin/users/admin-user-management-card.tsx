@@ -38,7 +38,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { toast } from "sonner"
-import { getBaseApiUrl } from "@/lib/api-client"
+import { administrationApi } from "@/lib/sdk-client"
 
 export interface UserItem {
   id: string
@@ -68,15 +68,10 @@ export function AdminUserManagementCard() {
   const fetchUsers = async () => {
     setIsLoading(true)
     try {
-      const res = await fetch(
-        `${getBaseApiUrl()}/v1/admin/users?q=${encodeURIComponent(search)}`,
-        {
-          credentials: "include",
-        }
-      )
-      if (!res.ok) throw new Error("Failed to fetch user list")
-      const resJson = (await res.json()) as any
-      const userList = resJson.data?.users || resJson.users || []
+      const resJson: any = await administrationApi.adminListUsers({
+        q: search || undefined,
+      })
+      const userList = resJson?.data?.users || resJson?.users || []
       setUsers(userList)
     } catch (err: any) {
       toast.error(err.message || "Failed to load users.")
@@ -103,23 +98,15 @@ export function AdminUserManagementCard() {
   const handleSaveEdit = async () => {
     if (!editingUser) return
     try {
-      const res = await fetch(
-        `${getBaseApiUrl()}/v1/admin/users/${editingUser.id}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({
-            name: editName,
-            email: editEmail,
-            role: editRole,
-            password: editPassword || undefined,
-          }),
-        }
-      )
-
-      const data = (await res.json()) as any
-      if (!res.ok) throw new Error(data.error || "Failed to update user.")
+      await administrationApi.adminUpdateUser({
+        id: editingUser.id,
+        requestBody: {
+          name: editName,
+          email: editEmail,
+          role: editRole,
+          password: editPassword || undefined,
+        },
+      })
 
       toast.success(`User ${editName} successfully updated.`)
       setEditingUser(null)
@@ -132,19 +119,12 @@ export function AdminUserManagementCard() {
   const handleDeleteUser = async () => {
     if (!deleteTarget) return
     try {
-      const res = await fetch(
-        `${getBaseApiUrl()}/v1/admin/users/${deleteTarget.id}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        }
-      )
-
-      const data = (await res.json()) as any
-      if (!res.ok) throw new Error(data.error || "Failed to delete user.")
+      const data: any = await administrationApi.adminDeleteUser({
+        id: deleteTarget.id,
+      })
 
       toast.success(
-        data.message || `User ${deleteTarget.name} has been deleted.`
+        data?.message || `User ${deleteTarget.name} has been deleted.`
       )
       setDeleteTarget(null)
       fetchUsers()
@@ -159,20 +139,14 @@ export function AdminUserManagementCard() {
       return
     }
     try {
-      const res = await fetch(`${getBaseApiUrl()}/v1/admin/users`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
+      await administrationApi.adminCreateUser({
+        adminCreateUserRequest: {
           name: editName,
           email: editEmail,
           password: editPassword,
           role: editRole,
-        }),
+        },
       })
-
-      const data = (await res.json()) as any
-      if (!res.ok) throw new Error(data.error || "Failed to create new user.")
 
       toast.success(`User ${editName} successfully created.`)
       setIsAddOpen(false)

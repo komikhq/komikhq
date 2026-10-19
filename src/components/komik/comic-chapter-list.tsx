@@ -8,16 +8,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { formatDate } from "@/lib/format-date"
-import { API_ROUTES } from "@/constants"
-import { apiFetch } from "@/lib/api-client"
+import { comicsApi } from "@/lib/sdk-client"
 
 interface ComicChapterListProps {
   slug?: string
+  initialChapters?: any[]
 }
 
-export function ComicChapterList({ slug }: ComicChapterListProps) {
-  const [chapters, setChapters] = useState<any[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+export function ComicChapterList({ slug, initialChapters }: ComicChapterListProps) {
+  const [chapters, setChapters] = useState<any[]>(initialChapters ?? [])
+  const [isLoading, setIsLoading] = useState(!initialChapters)
   const [searchQuery, setSearchQuery] = useState("")
   const chapterListRef = useRef<HTMLDivElement>(null)
 
@@ -32,13 +32,15 @@ export function ComicChapterList({ slug }: ComicChapterListProps) {
   }, [normalizedSearch])
 
   useEffect(() => {
-    if (!slug) return
+    // Skip fetch if initialChapters were provided by SSR
+    if (initialChapters || !slug) return
     let isMounted = true
     setIsLoading(true)
     setSearchQuery("")
 
-    apiFetch(API_ROUTES.COMICS.DETAIL(slug))
-      .then((data) => {
+    comicsApi
+      .getComicBySlug({ slug })
+      .then((data: any) => {
         if (isMounted) {
           setChapters(data.chapters || [])
         }

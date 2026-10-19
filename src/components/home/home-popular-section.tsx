@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react"
 import { CrownIcon as Crown } from "@phosphor-icons/react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { API_ROUTES } from "@/constants"
-import { apiFetch } from "@/lib/api-client"
+import { comicsApi } from "@/lib/sdk-client"
 
 export function HomePopularSection() {
   const [popularComics, setPopularComics] = useState<any[]>([])
@@ -12,8 +11,9 @@ export function HomePopularSection() {
     let isMounted = true
     setIsLoading(true)
 
-    apiFetch(API_ROUTES.COMICS.TRENDING("popular", 20))
-      .then((data) => {
+    comicsApi
+      .listTrendingComics({ period: "popular", limit: "20" })
+      .then((data: any) => {
         if (isMounted) {
           setPopularComics(data.comics || [])
         }
@@ -72,14 +72,14 @@ export function HomePopularSection() {
                   {comic.title}
                 </h3>
                 <p className="text-xs text-muted-foreground transition-colors group-hover:text-accent-foreground/80">
-                  {(comic.totalViews || 0).toLocaleString("id-ID")} views
+                  {(comic.totalViews || 0).toLocaleString("en-US")} views
                 </p>
               </a>
             ))}
           </div>
         ) : (
           <p className="py-8 text-center text-sm text-muted-foreground">
-            Belum ada data komik populer.
+            No popular comics data available yet.
           </p>
         )}
       </CardContent>

@@ -19,7 +19,7 @@ export function HomeHeroCard() {
           className="gap-1.5 px-2.5 py-1 text-xs font-semibold"
         >
           <Users className="h-3.5 w-3.5 animate-pulse text-emerald-500" />
-          <span>{onlineCount} Pembaca Online</span>
+          <span>{onlineCount} Readers Online</span>
         </Badge>
       </CardHeader>
       <CardContent>

@@ -14,8 +14,7 @@ import {
   CardDescription,
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { API_ROUTES } from "@/constants/api-routes"
-import { apiFetch } from "@/lib/api-client"
+import { administrationApi } from "@/lib/sdk-client"
 
 interface MaintenanceStatus {
   "cached-search-keys-count": number
@@ -35,9 +34,7 @@ export function SettingsDiagnosticsCard() {
   const fetchStatus = async () => {
     try {
       setLoadingStatus(true)
-      const res = await apiFetch<{ success: boolean; data: MaintenanceStatus }>(
-        API_ROUTES.ADMIN.SYSTEM.MAINTENANCE_STATUS
-      )
+      const res: any = await administrationApi.getSystemMaintenanceStatus()
       if (res?.data) {
         setStatus(res.data)
       }

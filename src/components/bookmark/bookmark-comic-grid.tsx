@@ -5,8 +5,8 @@ import {
 } from "@phosphor-icons/react"
 import { Card } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { API_ROUTES } from "@/constants"
-import { apiFetch } from "@/lib/api-client"
+import { bookmarksApi } from "@/lib/sdk-client"
+import { invalidateCache } from "@/lib/coalescing-fetch"
 
 export function BookmarkComicGrid() {
   const [bookmarks, setBookmarks] = useState<any[]>([])
@@ -15,8 +15,9 @@ export function BookmarkComicGrid() {
 
   const fetchBookmarks = () => {
     setIsLoading(true)
-    apiFetch(API_ROUTES.BOOKMARKS.LIST)
-      .then((data) => setBookmarks(data.bookmarks || []))
+    bookmarksApi
+      .listBookmarks()
+      .then((data: any) => setBookmarks(data.bookmarks || []))
       .catch(() => setBookmarks([]))
       .finally(() => setIsLoading(false))
   }
@@ -29,7 +30,8 @@ export function BookmarkComicGrid() {
     e.preventDefault()
     e.stopPropagation()
     try {
-      await apiFetch(API_ROUTES.BOOKMARKS.REMOVE(comicId), { method: "DELETE" })
+      await bookmarksApi.removeBookmark({ comicId })
+      invalidateCache("/bookmarks")
       setBookmarks((prev) => prev.filter((b) => b.comic.id !== comicId))
     } catch (err) {
       console.error("Failed to remove bookmark", err)
@@ -45,10 +47,10 @@ export function BookmarkComicGrid() {
       <div className="flex items-center justify-between">
         <Tabs value={filterStatus} onValueChange={setFilterStatus}>
           <TabsList>
-            <TabsTrigger value="all">Semua</TabsTrigger>
-            <TabsTrigger value="reading">Membaca</TabsTrigger>
-            <TabsTrigger value="plan_to_read">Rencana Baca</TabsTrigger>
-            <TabsTrigger value="completed">Selesai</TabsTrigger>
+            <TabsTrigger value="all">All</TabsTrigger>
+            <TabsTrigger value="reading">Reading</TabsTrigger>
+            <TabsTrigger value="plan_to_read">Plan to Read</TabsTrigger>
+            <TabsTrigger value="completed">Completed</TabsTrigger>
           </TabsList>
         </Tabs>
       </div>
@@ -70,8 +72,8 @@ export function BookmarkComicGrid() {
           <BookmarkSimple className="mx-auto mb-3 h-10 w-10 text-muted-foreground/40" />
           <p className="text-sm font-medium text-muted-foreground">
             {filterStatus === "all"
-              ? "Belum ada komik yang disimpan dalam bookmark."
-              : `Tidak ada komik dengan status "${filterStatus}".`}
+              ? "No comics saved in your bookmarks yet."
+              : `No comics with status "${filterStatus}".`}
           </p>
         </Card>
       ) : (
@@ -91,7 +93,7 @@ export function BookmarkComicGrid() {
                 />
                 <button
                   onClick={(e) => handleRemove(e, item.comic.id)}
-                  title="Hapus Bookmark"
+                  title="Remove Bookmark"
                   className="absolute top-2 right-2 rounded-full bg-black/60 p-1.5 text-white opacity-0 transition-colors group-hover:opacity-100 hover:bg-red-600"
                 >
                   <Trash className="h-3.5 w-3.5" />

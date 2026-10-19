@@ -9,8 +9,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
-import { API_ROUTES } from "@/constants/api-routes"
-import { apiFetch } from "@/lib/api-client"
+import { administrationApi } from "@/lib/sdk-client"
 
 interface ClearCacheResult {
   "cleared-keys": number
@@ -26,10 +25,7 @@ export function SettingsSearchCacheCard() {
   useEffect(() => {
     const fetchCacheCount = async () => {
       try {
-        const res = await apiFetch<{
-          success: boolean
-          data: { "cached-search-keys-count": number }
-        }>(API_ROUTES.ADMIN.SYSTEM.MAINTENANCE_STATUS)
+        const res: any = await administrationApi.getSystemMaintenanceStatus()
         if (res?.data) {
           setCachedKeysCount(res.data["cached-search-keys-count"])
         }
@@ -47,15 +43,9 @@ export function SettingsSearchCacheCard() {
     )
 
     try {
-      const data = await apiFetch<{
-        success: boolean
-        message?: string
-        "cleared-keys"?: number
-      }>(API_ROUTES.ADMIN.SYSTEM.CLEAR_SEARCH_CACHE, {
-        method: "POST",
-      })
+      const data: any = await administrationApi.clearSearchSuggestionCache()
 
-      const clearedKeys = data["cleared-keys"] ?? 0
+      const clearedKeys = data?.["cleared-keys"] ?? 0
       const now = new Date().toLocaleTimeString("en-US", {
         hour: "2-digit",
         minute: "2-digit",
@@ -70,7 +60,7 @@ export function SettingsSearchCacheCard() {
       setCachedKeysCount(0)
 
       toast.success(
-        data.message ||
+        data?.message ||
           `Search suggestion cache invalidated successfully (${clearedKeys} entries removed).`,
         { id: toastId }
       )

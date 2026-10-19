@@ -8,25 +8,28 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { API_PREFIX } from "@/constants/api-routes"
-import { apiFetch } from "@/lib/api-client"
+import { chaptersApi } from "@/lib/sdk-client"
 
 interface ReaderHeaderBarProps {
   comicSlug?: string
   chapterSlug?: string
+  initialData?: any
 }
 
 export function ReaderHeaderBar({
   comicSlug,
   chapterSlug,
+  initialData,
 }: ReaderHeaderBarProps) {
-  const [data, setData] = useState<any>(null)
+  const [data, setData] = useState<any>(initialData ?? null)
 
   useEffect(() => {
-    if (!comicSlug || !chapterSlug) return
+    // Skip fetch if initialData was provided by SSR
+    if (initialData || !comicSlug || !chapterSlug) return
 
-    apiFetch(`${API_PREFIX}/comics/${comicSlug}/chapters/${chapterSlug}`)
-      .then((res) => setData(res))
+    chaptersApi
+      .getPublicChapter({ slug: comicSlug, chapterSlug })
+      .then((res: any) => setData(res))
       .catch(() => setData(null))
   }, [comicSlug, chapterSlug])
 
@@ -54,7 +57,7 @@ export function ReaderHeaderBar({
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">
-              Kembali ke detail komik
+              Back to comic details
             </TooltipContent>
           </Tooltip>
           <div>
@@ -67,7 +70,7 @@ export function ReaderHeaderBar({
           variant="outline"
           className="border-primary/50 px-2.5 py-1 font-mono text-xs text-primary"
         >
-          Total {totalPages} Halaman
+          {totalPages} Pages
         </Badge>
       </header>
     </TooltipProvider>

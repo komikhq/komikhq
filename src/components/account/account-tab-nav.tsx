@@ -10,10 +10,10 @@ interface AccountTabNavProps {
 
 export function AccountTabNav({ currentTab }: AccountTabNavProps) {
   const tabs = [
-    { id: "profile", label: "Profil", href: "/account", icon: UserCircle },
+    { id: "profile", label: "Profile", href: "/account", icon: UserCircle },
     {
       id: "settings",
-      label: "Pengaturan",
+      label: "Settings",
       href: "/account/settings",
       icon: Gear,
     },

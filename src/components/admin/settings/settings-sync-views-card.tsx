@@ -9,8 +9,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
-import { API_ROUTES } from "@/constants/api-routes"
-import { apiFetch } from "@/lib/api-client"
+import { administrationApi } from "@/lib/sdk-client"
 
 interface SyncViewsResult {
   "synced-chapters"?: number
@@ -36,10 +35,7 @@ export function SettingsSyncViewsCard() {
   useEffect(() => {
     const fetchLastSync = async () => {
       try {
-        const res = await apiFetch<{
-          success: boolean
-          data: { "last-synced-at"?: string | null }
-        }>(API_ROUTES.ADMIN.SYSTEM.MAINTENANCE_STATUS)
+        const res: any = await administrationApi.getSystemMaintenanceStatus()
         if (res?.data?.["last-synced-at"]) {
           setLastSyncedAt(res.data["last-synced-at"])
         }
@@ -57,27 +53,13 @@ export function SettingsSyncViewsCard() {
     )
 
     try {
-      const data = await apiFetch<{
-        success: boolean
-        message?: string
-        "synced-chapters"?: number
-        "synced-comics"?: number
-        "total-views-added"?: number
-        "synced-logs"?: number
-        "affected-comics"?: number
-        rankings?: {
-          dailyCount: number
-          weeklyCount: number
-          popularCount: number
-        }
-      }>(API_ROUTES.ADMIN.SYSTEM.SYNC_VIEWS, {
-        method: "POST",
-      })
+      const data: any = await administrationApi.synchronizeViewCounts()
 
-      const syncedChapters = data["synced-chapters"] ?? 0
-      const syncedComics = data["synced-comics"] ?? data["affected-comics"] ?? 0
+      const syncedChapters = data?.["synced-chapters"] ?? 0
+      const syncedComics =
+        data?.["synced-comics"] ?? data?.["affected-comics"] ?? 0
       const totalViewsAdded =
-        data["total-views-added"] ?? data["synced-logs"] ?? 0
+        data?.["total-views-added"] ?? data?.["synced-logs"] ?? 0
       const now = new Date().toLocaleTimeString("en-US", {
         hour: "2-digit",
         minute: "2-digit",
@@ -90,14 +72,14 @@ export function SettingsSyncViewsCard() {
         "total-views-added": totalViewsAdded,
         "synced-logs": totalViewsAdded,
         "affected-comics": syncedComics,
-        rankings: data.rankings,
+        rankings: data?.rankings,
         timestamp: now,
       })
 
       setLastSyncedAt(new Date().toISOString())
 
       toast.success(
-        data.message ||
+        data?.message ||
           `Successfully synchronized ${syncedChapters} chapters across ${syncedComics} comics (+${totalViewsAdded} views). Rankings refreshed.`,
         { id: toastId }
       )

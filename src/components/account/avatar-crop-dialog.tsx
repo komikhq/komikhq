@@ -122,7 +122,7 @@ export function AvatarCropDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-lg font-bold">
-            Atur Foto Profil Avatar
+            Adjust Profile Picture
           </DialogTitle>
         </DialogHeader>
 
@@ -170,10 +170,10 @@ export function AvatarCropDialog({
               className="gap-2"
             >
               <ArrowClockwise className="h-4 w-4" />
-              <span>Putar 90°</span>
+              <span>Rotate 90°</span>
             </Button>
             <span className="text-xs text-muted-foreground">
-              Pratinjau Avatar Lingkaran
+              Circular Avatar Preview
             </span>
           </div>
         </div>
@@ -185,16 +185,16 @@ export function AvatarCropDialog({
             onClick={() => onOpenChange(false)}
             disabled={isSubmitting}
           >
-            Batal
+            Cancel
           </Button>
           <Button type="button" onClick={handleSave} disabled={isSubmitting}>
             {isSubmitting ? (
               <>
                 <CircleNotch className="mr-2 h-4 w-4 animate-spin" />
-                <span>Mengunggah...</span>
+                <span>Uploading...</span>
               </>
             ) : (
-              <span>Simpan & Unggah</span>
+              <span>Save & Upload</span>
             )}
           </Button>
         </DialogFooter>

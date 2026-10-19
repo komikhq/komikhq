@@ -15,8 +15,7 @@ import {
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { API_ROUTES } from "@/constants"
-import { apiFetch } from "@/lib/api-client"
+import { moderationApi } from "@/lib/sdk-client"
 
 interface ReportItem {
   id: string
@@ -39,8 +38,12 @@ export function AdminModerationCard() {
   const fetchReports = async () => {
     try {
       setIsLoading(true)
-      const res = await apiFetch(API_ROUTES.ADMIN.REPORTS(1, 50, filterStatus))
-      setReports(res.reports || [])
+      const res: any = await moderationApi.adminListModerationReports({
+        page: 1,
+        limit: 50,
+        status: filterStatus,
+      })
+      setReports(res?.reports || [])
     } catch {
       setReports([])
     } finally {
@@ -58,9 +61,9 @@ export function AdminModerationCard() {
   ) => {
     try {
       setProcessingId(reportId)
-      await apiFetch(API_ROUTES.ADMIN.RESOLVE_REPORT(reportId), {
-        method: "POST",
-        body: JSON.stringify({ action }),
+      await moderationApi.adminResolveModerationReport({
+        id: reportId,
+        adminResolveModerationReportRequest: { action },
       })
       fetchReports()
     } catch (err: any) {

@@ -57,20 +57,20 @@ export function AccountPasswordCard() {
         <CardTitle className="flex items-center gap-2 text-lg font-bold">
           <Key className="h-5 w-5 text-primary" />
           <span>
-            {hasPassword ? "Ubah Kata Sandi" : "Buat Kata Sandi Akun"}
+            {hasPassword ? "Change Password" : "Set Account Password"}
           </span>
         </CardTitle>
         <CardDescription className="text-xs">
           {hasPassword
-            ? "Perbarui kata sandi Anda secara berkala untuk menjaga keamanan akun KomikHQ."
-            : "Akun Anda saat ini menggunakan Google OAuth. Buat kata sandi baru jika ingin bisa masuk via Email & Kata Sandi."}
+            ? "Regularly update your password to keep your KomikHQ account secure."
+            : "Your account currently uses social sign-in. Set a password if you want to sign in with email and password."}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={submitPassword} className="max-w-md space-y-4">
           {hasPassword && (
             <div className="space-y-1.5">
-              <Label htmlFor="currentPassword">Kata Sandi Saat Ini</Label>
+              <Label htmlFor="currentPassword">Current Password</Label>
               <div className="relative">
                 <Input
                   id="currentPassword"
@@ -99,12 +99,12 @@ export function AccountPasswordCard() {
           )}
 
           <div className="space-y-1.5">
-            <Label htmlFor="newPassword">Kata Sandi Baru</Label>
+            <Label htmlFor="newPassword">New Password</Label>
             <div className="relative">
               <Input
                 id="newPassword"
                 type={showNewPassword ? "text" : "password"}
-                placeholder="Minimal 8 karakter"
+                placeholder="At least 8 characters"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 disabled={isSubmitting}
@@ -127,11 +127,11 @@ export function AccountPasswordCard() {
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="confirmPassword">Konfirmasi Kata Sandi Baru</Label>
+            <Label htmlFor="confirmPassword">Confirm New Password</Label>
             <Input
               id="confirmPassword"
               type="password"
-              placeholder="Ulangi kata sandi baru"
+              placeholder="Repeat new password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               disabled={isSubmitting}
@@ -153,15 +153,13 @@ export function AccountPasswordCard() {
             {isSubmitting ? (
               <>
                 <CircleNotch className="h-4 w-4 animate-spin" />
-                <span>Menyimpan...</span>
+                <span>Saving...</span>
               </>
             ) : (
               <>
                 <Lock className="h-4 w-4" />
                 <span>
-                  {hasPassword
-                    ? "Simpan Kata Sandi Baru"
-                    : "Buat Kata Sandi Akun"}
+                  {hasPassword ? "Save New Password" : "Set Password"}
                 </span>
               </>
             )}

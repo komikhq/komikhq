@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react"
-import { API_ROUTES } from "@/constants"
-import { apiFetch } from "@/lib/api-client"
+import { comicsApi } from "@/lib/sdk-client"
 
 export function useListAllComics() {
   const [comics, setComics] = useState<any[]>([])
@@ -10,11 +9,21 @@ export function useListAllComics() {
     let isMounted = true
     setIsLoading(true)
 
-    const params = typeof window !== "undefined" ? window.location.search : ""
-    const endpoint = API_ROUTES.COMICS.BROWSE(params.replace(/^\?/, ""))
+    const searchParams = new URLSearchParams(
+      typeof window !== "undefined" ? window.location.search : ""
+    )
+    const search =
+      searchParams.get("search") || searchParams.get("q") || undefined
+    const genre = searchParams.get("genre") || undefined
+    const status = searchParams.get("status") || undefined
+    const type = searchParams.get("type") || undefined
+    const sort = searchParams.get("sort") || undefined
+    const page = searchParams.get("page") || undefined
+    const limit = searchParams.get("limit") || undefined
 
-    apiFetch(endpoint)
-      .then((res) => {
+    comicsApi
+      .browseComics({ search, genre, status, type, sort, page, limit })
+      .then((res: any) => {
         if (isMounted) {
           setComics(res.comics || res.data || [])
         }

@@ -6,8 +6,8 @@ import {
 } from "@phosphor-icons/react"
 import { CommentInput } from "./comment-input"
 import { SpoilerText } from "./spoiler-text"
-import { API_ROUTES } from "@/constants"
-import { apiFetch } from "@/lib/api-client"
+import { CommentDeleteDialog } from "./comment-delete-dialog"
+import { commentsApi } from "@/lib/sdk-client"
 
 export interface CommentData {
   id: string
@@ -51,8 +51,6 @@ interface CommentTreeItemProps {
   variant?: "reader" | "default"
 }
 
-import { CommentDeleteDialog } from "./comment-delete-dialog"
-
 export function CommentTreeItem({
   comment,
   onSubmitReply,
@@ -78,7 +76,7 @@ export function CommentTreeItem({
     setLikeCount((prev) => (nextState ? prev + 1 : prev - 1))
 
     try {
-      await apiFetch(API_ROUTES.COMMENTS.LIKE(comment.id), { method: "POST" })
+      await commentsApi.toggleCommentLike({ commentId: comment.id })
     } catch {
       // Rollback on failure
       setIsLiked(!nextState)
@@ -98,7 +96,7 @@ export function CommentTreeItem({
   }
 
   const formattedDate = new Date(comment.createdAt).toLocaleDateString(
-    "id-ID",
+    "en-US",
     {
       day: "numeric",
       month: "short",
@@ -172,7 +170,7 @@ export function CommentTreeItem({
           <div className={`text-sm leading-relaxed break-words ${textColor}`}>
             {comment.isDeleted ? (
               <span className={`italic ${dateColor}`}>
-                [Komentar ini telah dihapus]
+                [This comment has been deleted]
               </span>
             ) : (
               <SpoilerText
@@ -201,7 +199,7 @@ export function CommentTreeItem({
               className={`flex items-center gap-1 transition-colors ${actionBtnClass}`}
             >
               <ChatCircleText className="h-3.5 w-3.5" />
-              <span>Balas</span>
+              <span>Reply</span>
             </button>
 
             {onOpenReportModal && !comment.isDeleted && (
@@ -209,7 +207,7 @@ export function CommentTreeItem({
                 onClick={() => onOpenReportModal(comment.id)}
                 className="text-[11px] text-muted-foreground transition-colors hover:text-amber-500"
               >
-                Laporkan
+                Report
               </button>
             )}
 
@@ -219,7 +217,7 @@ export function CommentTreeItem({
                 disabled={isDeleting}
                 className="text-[11px] text-muted-foreground transition-colors hover:text-rose-500"
               >
-                {isDeleting ? "Menghapus..." : "Hapus"}
+                {isDeleting ? "Deleting..." : "Delete"}
               </button>
             )}
           </div>
@@ -236,7 +234,7 @@ export function CommentTreeItem({
       {isReplying && (
         <div className="mt-2 ml-11">
           <CommentInput
-            placeholder={`Balas @${authorName}...`}
+            placeholder={`Reply to @${authorName}...`}
             parentId={comment.id}
             replyToName={authorName}
             onSubmit={onSubmitReply}

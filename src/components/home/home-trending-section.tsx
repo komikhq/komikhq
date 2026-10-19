@@ -2,8 +2,7 @@ import { useState, useEffect } from "react"
 import { TrendUpIcon as TrendUp } from "@phosphor-icons/react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { API_ROUTES } from "@/constants"
-import { apiFetch } from "@/lib/api-client"
+import { comicsApi } from "@/lib/sdk-client"
 
 export function HomeTrendingSection() {
   const [period, setPeriod] = useState<"daily" | "weekly">("daily")
@@ -19,8 +18,9 @@ export function HomeTrendingSection() {
       setIsFetching(true)
     }
 
-    apiFetch(API_ROUTES.COMICS.TRENDING(period, 20))
-      .then((data) => {
+    comicsApi
+      .listTrendingComics({ period, limit: "20" })
+      .then((data: any) => {
         if (isMounted) {
           setTrendingComics(data.comics || [])
         }
@@ -111,14 +111,14 @@ export function HomeTrendingSection() {
                       {comic.title}
                     </h3>
                     <p className="text-xs text-muted-foreground transition-colors group-hover:text-accent-foreground/80">
-                      {(comic.periodViews || 0).toLocaleString("id-ID")} views
+                      {(comic.periodViews || 0).toLocaleString("en-US")} views
                     </p>
                   </a>
                 ))}
               </div>
             ) : (
               <p className="py-8 text-center text-sm text-muted-foreground">
-                Belum ada data komik trending.
+                No trending comics data available yet.
               </p>
             )}
           </div>

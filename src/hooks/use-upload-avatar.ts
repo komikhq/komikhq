@@ -1,8 +1,7 @@
 import { useState } from "react"
 import { toast } from "sonner"
 import { authClient } from "@/lib/auth-client"
-import { API_ROUTES } from "@/constants/api-routes"
-import { getBaseApiUrl } from "@/lib/api-client"
+import { usersApi } from "@/lib/sdk-client"
 
 export function useUploadAvatar() {
   const [isUploading, setIsUploading] = useState(false)
@@ -12,28 +11,15 @@ export function useUploadAvatar() {
     setIsUploading(true)
     setUploadError(null)
     try {
-      const formData = new FormData()
-      formData.append("file", fileBlob, "avatar.jpg")
-
-      const baseUrl = getBaseApiUrl()
-      const response = await fetch(`${baseUrl}${API_ROUTES.USER.AVATAR}`, {
-        method: "POST",
-        body: formData,
-        credentials: "include",
+      const response: any = await usersApi.uploadUserAvatar({
+        file: fileBlob,
       })
 
-      const data = (await response.json().catch(() => ({}))) as {
-        success?: boolean
-        avatarUrl?: string
-        imageUrl?: string
-        error?: string
-      }
+      const finalUrl = response?.avatarUrl || response?.imageUrl
 
-      const finalUrl = data.avatarUrl || data.imageUrl
-
-      if (!response.ok || !finalUrl) {
+      if (!finalUrl) {
         throw new Error(
-          data.error || "Gagal mengunggah gambar profil ke server."
+          response?.error || "Failed to upload profile picture to server."
         )
       }
 
@@ -42,11 +28,11 @@ export function useUploadAvatar() {
         image: finalUrl,
       })
 
-      toast.success("Foto profil berhasil diperbarui!")
+      toast.success("Profile picture updated successfully!")
       return finalUrl
     } catch (err: any) {
       const message =
-        err?.message || "Terjadi kesalahan saat mengunggah foto profil."
+        err?.message || "An error occurred while uploading profile picture."
       setUploadError(message)
       toast.error(message)
       throw err

@@ -1,4 +1,12 @@
 import type { APIRoute } from "astro"
-import { proxyApiResponse } from "@/lib/api-client"
+import { sitemapsApi } from "@/lib/sdk-client"
 
-export const GET: APIRoute = () => proxyApiResponse("/sitemap-chapters.xml")
+export const GET: APIRoute = async () => {
+  const xml = await sitemapsApi.getChaptersXmlSitemap()
+  return new Response(xml, {
+    headers: {
+      "Content-Type": "application/xml; charset=utf-8",
+      "Cache-Control": "public, max-age=3600",
+    },
+  })
+}

@@ -4,8 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { CommentInput } from "./comment-input"
 import { CommentTreeItem, type CommentData } from "./comment-tree-item"
 import { CommentReportModal } from "./comment-report-modal"
-import { API_ROUTES } from "@/constants"
-import { apiFetch, getBaseApiUrl } from "@/lib/api-client"
+import { commentsApi, authenticationApi, getRealtimeWebSocketUrl } from "@/lib/sdk-client"
 
 interface CommentSectionProps {
   comicId?: string
@@ -29,8 +28,9 @@ export function CommentSection({
 
   useEffect(() => {
     // Check if user is logged in via session endpoint
-    apiFetch(API_ROUTES.AUTH.SESSION)
-      .then((res) => {
+    authenticationApi
+      .getAuthSession()
+      .then((res: any) => {
         if (res && (res.user || res.id)) {
           setIsLoggedIn(true)
           const u = res.user || res
@@ -76,8 +76,9 @@ export function CommentSection({
     if (!comicId && !chapterId) return
     if (showSkeleton) setIsLoading(true)
 
-    apiFetch(API_ROUTES.COMMENTS.LIST({ comicId, chapterId }))
-      .then((data) => {
+    commentsApi
+      .listComments({ comicId, chapterId })
+      .then((data: any) => {
         const rawList: CommentData[] = data.comments || []
         setComments(buildCommentTree(rawList))
       })
@@ -91,29 +92,30 @@ export function CommentSection({
     const targetId = chapterId || comicId
     if (!targetId || typeof window === "undefined") return
 
-    const baseUrl = getBaseApiUrl()
-    const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:"
-    const wsHost = baseUrl.replace(/^https?:\/\//, "")
-    const wsUrl = `${wsProtocol}//${wsHost}/v1/realtime/ws?channel=comment_stream:${targetId}`
-
     let ws: WebSocket | null = null
-    try {
-      ws = new WebSocket(wsUrl)
-      ws.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data)
-          if (data.event === "new_comment") {
-            fetchComments()
+    let isMounted = true
+
+    getRealtimeWebSocketUrl(`comment_stream:${targetId}`)
+      .then((wsUrl) => {
+        if (!isMounted) return
+        ws = new WebSocket(wsUrl)
+        ws.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data)
+            if (data.event === "new_comment") {
+              fetchComments()
+            }
+          } catch {
+            // Ignore
           }
-        } catch {
-          // Ignore
         }
-      }
-    } catch {
-      // Ignore WS fail
-    }
+      })
+      .catch(() => {
+        // Ignore WS fail
+      })
 
     return () => {
+      isMounted = false
       if (ws) ws.close()
     }
   }, [comicId, chapterId])
@@ -123,25 +125,22 @@ export function CommentSection({
     parentId?: string | null,
     guestInfo?: { guestName?: string; guestEmail?: string; isSpoiler?: boolean }
   ) => {
-    await apiFetch(API_ROUTES.COMMENTS.ADD, {
-      method: "POST",
-      body: JSON.stringify({
-        comicId: comicId || null,
-        chapterId: chapterId || null,
-        parentId: parentId || null,
+    await commentsApi.createComment({
+      createCommentRequest: {
+        comicId: comicId || undefined,
+        chapterId: chapterId || undefined,
+        parentId: parentId || undefined,
         content,
         guestName: guestInfo?.guestName,
         guestEmail: guestInfo?.guestEmail,
         isSpoiler: guestInfo?.isSpoiler ?? false,
-      }),
+      },
     })
     fetchComments(false)
   }
 
   const handleDeleteComment = async (commentId: string) => {
-    await apiFetch(API_ROUTES.COMMENTS.DELETE(commentId), {
-      method: "DELETE",
-    })
+    await commentsApi.deleteComment({ commentId })
     fetchComments(false)
   }
 
@@ -152,17 +151,17 @@ export function CommentSection({
   ) => {
     if (!reportingCommentId) return
 
-    await apiFetch(API_ROUTES.COMMENTS.REPORT(reportingCommentId), {
-      method: "POST",
-      body: JSON.stringify({
+    await commentsApi.reportComment({
+      commentId: reportingCommentId,
+      reportCommentRequest: {
         reason,
         details,
         guestName: guestInfo?.guestName,
         guestEmail: guestInfo?.guestEmail,
-      }),
+      },
     })
 
-    alert("Laporan Anda telah terkirim. Terima kasih!")
+    alert("Your report has been submitted. Thank you!")
   }
 
   const cardClasses =
@@ -180,7 +179,7 @@ export function CommentSection({
       <CardHeader className={headerClasses}>
         <CardTitle className="flex items-center gap-2 text-lg font-bold">
           <ChatCircleText className="h-5 w-5 text-primary" />
-          <span>Komentar</span>
+          <span>Comments</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6 p-4">
@@ -204,7 +203,7 @@ export function CommentSection({
           </div>
         ) : comments.length === 0 ? (
           <p className="py-6 text-center text-xs text-neutral-500">
-            Belum ada komentar. Jadilah yang pertama memberikan komentar!
+            No comments yet. Be the first to leave a comment!
           </p>
         ) : (
           <div className="space-y-6 pt-2">

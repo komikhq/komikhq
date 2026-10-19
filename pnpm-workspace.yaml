@@ -7,3 +7,6 @@ allowBuilds:
   sharp: true
   msw: false
   workerd: true
+
+minimumReleaseAgeExclude:
+  - '@komikhq/komikhq-typescript@1.1.0'
