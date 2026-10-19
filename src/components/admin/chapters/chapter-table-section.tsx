@@ -1,10 +1,10 @@
 import React, { useState } from "react"
 import {
-  ListNumbers,
-  Plus,
-  PencilSimple,
-  Trash,
-  Image as ImageIcon,
+  ListNumbersIcon as ListNumbers,
+  PlusIcon as Plus,
+  PencilSimpleIcon as PencilSimple,
+  TrashIcon as Trash,
+  ImageIcon,
 } from "@phosphor-icons/react"
 import {
   Card,

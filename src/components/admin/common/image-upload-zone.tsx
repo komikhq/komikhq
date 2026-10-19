@@ -1,10 +1,10 @@
 import React, { useState } from "react"
 import {
-  UploadSimple,
-  X,
-  Link as LinkIcon,
-  Image as ImageIcon,
-  WarningCircle,
+  UploadSimpleIcon as UploadSimple,
+  XIcon as X,
+  LinkIcon,
+  ImageIcon,
+  WarningCircleIcon as WarningCircle,
 } from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

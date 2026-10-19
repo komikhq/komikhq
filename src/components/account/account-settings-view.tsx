@@ -1,4 +1,3 @@
-import React from "react"
 import { AuthGuard } from "@/components/auth/auth-guard"
 import { AccountThemeCard } from "./account-theme-card"
 import { AccountPreferencesCard } from "./account-preferences-card"

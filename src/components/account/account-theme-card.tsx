@@ -1,6 +1,10 @@
 import React from "react"
 import { toast } from "sonner"
-import { Sun, Moon, Desktop } from "@phosphor-icons/react"
+import {
+  SunIcon as Sun,
+  MoonIcon as Moon,
+  DesktopIcon as Desktop,
+} from "@phosphor-icons/react"
 import {
   Card,
   CardContent,

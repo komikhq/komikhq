@@ -1,5 +1,9 @@
-import React, { useState } from "react"
-import { ThumbsUp, ChatCircleText, User } from "@phosphor-icons/react"
+import { useState } from "react"
+import {
+  ThumbsUpIcon as ThumbsUp,
+  ChatCircleTextIcon as ChatCircleText,
+  UserIcon as User,
+} from "@phosphor-icons/react"
 import { CommentInput } from "./comment-input"
 import { SpoilerText } from "./spoiler-text"
 import { API_ROUTES } from "@/constants"

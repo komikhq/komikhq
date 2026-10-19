@@ -1,4 +1,3 @@
-import React from "react"
 import { AdminGuard } from "../common/admin-guard"
 import { AdminComicDetailHeader } from "./admin-comic-detail-header"
 import { ChapterTableSection } from "./chapter-table-section"

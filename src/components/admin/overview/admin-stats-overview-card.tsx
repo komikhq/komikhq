@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import {
-  Users,
-  BookOpen,
-  Eye,
-  ShieldWarning,
-  ArrowsClockwise,
+  UsersIcon as Users,
+  BookOpenIcon as BookOpen,
+  EyeIcon as Eye,
+  ShieldWarningIcon as ShieldWarning,
+  ArrowsClockwiseIcon as ArrowsClockwise,
 } from "@phosphor-icons/react"
 import {
   Card,

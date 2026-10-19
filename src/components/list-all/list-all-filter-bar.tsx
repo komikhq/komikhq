@@ -1,5 +1,5 @@
-import React, { useState } from "react"
-import { ListBullets } from "@phosphor-icons/react"
+import { useState } from "react"
+import { ListBulletsIcon as ListBullets } from "@phosphor-icons/react"
 import {
   Card,
   CardContent,

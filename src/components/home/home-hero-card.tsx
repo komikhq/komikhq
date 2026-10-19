@@ -1,5 +1,4 @@
-import React from "react"
-import { Info, Users } from "@phosphor-icons/react"
+import { InfoIcon as Info, UsersIcon as Users } from "@phosphor-icons/react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { SITE_NAME, SITE_DESCRIPTION } from "@/constants"

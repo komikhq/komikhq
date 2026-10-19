@@ -1,18 +1,17 @@
 "use client"
 
-import * as React from "react"
 import { Logo } from "@/components/common/logo"
 import { SITE_NAME, SITE_TAGLINE, SITE_CONTACT_EMAIL } from "@/constants/site"
 import {
-  Cookie,
-  EnvelopeSimple,
-  ShieldCheck,
-  FileText,
-  Copyright,
-  Compass,
-  ListBullets,
-  BookmarkSimple,
-  ClockCounterClockwise,
+  CookieIcon as Cookie,
+  EnvelopeSimpleIcon as EnvelopeSimple,
+  ShieldCheckIcon as ShieldCheck,
+  FileTextIcon as FileText,
+  CopyrightIcon as Copyright,
+  CompassIcon as Compass,
+  ListBulletsIcon as ListBullets,
+  BookmarkSimpleIcon as BookmarkSimple,
+  ClockCounterClockwiseIcon as ClockCounterClockwise,
 } from "@phosphor-icons/react"
 
 export function SiteFooter() {

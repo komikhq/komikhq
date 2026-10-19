@@ -1,12 +1,12 @@
 import React, { useState, useRef } from "react"
 import {
-  UploadSimple,
-  WarningCircle,
-  PencilSimple,
-  Check,
-  X,
-  ShieldCheck,
-  SignOut,
+  UploadSimpleIcon as UploadSimple,
+  WarningCircleIcon as WarningCircle,
+  PencilSimpleIcon as PencilSimple,
+  CheckIcon as Check,
+  XIcon as X,
+  ShieldCheckIcon as ShieldCheck,
+  SignOutIcon as SignOut,
 } from "@phosphor-icons/react"
 import {
   Card,

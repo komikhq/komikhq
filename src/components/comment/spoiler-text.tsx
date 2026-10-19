@@ -1,5 +1,5 @@
-import React, { useState } from "react"
-import { Warning } from "@phosphor-icons/react"
+import { useState } from "react"
+import { WarningIcon as Warning } from "@phosphor-icons/react"
 
 interface SpoilerTextProps {
   text: string

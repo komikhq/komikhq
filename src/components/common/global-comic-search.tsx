@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react"
 import {
-  BookOpen,
-  CircleNotch,
-  MagnifyingGlass,
-  X,
+  BookOpenIcon as BookOpen,
+  CircleNotchIcon as CircleNotch,
+  MagnifyingGlassIcon as MagnifyingGlass,
+  XIcon as X,
 } from "@phosphor-icons/react"
 import { API_ROUTES } from "@/constants"
 import { apiFetch } from "@/lib/api-client"

@@ -15,7 +15,10 @@ import { ImageUploadZone } from "@/components/admin/common/image-upload-zone"
 import { useImageUpload } from "@/hooks/use-image-upload"
 import { extractZipToFiles, isZipFile } from "@/lib/zip-utils"
 import { toast } from "sonner"
-import { FileZip, CircleNotch } from "@phosphor-icons/react"
+import {
+  FileZipIcon as FileZip,
+  CircleNotchIcon as CircleNotch,
+} from "@phosphor-icons/react"
 
 interface ChapterFormSheetProps {
   open: boolean
@@ -115,7 +118,7 @@ export function ChapterFormSheet({
     [handleFilesSelected]
   )
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault()
     if (!chapterNumber.trim() || pagesUpload.files.length === 0) return
 

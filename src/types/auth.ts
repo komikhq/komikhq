@@ -7,7 +7,7 @@ export interface LoginFormState {
   setShowPassword: (show: boolean) => void
   isLoading: boolean
   errorMsg: string | null
-  handleSignIn: (e: React.FormEvent) => Promise<void>
+  handleSignIn: (e: React.SubmitEvent) => Promise<void>
   handleGoogleAuth: () => Promise<void>
 }
 
@@ -27,7 +27,7 @@ export interface RegisterFormState {
   isLoading: boolean
   isSuccess: boolean
   errorMsg: string | null
-  handleSignUp: (e: React.FormEvent) => Promise<void>
+  handleSignUp: (e: React.SubmitEvent) => Promise<void>
   handleGoogleAuth: () => Promise<void>
 }
 

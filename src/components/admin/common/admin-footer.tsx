@@ -1,5 +1,9 @@
-import React from "react"
-import { Layout, ShieldCheck, HardDrives, Cloud } from "@phosphor-icons/react"
+import {
+  LayoutIcon as Layout,
+  ShieldCheckIcon as ShieldCheck,
+  HardDrivesIcon as HardDrives,
+  CloudIcon as Cloud,
+} from "@phosphor-icons/react"
 import { Badge } from "@/components/ui/badge"
 
 export function AdminFooter() {

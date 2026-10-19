@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react"
-import { TrendUp } from "@phosphor-icons/react"
+import { useState, useEffect } from "react"
+import { TrendUpIcon as TrendUp } from "@phosphor-icons/react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { API_ROUTES } from "@/constants"

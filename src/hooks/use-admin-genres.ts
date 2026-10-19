@@ -50,7 +50,7 @@ export function useAdminGenres() {
     fetchGenres()
   }, [fetchGenres])
 
-  const handleAdd = async (e: React.FormEvent) => {
+  const handleAdd = async (e: React.SubmitEvent) => {
     e.preventDefault()
     if (!newName.trim()) return
     setSubmitting(true)

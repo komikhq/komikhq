@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from "react"
-import { ArrowLeft, ArrowRight } from "@phosphor-icons/react"
+import { useState, useEffect } from "react"
+import {
+  ArrowLeftIcon as ArrowLeft,
+  ArrowRightIcon as ArrowRight,
+} from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { CommentSection } from "@/components/comment/comment-section"
 import { API_PREFIX } from "@/constants/api-routes"

@@ -1,5 +1,9 @@
-import React, { useEffect, useRef, useState } from "react"
-import { BookmarkSimple, BookOpen, User } from "@phosphor-icons/react"
+import { useEffect, useRef, useState } from "react"
+import {
+  BookmarkSimpleIcon as BookmarkSimple,
+  BookOpenIcon as BookOpen,
+  UserIcon as User,
+} from "@phosphor-icons/react"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"

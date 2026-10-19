@@ -1,5 +1,10 @@
-import React from "react"
-import { Key, Lock, Eye, EyeSlash, CircleNotch } from "@phosphor-icons/react"
+import {
+  KeyIcon as Key,
+  LockIcon as Lock,
+  EyeIcon as Eye,
+  EyeSlashIcon as EyeSlash,
+  CircleNotchIcon as CircleNotch,
+} from "@phosphor-icons/react"
 import {
   Card,
   CardContent,

@@ -1,5 +1,4 @@
-import React from "react"
-import { BookmarkSimple } from "@phosphor-icons/react"
+import { BookmarkSimpleIcon as BookmarkSimple } from "@phosphor-icons/react"
 
 export function BookmarkHeader() {
   return (

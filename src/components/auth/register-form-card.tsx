@@ -1,14 +1,13 @@
-import React from "react"
 import {
-  Lock,
-  EnvelopeSimple,
-  User,
-  GoogleLogo,
-  ArrowRight,
-  Eye,
-  EyeSlash,
-  PaperPlaneRight,
-  ArrowClockwise,
+  LockIcon as Lock,
+  EnvelopeSimpleIcon as EnvelopeSimple,
+  UserIcon as User,
+  GoogleLogoIcon as GoogleLogo,
+  ArrowRightIcon as ArrowRight,
+  EyeIcon as Eye,
+  EyeSlashIcon as EyeSlash,
+  PaperPlaneRightIcon as PaperPlaneRight,
+  ArrowClockwiseIcon as ArrowClockwise,
 } from "@phosphor-icons/react"
 import {
   Card,

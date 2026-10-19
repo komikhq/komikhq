@@ -1,5 +1,4 @@
-import React from "react"
-import { Tag } from "@phosphor-icons/react"
+import { TagIcon as Tag } from "@phosphor-icons/react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { COMMON_GENRES, type GenreDefinition } from "@/constants"

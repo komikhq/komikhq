@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import {
-  House,
-  Compass,
-  BookmarkSimple,
-  ClockCounterClockwise,
-  UserCircle,
+  HouseIcon as House,
+  CompassIcon as Compass,
+  BookmarkSimpleIcon as BookmarkSimple,
+  ClockCounterClockwiseIcon as ClockCounterClockwise,
+  UserCircleIcon as UserCircle,
   type Icon,
 } from "@phosphor-icons/react"
 import { BOTTOM_NAV_ITEMS, type NavItem } from "@/constants"

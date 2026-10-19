@@ -39,7 +39,7 @@ export function useAccountPassword() {
   }, [])
 
   const submitPassword = useCallback(
-    async (e: React.FormEvent): Promise<boolean> => {
+    async (e: React.SubmitEvent): Promise<boolean> => {
       e.preventDefault()
       setErrorMsg(null)
 

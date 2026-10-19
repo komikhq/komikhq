@@ -9,7 +9,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { Trash } from "@phosphor-icons/react"
+import { TrashIcon as Trash } from "@phosphor-icons/react"
 
 interface CommentDeleteDialogProps {
   isOpen: boolean

@@ -28,10 +28,10 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import {
-  CaretLeft,
-  CaretRight,
-  CaretDoubleLeft,
-  CaretDoubleRight,
+  CaretLeftIcon as CaretLeft,
+  CaretRightIcon as CaretRight,
+  CaretDoubleLeftIcon as CaretDoubleLeft,
+  CaretDoubleRightIcon as CaretDoubleRight,
 } from "@phosphor-icons/react"
 import { DataTableColumnHeader } from "./data-table-column-header"
 

@@ -1,5 +1,7 @@
-import React from "react"
-import { MagnifyingGlass, Funnel } from "@phosphor-icons/react"
+import {
+  MagnifyingGlassIcon as MagnifyingGlass,
+  FunnelIcon as Funnel,
+} from "@phosphor-icons/react"
 import { Input } from "@/components/ui/input"
 import {
   Card,

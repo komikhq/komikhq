@@ -39,7 +39,7 @@ export function useRegisterForm() {
   const { cooldownSeconds, isCooldownActive, startCooldown } =
     useResendCooldown(email, 60)
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault()
     if (password !== confirmPassword) {
       setAuthError("Konfirmasi kata sandi tidak cocok.")

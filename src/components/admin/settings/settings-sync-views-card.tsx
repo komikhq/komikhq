@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import {
-  ArrowsClockwise,
-  CircleNotch,
-  CheckCircle,
-  ChartLineUp,
+  ArrowsClockwiseIcon as ArrowsClockwise,
+  CircleNotchIcon as CircleNotch,
+  CheckCircleIcon as CheckCircle,
+  ChartLineUpIcon as ChartLineUp,
 } from "@phosphor-icons/react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"

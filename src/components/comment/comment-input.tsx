@@ -1,5 +1,9 @@
 import React, { useState } from "react"
-import { PaperPlaneRight, X, EyeClosed } from "@phosphor-icons/react"
+import {
+  PaperPlaneRightIcon as PaperPlaneRight,
+  XIcon as X,
+  EyeClosedIcon as EyeClosed,
+} from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
@@ -51,7 +55,7 @@ export function CommentInput({
     }
   }, [isLoggedIn])
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault()
     if (!content.trim() || isSubmitting) return
 

@@ -1,6 +1,10 @@
 import * as React from "react"
 import type { Column } from "@tanstack/react-table"
-import { CaretUpDown, CaretUp, CaretDown } from "@phosphor-icons/react"
+import {
+  CaretUpDownIcon as CaretUpDown,
+  CaretUpIcon as CaretUp,
+  CaretDownIcon as CaretDown,
+} from "@phosphor-icons/react"
 import { cn } from "cn"
 
 interface DataTableColumnHeaderProps<

@@ -1,11 +1,11 @@
 import React, { useState } from "react"
 import {
-  BookOpen,
-  Plus,
-  MagnifyingGlass,
-  PencilSimple,
-  Trash,
-  Eye,
+  BookOpenIcon as BookOpen,
+  PlusIcon as Plus,
+  MagnifyingGlassIcon as MagnifyingGlass,
+  PencilSimpleIcon as PencilSimple,
+  TrashIcon as Trash,
+  EyeIcon as Eye,
 } from "@phosphor-icons/react"
 import {
   Card,

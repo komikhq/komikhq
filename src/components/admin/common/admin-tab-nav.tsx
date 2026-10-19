@@ -1,12 +1,12 @@
 import { useEffect, useRef } from "react"
 import {
-  Users,
-  BookOpen,
-  Tag,
-  ChartBar,
-  Gear,
-  ShieldCheck,
-  ChatDots,
+  UsersIcon as Users,
+  BookOpenIcon as BookOpen,
+  TagIcon as Tag,
+  ChartBarIcon as ChartBar,
+  GearIcon as Gear,
+  ShieldCheckIcon as ShieldCheck,
+  ChatDotsIcon as ChatDots,
 } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
 

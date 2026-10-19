@@ -1,5 +1,7 @@
-import React from "react"
-import { BookBookmark, ArrowRight } from "@phosphor-icons/react"
+import {
+  BookBookmarkIcon as BookBookmark,
+  ArrowRightIcon as ArrowRight,
+} from "@phosphor-icons/react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useListAllComics } from "@/hooks/use-list-all-comics"

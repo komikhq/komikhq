@@ -1,7 +1,10 @@
-import React, { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef } from "react"
 import { API_PREFIX, API_ROUTES } from "@/constants/api-routes"
 import { apiFetch } from "@/lib/api-client"
-import { Image, CircleNotch } from "@phosphor-icons/react"
+import {
+  ImageIcon as Image,
+  CircleNotchIcon as CircleNotch,
+} from "@phosphor-icons/react"
 
 interface ReaderImageStackProps {
   comicSlug?: string

@@ -1,5 +1,7 @@
-import React from "react"
-import { TrendUp, Lightning } from "@phosphor-icons/react"
+import {
+  TrendUpIcon as TrendUp,
+  LightningIcon as Lightning,
+} from "@phosphor-icons/react"
 import {
   Card,
   CardContent,

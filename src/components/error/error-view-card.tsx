@@ -1,12 +1,12 @@
 import React, { useId, useState } from "react"
 import {
-  MagnifyingGlass,
-  House,
-  ArrowClockwise,
-  Copy,
-  Check,
-  Bug,
-  ShieldWarning,
+  MagnifyingGlassIcon as MagnifyingGlass,
+  HouseIcon as House,
+  ArrowClockwiseIcon as ArrowClockwise,
+  CopyIcon as Copy,
+  CheckIcon as Check,
+  BugIcon as Bug,
+  ShieldWarningIcon as ShieldWarning,
 } from "@phosphor-icons/react"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -82,7 +82,7 @@ export function ErrorViewCard({
   // Generate fallback unique error ID
   const errorId = providedErrorId || `ERR-${code}-${generatedErrorId}`
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = (e: React.SubmitEvent) => {
     e.preventDefault()
     if (searchQuery.trim()) {
       window.location.href = `/search?q=${encodeURIComponent(searchQuery.trim())}`

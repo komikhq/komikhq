@@ -1,5 +1,8 @@
-import React from "react"
-import { Globe, Bell, Shield } from "@phosphor-icons/react"
+import {
+  GlobeIcon as Globe,
+  BellIcon as Bell,
+  ShieldIcon as Shield,
+} from "@phosphor-icons/react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"

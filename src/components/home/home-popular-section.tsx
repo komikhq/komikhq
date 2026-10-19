@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react"
-import { Crown } from "@phosphor-icons/react"
+import { useState, useEffect } from "react"
+import { CrownIcon as Crown } from "@phosphor-icons/react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { API_ROUTES } from "@/constants"
 import { apiFetch } from "@/lib/api-client"

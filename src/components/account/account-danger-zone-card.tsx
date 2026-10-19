@@ -1,5 +1,9 @@
 import React from "react"
-import { Warning, Trash, CircleNotch } from "@phosphor-icons/react"
+import {
+  WarningIcon as Warning,
+  TrashIcon as Trash,
+  CircleNotchIcon as CircleNotch,
+} from "@phosphor-icons/react"
 import {
   Card,
   CardContent,

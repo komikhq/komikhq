@@ -3,12 +3,12 @@
 import * as React from "react"
 import { useState, useEffect } from "react"
 import {
-  Cookie,
-  ShieldCheck,
-  ChartBar,
-  Eye,
-  SlidersHorizontal,
-  Check,
+  CookieIcon as Cookie,
+  ShieldCheckIcon as ShieldCheck,
+  ChartBarIcon as ChartBar,
+  EyeIcon as Eye,
+  SlidersHorizontalIcon as SlidersHorizontal,
+  CheckIcon as Check,
 } from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

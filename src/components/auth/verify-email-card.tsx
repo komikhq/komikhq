@@ -1,5 +1,4 @@
-import React from "react"
-import { CheckCircle } from "@phosphor-icons/react"
+import { CheckCircleIcon as CheckCircle } from "@phosphor-icons/react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 

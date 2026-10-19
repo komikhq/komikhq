@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import {
-  Broom,
-  CircleNotch,
-  MagnifyingGlass,
-  CheckCircle,
+  BroomIcon as Broom,
+  CircleNotchIcon as CircleNotch,
+  MagnifyingGlassIcon as MagnifyingGlass,
+  CheckCircleIcon as CheckCircle,
 } from "@phosphor-icons/react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"

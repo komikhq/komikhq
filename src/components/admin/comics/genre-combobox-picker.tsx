@@ -1,10 +1,10 @@
-import React, { useState } from "react"
+import { useState } from "react"
 import {
-  X,
-  CaretDown,
-  CaretUp,
-  Check,
-  MagnifyingGlass,
+  XIcon as X,
+  CaretDownIcon as CaretDown,
+  CaretUpIcon as CaretUp,
+  CheckIcon as Check,
+  MagnifyingGlassIcon as MagnifyingGlass,
 } from "@phosphor-icons/react"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"

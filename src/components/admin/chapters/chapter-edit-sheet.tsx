@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Image as ImageIcon, Sparkle } from "@phosphor-icons/react"
+import { ImageIcon, SparkleIcon as Sparkle } from "@phosphor-icons/react"
 import type { ChapterItem } from "@/hooks/use-admin-chapters"
 
 interface ChapterEditSheetProps {
@@ -58,7 +58,7 @@ export function ChapterEditSheet({
     }
   }, [chapter, open])
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault()
     if (!chapter || !chapterNumber.trim()) return
 

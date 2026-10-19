@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from "react"
-import { Tag, ArrowRight } from "@phosphor-icons/react"
+import { useState, useEffect } from "react"
+import {
+  TagIcon as Tag,
+  ArrowRightIcon as ArrowRight,
+} from "@phosphor-icons/react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { COMMON_GENRES, type GenreDefinition, API_ROUTES } from "@/constants"

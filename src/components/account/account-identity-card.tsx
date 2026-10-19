@@ -1,5 +1,7 @@
-import React from "react"
-import { Envelope, ShieldCheck } from "@phosphor-icons/react"
+import {
+  EnvelopeIcon as Envelope,
+  ShieldCheckIcon as ShieldCheck,
+} from "@phosphor-icons/react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useAuthContext } from "@/components/auth/auth-context"

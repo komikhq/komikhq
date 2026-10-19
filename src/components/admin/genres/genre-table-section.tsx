@@ -1,13 +1,13 @@
 import React from "react"
 import {
-  Plus,
-  Tag,
-  PencilSimple,
-  Trash,
-  CaretDown,
-  CaretUp,
-  Info,
-  FloppyDisk,
+  PlusIcon as Plus,
+  TagIcon as Tag,
+  PencilSimpleIcon as PencilSimple,
+  TrashIcon as Trash,
+  CaretDownIcon as CaretDown,
+  CaretUpIcon as CaretUp,
+  InfoIcon as Info,
+  FloppyDiskIcon as FloppyDisk,
 } from "@phosphor-icons/react"
 import {
   Card,

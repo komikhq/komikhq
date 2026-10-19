@@ -1,5 +1,9 @@
-import React, { useState, useEffect } from "react"
-import { Clock, ArrowRight, BookOpen } from "@phosphor-icons/react"
+import { useState, useEffect } from "react"
+import {
+  ClockIcon as Clock,
+  ArrowRightIcon as ArrowRight,
+  BookOpenIcon as BookOpen,
+} from "@phosphor-icons/react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"

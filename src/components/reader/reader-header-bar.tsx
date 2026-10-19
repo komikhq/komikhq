@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react"
-import { ArrowLeft } from "@phosphor-icons/react"
+import { useState, useEffect } from "react"
+import { ArrowLeftIcon as ArrowLeft } from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {

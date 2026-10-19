@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef } from "react"
 import {
-  House,
-  Compass,
-  ListBullets,
-  DotsThree,
-  SignIn,
-  UserCircle,
-  Gear,
-  SignOut,
-  ShieldCheck,
-  BookmarkSimple,
-  ClockCounterClockwise,
+  HouseIcon as House,
+  CompassIcon as Compass,
+  ListBulletsIcon as ListBullets,
+  DotsThreeIcon as DotsThree,
+  SignInIcon as SignIn,
+  UserCircleIcon as UserCircle,
+  GearIcon as Gear,
+  SignOutIcon as SignOut,
+  ShieldCheckIcon as ShieldCheck,
+  BookmarkSimpleIcon as BookmarkSimple,
+  ClockCounterClockwiseIcon as ClockCounterClockwise,
   type Icon,
 } from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"

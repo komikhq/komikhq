@@ -1,5 +1,4 @@
-import React from "react"
-import { Sun, Moon } from "@phosphor-icons/react"
+import { SunIcon as Sun, MoonIcon as Moon } from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import {
   Tooltip,

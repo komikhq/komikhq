@@ -1,5 +1,9 @@
-import React, { useState } from "react"
-import { HardDrives, Broom, CircleNotch } from "@phosphor-icons/react"
+import { useState } from "react"
+import {
+  HardDrivesIcon as HardDrives,
+  BroomIcon as Broom,
+  CircleNotchIcon as CircleNotch,
+} from "@phosphor-icons/react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"

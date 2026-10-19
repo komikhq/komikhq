@@ -1,5 +1,9 @@
 import React, { useState } from "react"
-import { Warning, X, PaperPlaneRight } from "@phosphor-icons/react"
+import {
+  WarningIcon as Warning,
+  XIcon as X,
+  PaperPlaneRightIcon as PaperPlaneRight,
+} from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -37,7 +41,7 @@ export function CommentReportModal({
 
   if (!isOpen) return null
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault()
     if (isSubmitting) return
 

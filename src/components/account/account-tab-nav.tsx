@@ -1,5 +1,7 @@
-import React from "react"
-import { UserCircle, Gear } from "@phosphor-icons/react"
+import {
+  UserCircleIcon as UserCircle,
+  GearIcon as Gear,
+} from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
 
 interface AccountTabNavProps {

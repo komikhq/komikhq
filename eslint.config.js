@@ -1,4 +1,3 @@
-
 import js from "@eslint/js"
 import globals from "globals"
 import reactHooks from "eslint-plugin-react-hooks"
@@ -55,6 +54,8 @@ export default defineConfig([
     files: ["src/components/ui/**/*.{ts,tsx}"],
     rules: {
       "react-refresh/only-export-components": "off",
+      // TanStack table useReactTable API returns functions incompatible with React Compiler memoization
+      "react-hooks/incompatible-library": "off",
     },
   },
 ])

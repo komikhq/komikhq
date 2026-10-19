@@ -53,7 +53,7 @@ export function useComicForm({
     )
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault()
     const formData = new FormData()
     formData.append("title", title)

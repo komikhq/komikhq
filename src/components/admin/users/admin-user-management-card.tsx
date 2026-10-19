@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import {
-  MagnifyingGlass,
-  UserPlus,
-  Shield,
-  User,
-  Trash,
-  PencilSimple,
-  Key,
-  CheckCircle,
-  XCircle,
-  ArrowsClockwise,
+  MagnifyingGlassIcon as MagnifyingGlass,
+  UserPlusIcon as UserPlus,
+  ShieldIcon as Shield,
+  UserIcon as User,
+  TrashIcon as Trash,
+  PencilSimpleIcon as PencilSimple,
+  KeyIcon as Key,
+  CheckCircleIcon as CheckCircle,
+  XCircleIcon as XCircle,
+  ArrowsClockwiseIcon as ArrowsClockwise,
 } from "@phosphor-icons/react"
 import {
   Card,

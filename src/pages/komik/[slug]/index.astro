@@ -11,9 +11,7 @@ const { slug } = Astro.params
 let comic: any = null
 if (slug) {
   try {
-    const res = await apiFetch<any>(
-      API_ROUTES.COMICS.DETAIL(slug)
-    )
+    const res = await apiFetch<any>(API_ROUTES.COMICS.DETAIL(slug))
     comic = res.comic || res.data || res
   } catch {
     comic = null

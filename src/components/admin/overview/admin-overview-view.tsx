@@ -1,4 +1,3 @@
-import React from "react"
 import { AdminGuard } from "../common/admin-guard"
 import { AdminStatsOverviewCard } from "./admin-stats-overview-card"
 

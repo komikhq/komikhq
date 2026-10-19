@@ -1,5 +1,4 @@
-import React from "react"
-import { ClockCounterClockwise } from "@phosphor-icons/react"
+import { ClockCounterClockwiseIcon as ClockCounterClockwise } from "@phosphor-icons/react"
 
 export function HistoryHeader() {
   return (

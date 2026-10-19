@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react"
+import { useState, useCallback } from "react"
 import Cropper, { type Point, type Area } from "react-easy-crop"
 import {
   Dialog,
@@ -8,7 +8,10 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { ArrowClockwise, CircleNotch } from "@phosphor-icons/react"
+import {
+  ArrowClockwiseIcon as ArrowClockwise,
+  CircleNotchIcon as CircleNotch,
+} from "@phosphor-icons/react"
 
 interface AvatarCropDialogProps {
   open: boolean
