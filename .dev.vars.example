@@ -1,0 +1,11 @@
+# API & CDN Endpoints
+PUBLIC_API_URL="https://api.komikhq.com"
+PUBLIC_USERS_CDN_URL="https://cdn-01.komikhq.com"
+PUBLIC_MEDIA_CDN_URL="https://cdn-02.komikhq.com"
+
+# Better Auth Configuration
+BETTER_AUTH_URL="https://api.komikhq.com"
+
+# Web Analytics
+PUBLIC_GA_ID="G-V44GMCRBP2"
+PUBLIC_CLARITY_ID="yui00n93x1"

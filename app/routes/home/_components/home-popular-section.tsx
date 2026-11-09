@@ -3,11 +3,17 @@ import { CrownIcon as Crown } from "@phosphor-icons/react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { comicsApi } from "@/lib/sdk-client"
 
-export function HomePopularSection() {
-  const [popularComics, setPopularComics] = useState<any[]>([])
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+interface HomePopularSectionProps {
+  initialComics?: any[]
+}
+
+export function HomePopularSection({ initialComics }: HomePopularSectionProps) {
+  const [popularComics, setPopularComics] = useState<any[]>(initialComics || [])
+  const [isLoading, setIsLoading] = useState<boolean>(!initialComics?.length)
 
   useEffect(() => {
+    if (initialComics && initialComics.length > 0) return
+
     let isMounted = true
     setIsLoading(true)
 

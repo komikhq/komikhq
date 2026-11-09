@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import {
   ClockIcon as Clock,
   ArrowRightIcon as ArrowRight,
@@ -9,13 +9,25 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { comicsApi } from "@/lib/sdk-client"
 
-export function HomeLatestAddedSection() {
+interface HomeLatestAddedSectionProps {
+  initialComics?: any[]
+}
+
+export function HomeLatestAddedSection({ initialComics }: HomeLatestAddedSectionProps) {
   const [selectedType, setSelectedType] = useState<string>("all")
-  const [latestComics, setLatestComics] = useState<any[]>([])
-  const [isInitialLoading, setIsInitialLoading] = useState<boolean>(true)
+  const [latestComics, setLatestComics] = useState<any[]>(initialComics || [])
+  const [isInitialLoading, setIsInitialLoading] = useState<boolean>(!initialComics?.length)
   const [isFetching, setIsFetching] = useState<boolean>(false)
+  const isFirstMount = useRef(true)
 
   useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false
+      if (initialComics && initialComics.length > 0 && selectedType === "all") {
+        return
+      }
+    }
+
     let isMounted = true
     if (latestComics.length === 0) {
       setIsInitialLoading(true)

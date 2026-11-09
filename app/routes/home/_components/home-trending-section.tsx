@@ -1,16 +1,28 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { TrendUpIcon as TrendUp } from "@phosphor-icons/react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { comicsApi } from "@/lib/sdk-client"
 
-export function HomeTrendingSection() {
+interface HomeTrendingSectionProps {
+  initialComics?: any[]
+}
+
+export function HomeTrendingSection({ initialComics }: HomeTrendingSectionProps) {
   const [period, setPeriod] = useState<"daily" | "weekly">("daily")
-  const [trendingComics, setTrendingComics] = useState<any[]>([])
-  const [isInitialLoading, setIsInitialLoading] = useState<boolean>(true)
+  const [trendingComics, setTrendingComics] = useState<any[]>(initialComics || [])
+  const [isInitialLoading, setIsInitialLoading] = useState<boolean>(!initialComics?.length)
   const [isFetching, setIsFetching] = useState<boolean>(false)
+  const isFirstMount = useRef(true)
 
   useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false
+      if (initialComics && initialComics.length > 0 && period === "daily") {
+        return
+      }
+    }
+
     let isMounted = true
     if (trendingComics.length === 0) {
       setIsInitialLoading(true)
