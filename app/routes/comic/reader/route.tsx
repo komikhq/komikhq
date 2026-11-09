@@ -54,7 +54,7 @@ export async function loader({ params }: Route.LoaderArgs) {
   };
 }
 
-export function meta({ data }: Route.MetaArgs): Route.MetaDescriptors {
+export function meta({ data }: Route.MetaArgs & { data?: any }): Route.MetaDescriptors {
   const comicTitle = data?.comicTitle || "Comic";
   const chapterTitle = data?.chapterTitle || "Chapter";
 

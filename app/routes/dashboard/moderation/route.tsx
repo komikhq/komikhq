@@ -1,4 +1,4 @@
-import { AdminModerationCard } from "@/components/admin/moderation/admin-moderation-card";
+import { AdminModerationCard } from "@/routes/dashboard/moderation/_components/admin-moderation-card";
 
 export default function DashboardModerationRoute() {
   return <AdminModerationCard />;

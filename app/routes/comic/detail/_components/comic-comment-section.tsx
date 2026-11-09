@@ -1,4 +1,4 @@
-import { CommentSection } from "@/components/comment/comment-section"
+import { CommentSection } from "@/routes/comic/_components/comment/comment-section"
 
 interface ComicCommentSectionProps {
   slug?: string

@@ -1,4 +1,4 @@
-import { AdminUsersView } from "@/components/admin/users/admin-users-view";
+import { AdminUsersView } from "@/routes/dashboard/users/_components/admin-users-view";
 
 export default function DashboardUsersRoute() {
   return <AdminUsersView />;

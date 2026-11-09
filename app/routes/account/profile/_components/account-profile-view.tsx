@@ -1,4 +1,4 @@
-import { AuthGuard } from "@/components/auth/auth-guard"
+import { AuthGuard } from "@/components/common/auth/auth-guard"
 import { AccountProfileCard } from "./account-profile-card"
 import { AccountIdentityCard } from "./account-identity-card"
 

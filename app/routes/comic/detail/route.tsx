@@ -23,7 +23,7 @@ export async function loader({ params }: Route.LoaderArgs) {
   };
 }
 
-export function meta({ data }: Route.MetaArgs): Route.MetaDescriptors {
+export function meta({ data }: Route.MetaArgs & { data?: any }): Route.MetaDescriptors {
   const comic = data?.comic;
   const slug = data?.slug;
   const formattedTitle =

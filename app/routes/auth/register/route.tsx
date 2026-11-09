@@ -1,5 +1,5 @@
 import type { Route } from "./+types/route";
-import { RegisterFormCard } from "@/components/auth/register-form-card";
+import { RegisterFormCard } from "./_components/register-form-card";
 import { SITE_NAME } from "@/constants";
 
 export function meta(): Route.MetaDescriptors {

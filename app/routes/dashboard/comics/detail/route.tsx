@@ -1,5 +1,5 @@
 import { useParams } from "react-router";
-import { AdminComicDetailView } from "@/components/admin/chapters/admin-comic-detail-view";
+import { AdminComicDetailView } from "@/routes/dashboard/comics/detail/_components/admin-comic-detail-view";
 
 export default function DashboardComicDetailRoute() {
   const { id } = useParams();

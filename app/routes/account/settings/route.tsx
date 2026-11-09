@@ -1,8 +1,14 @@
 import type { Route } from "./+types/route";
-import { AccountTabNav } from "@/components/account/account-tab-nav";
-import { AccountSettingsView } from "@/components/account/account-settings-view";
+import { AccountTabNav } from "@/routes/account/_components/account-tab-nav";
+import { AccountSettingsView } from "@/routes/account/settings/_components/account-settings-view";
 import { UserCircleIcon as UserCircle } from "@phosphor-icons/react";
 import { SITE_NAME } from "@/constants";
+import { requireUser } from "@/lib/auth-server";
+
+export async function loader({ request }: Route.LoaderArgs) {
+  const sessionData = await requireUser(request);
+  return { user: sessionData.user };
+}
 
 export function meta(): Route.MetaDescriptors {
   return [

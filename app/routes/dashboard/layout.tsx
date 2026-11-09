@@ -1,8 +1,14 @@
 import { Outlet, useLocation } from "react-router";
 import type { Route } from "./+types/layout";
-import { AdminTabNav, type AdminTabNavProps } from "@/components/admin/common/admin-tab-nav";
-import { AdminFooter } from "@/components/admin/common/admin-footer";
+import { AdminTabNav, type AdminTabNavProps } from "@/routes/dashboard/_components/admin-tab-nav";
+import { AdminFooter } from "@/routes/dashboard/_components/admin-footer";
 import { SITE_NAME } from "@/constants";
+import { requireAdmin } from "@/lib/auth-server";
+
+export async function loader({ request }: Route.LoaderArgs) {
+  const sessionData = await requireAdmin(request);
+  return { user: sessionData.user };
+}
 
 export function meta(): Route.MetaDescriptors {
   return [

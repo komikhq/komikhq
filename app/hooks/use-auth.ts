@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useRouteLoaderData } from "react-router"
 import { toast } from "sonner"
 import {
   authClient,
@@ -27,23 +28,15 @@ export interface UseAuthReturn {
 }
 
 export function useAuth(): UseAuthReturn {
-  const { data: sessionData, isPending, refetch } = useSession()
+  const rootData = useRouteLoaderData<{ user?: any; session?: any }>("root")
+  const { data: sessionData, isPending: clientPending, refetch } = useSession()
   const [authError, setAuthError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      console.log("[Auth Session Debug]", {
-        isPending,
-        sessionData,
-        user: sessionData?.user || null,
-      })
-    }
-  }, [isPending, sessionData])
-
-  const user = sessionData?.user || null
-  const session = sessionData?.session || null
+  const user = sessionData?.user ?? rootData?.user ?? null
+  const session = sessionData?.session ?? rootData?.session ?? null
   const isAuthenticated = Boolean(user)
+  const isPending = clientPending && !rootData?.user
 
   const handleSignInEmail = async (
     email: string,

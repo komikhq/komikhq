@@ -5,7 +5,7 @@ import {
   ArrowRightIcon as ArrowRight,
 } from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
-import { CommentSection } from "@/components/comment/comment-section"
+import { CommentSection } from "@/routes/comic/_components/comment/comment-section"
 import { chaptersApi } from "@/lib/sdk-client"
 
 interface ReaderFooterNavProps {

@@ -70,8 +70,14 @@ export function useTheme() {
     setThemeState(newTheme)
     if (newTheme === "system") {
       localStorage.removeItem("theme")
+      if (typeof document !== "undefined") {
+        document.cookie = "theme=; path=/; max-age=0; SameSite=Lax"
+      }
     } else {
       localStorage.setItem("theme", newTheme)
+      if (typeof document !== "undefined") {
+        document.cookie = `theme=${newTheme}; path=/; max-age=31536000; SameSite=Lax`
+      }
     }
     applyTheme(newTheme)
     window.dispatchEvent(new CustomEvent("theme-change", { detail: newTheme }))

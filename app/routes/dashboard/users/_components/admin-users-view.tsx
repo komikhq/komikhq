@@ -1,4 +1,4 @@
-import { AdminGuard } from "../common/admin-guard"
+import { AdminGuard } from "@/routes/dashboard/_components/admin-guard"
 import { AdminUserManagementCard } from "./admin-user-management-card"
 
 export function AdminUsersView() {

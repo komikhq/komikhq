@@ -6,6 +6,7 @@ import {
   Scripts,
   ScrollRestoration,
   useLocation,
+  useRouteLoaderData,
 } from "react-router";
 
 import type { Route } from "./+types/root";
@@ -17,6 +18,9 @@ import { GlobalLoadingBar } from "@/components/common/global-loading-bar";
 import { Toaster } from "@/components/ui/sonner";
 import { GlobalPresenceListener } from "@/components/common/global-presence-listener";
 import { CookieConsent } from "@/components/common/cookie-consent";
+import { GoogleAnalytics, MicrosoftClarity } from "@/components/common/analytics";
+import { ErrorViewCard } from "@/components/common/error-view-card";
+import { getSession } from "@/lib/auth-server";
 import { SITE_NAME, SITE_DESCRIPTION } from "@/constants";
 
 export const links: Route.LinksFunction = () => [
@@ -33,6 +37,35 @@ export function meta(): Route.MetaDescriptors {
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:image", content: "/images/og.png" },
   ];
+}
+
+export async function loader({ request, context }: Route.LoaderArgs) {
+  const cookieHeader = request.headers.get("Cookie") || "";
+
+  // 1. SSR Theme extraction from Cookie
+  const themeMatch = cookieHeader.match(/(?:^|;\s*)theme=(dark|light|system)(?:;|$)/);
+  const theme = themeMatch ? (themeMatch[1] as "dark" | "light" | "system") : null;
+
+  // 2. SSR Auth session extraction
+  const sessionData = await getSession(request);
+
+  // 3. Analytics IDs from Worker env or fallback
+  const gaId =
+    (context as any)?.cloudflare?.env?.PUBLIC_GA_ID ||
+    process.env.PUBLIC_GA_ID ||
+    "G-V44GMCRBP2";
+  const clarityId =
+    (context as any)?.cloudflare?.env?.PUBLIC_CLARITY_ID ||
+    process.env.PUBLIC_CLARITY_ID ||
+    "yui00n93x1";
+
+  return {
+    theme,
+    user: sessionData?.user ?? null,
+    session: sessionData?.session ?? null,
+    gaId,
+    clarityId,
+  };
 }
 
 const themeScript = `
@@ -52,8 +85,11 @@ const themeScript = `
 `;
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const rootData = useRouteLoaderData<typeof loader>("root");
+  const isDark = rootData?.theme === "dark";
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={isDark ? "dark" : ""} suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -70,7 +106,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function App() {
+export default function App({ loaderData }: Route.ComponentProps) {
   const location = useLocation();
   // Check if current page is comic reader mode (e.g. /komik/:slug/:chapter)
   const isReaderMode =
@@ -87,6 +123,8 @@ export default function App() {
     >
       <GlobalPresenceListener />
       <GlobalLoadingBar />
+      <GoogleAnalytics measurementId={loaderData?.gaId} />
+      <MicrosoftClarity projectId={loaderData?.clarityId} />
       <div className="relative flex min-h-screen flex-col">
         {!isReaderMode && <SiteHeader />}
         <main className={isReaderMode ? "flex-1" : "flex-1 pb-16 md:pb-0"}>
@@ -102,34 +140,31 @@ export default function App() {
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  let message = "Oops!";
-  let details = "An unexpected error occurred.";
-  let stack: string | undefined;
+  let title = "An Error Occurred";
+  let message = "An unexpected error occurred.";
+  let code: 403 | 404 | 418 | 500 | 503 = 500;
 
   if (isRouteErrorResponse(error)) {
-    message = error.status === 404 ? "404" : "Error";
-    details =
+    code = error.status === 404 ? 404 : error.status === 403 ? 403 : 500;
+    title = error.status === 404 ? "Comic Panel Not Found!" : "Error Encountered";
+    message =
       error.status === 404
-        ? "The requested page could not be found."
-        : error.statusText || details;
+        ? "The requested page or comic could not be found."
+        : error.statusText || message;
   } else if (import.meta.env.DEV && error && error instanceof Error) {
-    details = error.message;
-    stack = error.stack;
+    message = error.message;
   }
 
   return (
     <div className="relative flex min-h-screen flex-col bg-background text-foreground">
       <SiteHeader />
-      <main className="container mx-auto flex-1 px-4 py-16 text-center">
-        <h1 className="text-4xl font-bold tracking-tight text-primary sm:text-6xl">
-          {message}
-        </h1>
-        <p className="mt-4 text-base text-muted-foreground">{details}</p>
-        {stack && (
-          <pre className="mt-6 overflow-x-auto rounded-lg bg-muted p-4 text-left text-xs">
-            <code>{stack}</code>
-          </pre>
-        )}
+      <main className="container mx-auto flex-1 px-4 py-16 flex items-center justify-center">
+        <ErrorViewCard
+          code={code}
+          title={title}
+          description={message}
+          error={error}
+        />
       </main>
       <SiteFooter />
     </div>

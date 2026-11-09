@@ -1,7 +1,13 @@
 import type { Route } from "./+types/route";
-import { HistoryHeader } from "@/components/history/history-header";
-import { HistoryList } from "@/components/history/history-list";
+import { HistoryHeader } from "./_components/history-header";
+import { HistoryList } from "./_components/history-list";
 import { SITE_NAME } from "@/constants";
+import { requireUser } from "@/lib/auth-server";
+
+export async function loader({ request }: Route.LoaderArgs) {
+  const sessionData = await requireUser(request);
+  return { user: sessionData.user };
+}
 
 export function meta(): Route.MetaDescriptors {
   return [

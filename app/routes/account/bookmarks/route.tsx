@@ -1,7 +1,13 @@
 import type { Route } from "./+types/route";
-import { BookmarkHeader } from "@/components/bookmark/bookmark-header";
-import { BookmarkComicGrid } from "@/components/bookmark/bookmark-comic-grid";
+import { BookmarkHeader } from "./_components/bookmark-header";
+import { BookmarkComicGrid } from "./_components/bookmark-comic-grid";
 import { SITE_NAME } from "@/constants";
+import { requireUser } from "@/lib/auth-server";
+
+export async function loader({ request }: Route.LoaderArgs) {
+  const sessionData = await requireUser(request);
+  return { user: sessionData.user };
+}
 
 export function meta(): Route.MetaDescriptors {
   return [

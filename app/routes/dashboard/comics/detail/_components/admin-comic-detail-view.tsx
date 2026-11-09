@@ -1,4 +1,4 @@
-import { AdminGuard } from "../common/admin-guard"
+import { AdminGuard } from "@/routes/dashboard/_components/admin-guard"
 import { AdminComicDetailHeader } from "./admin-comic-detail-header"
 import { ChapterTableSection } from "./chapter-table-section"
 
