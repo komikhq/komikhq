@@ -1,0 +1,269 @@
+import { useState } from "react"
+import {
+  ThumbsUpIcon as ThumbsUp,
+  ChatCircleTextIcon as ChatCircleText,
+  UserIcon as User,
+} from "@phosphor-icons/react"
+import { CommentInput } from "./comment-input"
+import { SpoilerText } from "./spoiler-text"
+import { CommentDeleteDialog } from "./comment-delete-dialog"
+import { commentsApi } from "@/lib/sdk-client"
+
+export interface CommentData {
+  id: string
+  comicId?: string
+  chapterId?: string
+  rootId?: string | null
+  parentId?: string | null
+  depth: number
+  content: string
+  isSpoiler?: boolean
+  likeCount: number
+  replyCount: number
+  isEdited: boolean
+  isDeleted: boolean
+  createdAt: string
+  author: {
+    id?: string | null
+    name: string
+    image?: string | null
+    isGuest?: boolean
+  }
+  replyToUser?: {
+    id: string
+    name: string
+  } | null
+  replies?: CommentData[]
+}
+
+interface CommentTreeItemProps {
+  comment: CommentData
+  onSubmitReply: (
+    content: string,
+    parentId?: string | null,
+    guestInfo?: { guestName?: string; guestEmail?: string; isSpoiler?: boolean }
+  ) => Promise<void>
+  onDeleteComment?: (commentId: string) => Promise<void>
+  onOpenReportModal?: (commentId: string) => void
+  isLoggedIn?: boolean
+  currentUserId?: string | null
+  isAdmin?: boolean
+  variant?: "reader" | "default"
+}
+
+export function CommentTreeItem({
+  comment,
+  onSubmitReply,
+  onDeleteComment,
+  onOpenReportModal,
+  isLoggedIn = false,
+  currentUserId = null,
+  isAdmin = false,
+  variant = "reader",
+}: CommentTreeItemProps) {
+  const [isReplying, setIsReplying] = useState(false)
+  const [likeCount, setLikeCount] = useState(comment.likeCount || 0)
+  const [isLiked, setIsLiked] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+
+  const isOwnerOrAdmin =
+    isAdmin || (currentUserId && comment.author?.id === currentUserId)
+
+  const handleToggleLike = async () => {
+    const nextState = !isLiked
+    setIsLiked(nextState)
+    setLikeCount((prev) => (nextState ? prev + 1 : prev - 1))
+
+    try {
+      await commentsApi.toggleCommentLike({ commentId: comment.id })
+    } catch {
+      // Rollback on failure
+      setIsLiked(!nextState)
+      setLikeCount((prev) => (nextState ? prev - 1 : prev + 1))
+    }
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!onDeleteComment || isDeleting) return
+
+    try {
+      setIsDeleting(true)
+      await onDeleteComment(comment.id)
+    } finally {
+      setIsDeleting(false)
+    }
+  }
+
+  const formattedDate = new Date(comment.createdAt).toLocaleDateString(
+    "en-US",
+    {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }
+  )
+
+  const authorName = comment.author?.name || "Guest"
+  const authorImage = comment.author?.image || null
+  const isGuestAuthor = comment.author?.isGuest ?? !comment.author?.id
+
+  const nameColor =
+    variant === "reader" ? "text-neutral-200" : "text-foreground font-semibold"
+  const textColor =
+    variant === "reader" ? "text-neutral-300" : "text-foreground/90"
+  const dateColor =
+    variant === "reader" ? "text-neutral-500" : "text-muted-foreground"
+  const guestBadgeClass =
+    variant === "reader"
+      ? "bg-neutral-800 text-neutral-400 border-neutral-700"
+      : "bg-muted text-muted-foreground border-border"
+  const actionBtnClass =
+    variant === "reader"
+      ? "text-neutral-400 hover:text-neutral-200"
+      : "text-muted-foreground hover:text-foreground"
+  const avatarBorderClass =
+    variant === "reader"
+      ? "bg-neutral-800 border-neutral-700"
+      : "bg-muted border-border"
+  const treeLineClass =
+    variant === "reader" ? "border-neutral-800" : "border-border"
+
+  return (
+    <div className="group/item relative space-y-3">
+      <div className="flex items-start gap-3">
+        <div
+          className={`flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border ${avatarBorderClass}`}
+        >
+          {authorImage ? (
+            <img
+              src={authorImage}
+              alt={authorName}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <User className="h-4 w-4 text-muted-foreground" />
+          )}
+        </div>
+
+        <div className="min-w-0 flex-1 space-y-1">
+          <div className="flex flex-wrap items-center gap-2 text-xs">
+            <span className={nameColor}>{authorName}</span>
+            {isGuestAuthor && (
+              <span
+                className={`rounded border px-1.5 py-0.5 text-[10px] ${guestBadgeClass}`}
+              >
+                Guest
+              </span>
+            )}
+            {comment.replyToUser?.name && (
+              <span className="flex items-center gap-1 font-medium text-primary">
+                <span>Replying to</span>
+                <span className="underline">@{comment.replyToUser.name}</span>
+              </span>
+            )}
+            <span className={`text-[11px] ${dateColor}`}>{formattedDate}</span>
+          </div>
+
+          <div className={`text-sm leading-relaxed break-words ${textColor}`}>
+            {comment.isDeleted ? (
+              <span className={`italic ${dateColor}`}>
+                [This comment has been deleted]
+              </span>
+            ) : (
+              <SpoilerText
+                text={comment.content}
+                isSpoilerComment={comment.isSpoiler}
+              />
+            )}
+          </div>
+
+          <div className="flex items-center gap-4 pt-1 text-xs">
+            <button
+              onClick={handleToggleLike}
+              className={`flex items-center gap-1 transition-colors ${
+                isLiked ? "font-semibold text-primary" : actionBtnClass
+              }`}
+            >
+              <ThumbsUp
+                className="h-3.5 w-3.5"
+                weight={isLiked ? "fill" : "regular"}
+              />
+              <span>{likeCount}</span>
+            </button>
+
+            <button
+              onClick={() => setIsReplying((prev) => !prev)}
+              className={`flex items-center gap-1 transition-colors ${actionBtnClass}`}
+            >
+              <ChatCircleText className="h-3.5 w-3.5" />
+              <span>Reply</span>
+            </button>
+
+            {onOpenReportModal && !comment.isDeleted && (
+              <button
+                onClick={() => onOpenReportModal(comment.id)}
+                className="text-[11px] text-muted-foreground transition-colors hover:text-amber-500"
+              >
+                Report
+              </button>
+            )}
+
+            {isOwnerOrAdmin && !comment.isDeleted && onDeleteComment && (
+              <button
+                onClick={() => setShowDeleteDialog(true)}
+                disabled={isDeleting}
+                className="text-[11px] text-muted-foreground transition-colors hover:text-rose-500"
+              >
+                {isDeleting ? "Deleting..." : "Delete"}
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <CommentDeleteDialog
+        isOpen={showDeleteDialog}
+        onClose={() => setShowDeleteDialog(false)}
+        onConfirm={handleConfirmDelete}
+        isDeleting={isDeleting}
+      />
+
+      {isReplying && (
+        <div className="mt-2 ml-11">
+          <CommentInput
+            placeholder={`Reply to @${authorName}...`}
+            parentId={comment.id}
+            replyToName={authorName}
+            onSubmit={onSubmitReply}
+            onCancelReply={() => setIsReplying(false)}
+            autoFocus
+            isLoggedIn={isLoggedIn}
+            variant={variant}
+          />
+        </div>
+      )}
+
+      {/* Visual Tree Line for Replies */}
+      {comment.replies && comment.replies.length > 0 && (
+        <div className={`ml-4 space-y-4 border-l-2 pt-2 pl-4 ${treeLineClass}`}>
+          {comment.replies.map((reply) => (
+            <CommentTreeItem
+              key={reply.id}
+              comment={reply}
+              onSubmitReply={onSubmitReply}
+              onDeleteComment={onDeleteComment}
+              onOpenReportModal={onOpenReportModal}
+              isLoggedIn={isLoggedIn}
+              currentUserId={currentUserId}
+              isAdmin={isAdmin}
+              variant={variant}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}

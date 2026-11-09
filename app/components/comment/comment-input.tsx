@@ -1,0 +1,198 @@
+import React, { useState } from "react"
+import {
+  PaperPlaneRightIcon as PaperPlaneRight,
+  XIcon as X,
+  EyeClosedIcon as EyeClosed,
+} from "@phosphor-icons/react"
+import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea"
+import { Input } from "@/components/ui/input"
+
+interface CommentInputProps {
+  placeholder?: string
+  parentId?: string | null
+  replyToName?: string | null
+  onSubmit: (
+    content: string,
+    parentId?: string | null,
+    guestInfo?: { guestName?: string; guestEmail?: string; isSpoiler?: boolean }
+  ) => Promise<void>
+  onCancelReply?: () => void
+  autoFocus?: boolean
+  isLoggedIn?: boolean
+  variant?: "reader" | "default"
+}
+
+export function CommentInput({
+  placeholder = "Write your comment...",
+  parentId,
+  replyToName,
+  onSubmit,
+  onCancelReply,
+  autoFocus = false,
+  isLoggedIn = false,
+  variant = "reader",
+}: CommentInputProps) {
+  const [content, setContent] = useState("")
+  const [guestName, setGuestName] = useState("")
+  const [guestEmail, setGuestEmail] = useState("")
+  const [isSpoiler, setIsSpoiler] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Load guest info from localStorage if not logged in
+  React.useEffect(() => {
+    if (!isLoggedIn && typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("komikhq_guest_info")
+        if (saved) {
+          const parsed = JSON.parse(saved)
+          if (parsed.guestName) setGuestName(parsed.guestName)
+          if (parsed.guestEmail) setGuestEmail(parsed.guestEmail)
+        }
+      } catch {
+        // Ignore parsing errors
+      }
+    }
+  }, [isLoggedIn])
+
+  const handleSubmit = async (e: React.SubmitEvent) => {
+    e.preventDefault()
+    if (!content.trim() || isSubmitting) return
+
+    if (!isLoggedIn && (!guestName.trim() || !guestEmail.trim())) {
+      alert("Name and Email are required to post a comment as Guest!")
+      return
+    }
+
+    try {
+      setIsSubmitting(true)
+
+      // Save guest info to localStorage for future comments
+      if (!isLoggedIn && typeof window !== "undefined") {
+        try {
+          localStorage.setItem(
+            "komikhq_guest_info",
+            JSON.stringify({
+              guestName: guestName.trim(),
+              guestEmail: guestEmail.trim(),
+            })
+          )
+        } catch {
+          // Ignore localStorage errors
+        }
+      }
+
+      await onSubmit(content.trim(), parentId, {
+        guestName: !isLoggedIn ? guestName.trim() : undefined,
+        guestEmail: !isLoggedIn ? guestEmail.trim() : undefined,
+        isSpoiler,
+      })
+      setContent("")
+      setIsSpoiler(false)
+      if (onCancelReply) onCancelReply()
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const inputBgClass =
+    variant === "reader"
+      ? "bg-neutral-950 border-neutral-800 text-neutral-100 placeholder:text-neutral-500"
+      : "bg-background border-input text-foreground placeholder:text-muted-foreground"
+
+  const labelClass =
+    variant === "reader"
+      ? "text-neutral-400 hover:text-neutral-300"
+      : "text-muted-foreground hover:text-foreground"
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-3">
+      {replyToName && (
+        <div className="flex items-center justify-between rounded-md border border-primary/20 bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary">
+          <span>Replying to @{replyToName}</span>
+          {onCancelReply && (
+            <button
+              type="button"
+              onClick={onCancelReply}
+              className="transition-opacity hover:opacity-75"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          )}
+        </div>
+      )}
+
+      {!isLoggedIn && (
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <Input
+            type="text"
+            placeholder="Your Name (Guest)*"
+            value={guestName}
+            onChange={(e) => setGuestName(e.target.value)}
+            required
+            className={`${inputBgClass} h-9 text-xs focus:border-primary`}
+          />
+          <Input
+            type="email"
+            placeholder="Your Email (Guest)*"
+            value={guestEmail}
+            onChange={(e) => setGuestEmail(e.target.value)}
+            required
+            className={`${inputBgClass} h-9 text-xs focus:border-primary`}
+          />
+        </div>
+      )}
+
+      <Textarea
+        placeholder={placeholder}
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        autoFocus={autoFocus}
+        className={`${inputBgClass} min-h-[80px] text-sm focus:border-primary`}
+      />
+
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <label
+          className={`flex cursor-pointer items-center gap-1.5 text-xs transition-colors select-none ${labelClass}`}
+        >
+          <input
+            type="checkbox"
+            checked={isSpoiler}
+            onChange={(e) => setIsSpoiler(e.target.checked)}
+            className="h-3.5 w-3.5 rounded border-neutral-700 bg-neutral-950 text-primary accent-primary focus:ring-0 focus:ring-offset-0"
+          />
+          <EyeClosed className="h-3.5 w-3.5 text-neutral-400" />
+          <span>Contains Spoiler</span>
+        </label>
+
+        <div className="flex items-center gap-2">
+          {onCancelReply && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={onCancelReply}
+              disabled={isSubmitting}
+              className="text-xs"
+            >
+              Cancel
+            </Button>
+          )}
+          <Button
+            type="submit"
+            size="sm"
+            disabled={
+              !content.trim() ||
+              isSubmitting ||
+              (!isLoggedIn && (!guestName.trim() || !guestEmail.trim()))
+            }
+            className="text-xs"
+          >
+            <PaperPlaneRight className="mr-1.5 h-3.5 w-3.5" />
+            {isSubmitting ? "Sending..." : "Post Comment"}
+          </Button>
+        </div>
+      </div>
+    </form>
+  )
+}

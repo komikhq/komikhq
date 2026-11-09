@@ -11,7 +11,7 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export function loader() {
-  return { message: env.VALUE_FROM_CLOUDFLARE };
+  return { message: env.PUBLIC_API_URL };
 }
 
 export default function Home({ loaderData }: Route.ComponentProps) {

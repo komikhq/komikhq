@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+Allow: /browse
+Allow: /list-all
+Allow: /komik/
+
+# Protect crawl budget on private/user/admin routes
+Disallow: /dashboard/
+Disallow: /account/
+Disallow: /bookmark
+Disallow: /history
+Disallow: /login
+Disallow: /register
+Disallow: /verify-email
+
+# Dynamic Sitemap Index (1-day Edge Cache)
+Sitemap: https://komikhq.com/sitemap.xml
