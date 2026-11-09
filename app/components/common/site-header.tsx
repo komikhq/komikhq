@@ -249,10 +249,10 @@ export function SiteHeader() {
                   <DropdownMenuSeparator />
                   {user.role === "admin" && (
                     <DropdownMenuItem
-                      className="cursor-pointer font-semibold text-primary focus:bg-primary/10 focus:text-primary dark:focus:bg-primary/20 dark:focus:text-primary"
+                      className="cursor-pointer font-semibold text-primary focus:bg-primary focus:text-primary-foreground"
                       onClick={() => navigate("/dashboard")}
                     >
-                      <ShieldCheck className="mr-2 h-4 w-4 text-primary" />
+                      <ShieldCheck className="mr-2 h-4 w-4 text-primary group-focus/dropdown-menu-item:text-primary-foreground" />
                       <span>
                         Admin Dashboard
                       </span>
