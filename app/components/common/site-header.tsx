@@ -157,7 +157,7 @@ export function SiteHeader() {
                   <DropdownMenuTrigger asChild>
                     <Button
                       variant="ghost"
-                      className="h-8 shrink-0 gap-1 px-2 text-sm font-medium text-muted-foreground hover:text-foreground"
+                      className="h-8 shrink-0 gap-1 px-2 text-sm font-medium text-muted-foreground hover:text-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground"
                     >
                       <DotsThree className="h-4 w-4" />
                       <span>More</span>
@@ -219,7 +219,7 @@ export function SiteHeader() {
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="hidden h-9 cursor-pointer items-center gap-2 rounded-full px-2 hover:bg-accent md:flex"
+                    className="hidden h-9 cursor-pointer items-center gap-2 rounded-full px-2 hover:bg-muted hover:text-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground md:flex"
                   >
                     <Avatar className="h-7 w-7 border border-primary/40">
                       <AvatarImage
@@ -249,7 +249,7 @@ export function SiteHeader() {
                   <DropdownMenuSeparator />
                   {user.role === "admin" && (
                     <DropdownMenuItem
-                      className="cursor-pointer font-semibold text-primary focus:bg-primary/10"
+                      className="cursor-pointer font-semibold text-primary focus:bg-primary/10 focus:text-primary dark:focus:bg-primary/20 dark:focus:text-primary"
                       onClick={() => navigate("/dashboard")}
                     >
                       <ShieldCheck className="mr-2 h-4 w-4 text-primary" />
@@ -296,8 +296,9 @@ export function SiteHeader() {
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
+                    variant="destructive"
                     onClick={handleSignOut}
-                    className="cursor-pointer text-destructive focus:bg-destructive/10 focus:text-destructive"
+                    className="cursor-pointer"
                   >
                     <SignOut className="mr-2 h-4 w-4" />
                     <span>

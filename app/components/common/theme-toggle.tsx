@@ -24,14 +24,14 @@ export function ThemeToggle() {
           type="button"
           variant="outline"
           size="icon"
-          className="h-9 w-9 border-input bg-background hover:bg-accent hover:text-accent-foreground"
+          className="h-9 w-9 border-input bg-background hover:bg-muted hover:text-foreground active:bg-muted/80"
           onClick={handleThemeToggle}
           aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
         >
           {isDark ? (
-            <Sun className="h-4 w-4 text-amber-400" />
+            <Sun className="h-4 w-4 text-amber-400 group-hover/button:text-amber-300 transition-colors" />
           ) : (
-            <Moon className="h-4 w-4 text-slate-700" />
+            <Moon className="h-4 w-4 text-foreground/80 group-hover/button:text-foreground transition-colors" />
           )}
         </Button>
       </TooltipTrigger>
