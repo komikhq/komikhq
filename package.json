@@ -11,6 +11,23 @@
 		"cf-typegen": "wrangler types",
 		"postinstall": "wrangler types"
 	},
+	"packageManager": "pnpm@12.3.4",
+	"engines": {
+		"node": ">=24",
+		"pnpm": ">=12"
+	},
+	"devEngines": {
+		"runtime": {
+			"name": "node",
+			"version": ">=24",
+			"onFail": "error"
+		},
+		"packageManager": {
+			"name": "pnpm",
+			"version": ">=12",
+			"onFail": "error"
+		}
+	},
 	"dependencies": {
 		"@base-ui/react": "^1.9.0",
 		"@fontsource-variable/instrument-sans": "^5.3.0",
