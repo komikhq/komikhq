@@ -10,12 +10,12 @@ export function useRequireAdmin(redirectTo: string = "/") {
     if (!isPending) {
       if (!isAuthenticated) {
         if (typeof window !== "undefined") {
-          toast.error("Anda harus masuk terlebih dahulu.")
+          toast.error("Please login first.")
           window.location.replace("/login")
         }
       } else if (user?.role !== "admin") {
         if (typeof window !== "undefined") {
-          toast.error("Akses Ditolak. Halaman ini khusus Administrator.")
+          toast.error("Access Denied. This page is only for Administrators.")
           window.location.replace(redirectTo)
         }
       }

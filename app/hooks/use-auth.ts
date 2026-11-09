@@ -59,17 +59,17 @@ export function useAuth(): UseAuthReturn {
 
       if (err) {
         const msg =
-          err.message || "Gagal masuk. Periksa email dan kata sandi Anda."
+          err.message || "Login failed. Check your email and password."
         setAuthError(msg)
         toast.error(msg)
         return false
       }
 
-      toast.success("Berhasil masuk akun!")
+      toast.success("Login success!")
       await refetch()
       return true
     } catch (e: any) {
-      const msg = e.message || "Terjadi kesalahan saat masuk."
+      const msg = e.message || "Login failed."
       setAuthError(msg)
       toast.error(msg)
       return false
@@ -91,7 +91,7 @@ export function useAuth(): UseAuthReturn {
         },
       } as any)
     } catch (e: any) {
-      const msg = e.message || "Gagal menghubungkan dengan Google OAuth."
+      const msg = e.message || "Login with Google failed."
       setAuthError(msg)
       toast.error(msg)
       setIsLoading(false)
@@ -114,17 +114,17 @@ export function useAuth(): UseAuthReturn {
       })
 
       if (err) {
-        const msg = err.message || "Gagal membuat akun baru."
+        const msg = err.message || "Failed to create new account."
         setAuthError(msg)
         toast.error(msg)
         return false
       }
 
-      toast.success("Akun berhasil dibuat!")
+      toast.success("Register success!")
       await refetch()
       return true
     } catch (e: any) {
-      const msg = e.message || "Terjadi kesalahan saat mendaftar."
+      const msg = e.message || "Failed to register."
       setAuthError(msg)
       toast.error(msg)
       return false
@@ -145,17 +145,17 @@ export function useAuth(): UseAuthReturn {
       })
 
       if (err) {
-        const msg = err.message || "Gagal mengirim ulang email verifikasi."
+        const msg = err.message || "Failed to send verification email."
         setAuthError(msg)
         toast.error(msg)
         return false
       }
 
-      toast.success(`Email verifikasi baru telah dikirim ke ${emailToVerify}`)
+      toast.success(`Email verification has been sent to ${emailToVerify}`)
       return true
     } catch (e: any) {
       const msg =
-        e.message || "Terjadi kesalahan saat mengirim ulang email verifikasi."
+        e.message || "Failed to send verification email."
       setAuthError(msg)
       toast.error(msg)
       return false
@@ -169,10 +169,10 @@ export function useAuth(): UseAuthReturn {
     try {
       await authClient.signOut()
       await refetch()
-      toast.success("Berhasil keluar dari akun.")
+      toast.success("Logout success!")
       window.location.href = "/login"
     } catch (e: any) {
-      const msg = e.message || "Gagal keluar."
+      const msg = e.message || "Logout failed."
       setAuthError(msg)
       toast.error(msg)
     } finally {

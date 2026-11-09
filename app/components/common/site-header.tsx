@@ -253,7 +253,9 @@ export function SiteHeader() {
                       onClick={() => navigate("/dashboard")}
                     >
                       <ShieldCheck className="mr-2 h-4 w-4 text-primary" />
-                      <span>Admin Dashboard</span>
+                      <span>
+                        Admin Dashboard
+                      </span>
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuItem
@@ -261,28 +263,36 @@ export function SiteHeader() {
                     onClick={() => navigate("/account")}
                   >
                     <UserCircle className="mr-2 h-4 w-4 text-primary" />
-                    <span>Profil Saya</span>
+                    <span>
+                      Profile
+                    </span>
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     className="cursor-pointer"
                     onClick={() => navigate("/bookmark")}
                   >
                     <BookmarkSimple className="mr-2 h-4 w-4 text-primary" />
-                    <span>Bookmark Saya</span>
+                    <span>
+                      My Bookmarks
+                    </span>
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     className="cursor-pointer"
                     onClick={() => navigate("/history")}
                   >
                     <ClockCounterClockwise className="mr-2 h-4 w-4 text-primary" />
-                    <span>Riwayat Baca</span>
+                    <span>
+                      Reading History
+                    </span>
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     className="cursor-pointer"
                     onClick={() => navigate("/account/settings")}
                   >
                     <Gear className="mr-2 h-4 w-4 text-muted-foreground" />
-                    <span>Pengaturan Akun</span>
+                    <span>
+                      Account Settings
+                    </span>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
@@ -290,7 +300,9 @@ export function SiteHeader() {
                     className="cursor-pointer text-destructive focus:bg-destructive/10 focus:text-destructive"
                   >
                     <SignOut className="mr-2 h-4 w-4" />
-                    <span>Keluar</span>
+                    <span>
+                      Log Out
+                    </span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -302,11 +314,13 @@ export function SiteHeader() {
                     onClick={() => navigate("/login")}
                   >
                     <SignIn className="mr-1.5 h-4 w-4" />
-                    <span>Masuk</span>
+                    <span>
+                      Log In
+                    </span>
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="bottom">
-                  Masuk ke akun KomikHQ
+                  Log in to your KomikHQ account
                 </TooltipContent>
               </Tooltip>
             )}

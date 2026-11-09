@@ -57,23 +57,21 @@ export function RegisterFormCard() {
         <Card className="mx-auto w-full max-w-[440px]">
           <CardHeader className="pb-4 text-center">
             <CardTitle className="text-2xl font-bold">
-              Buat Akun KomikHQ
+              Create a KomikHQ Account
             </CardTitle>
             <CardDescription>
-              Bergabung dengan KomikHQ untuk sinkronisasi bookmark, riwayat
-              baca, dan baca komik tanpa iklan.
+              Join KomikHQ to sync bookmarks, reading history, and read comics without ads.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {isSuccess ? (
               <div className="space-y-3 rounded-lg border bg-muted/30 p-6 text-center">
                 <PaperPlaneRight className="mx-auto h-10 w-10 text-primary" />
-                <h3 className="text-lg font-bold">Periksa Email Anda</h3>
+                <h3 className="text-lg font-bold">Check your email</h3>
                 <p className="text-sm leading-relaxed text-muted-foreground">
-                  Kami telah mengirimkan tautan verifikasi ke{" "}
-                  <strong className="text-foreground">{email}</strong>. Silakan
-                  periksa kotak masuk dan lakukan verifikasi untuk mengaktifkan
-                  akun.
+                  We have sent a verification link to{" "}
+                  <strong className="text-foreground">{email}</strong>. Please
+                  check your inbox and verify to activate your account.
                 </p>
                 <div className="space-y-2 pt-2">
                   <Button
@@ -88,14 +86,14 @@ export function RegisterFormCard() {
                     />
                     <span>
                       {isCooldownActive
-                        ? `Kirim Ulang dalam ${cooldownSeconds}s`
-                        : "Kirim Ulang Email Verifikasi"}
+                        ? `Resend in ${cooldownSeconds}s`
+                        : "Resend Verification Email"}
                     </span>
                   </Button>
 
                   <Link to="/login" className="block">
                     <Button variant="outline" className="w-full">
-                      Kembali ke Halaman Masuk
+                      Back to Login Page
                     </Button>
                   </Link>
                 </div>
@@ -116,17 +114,17 @@ export function RegisterFormCard() {
                   disabled={isLoading}
                 >
                   <GoogleLogo className="h-4 w-4 text-primary" weight="bold" />
-                  <span>Daftar dengan Google</span>
+                  <span>Sign up with Google</span>
                 </Button>
 
                 <div className="relative my-2 flex items-center justify-center text-xs text-muted-foreground uppercase">
-                  <span className="bg-card px-2">Atau daftar dengan email</span>
+                  <span className="bg-card px-2">Or sign up with email</span>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-3">
                   <div className="space-y-1">
                     <label className="text-xs font-semibold">
-                      Nama Lengkap
+                      Full Name
                     </label>
                     <div className="relative">
                       <User className="absolute top-2.5 left-3 h-4 w-4 text-muted-foreground" />
@@ -143,7 +141,7 @@ export function RegisterFormCard() {
 
                   <div className="space-y-1">
                     <label className="text-xs font-semibold">
-                      Alamat Email
+                      Email Address
                     </label>
                     <div className="relative">
                       <EnvelopeSimple className="absolute top-2.5 left-3 h-4 w-4 text-muted-foreground" />
@@ -159,12 +157,14 @@ export function RegisterFormCard() {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold">Kata Sandi</label>
+                    <label className="text-xs font-semibold">
+                      Password
+                    </label>
                     <div className="relative">
                       <Lock className="absolute top-2.5 left-3 h-4 w-4 text-muted-foreground" />
                       <Input
                         type={showPassword ? "text" : "password"}
-                        placeholder="Minimal 8 karakter"
+                        placeholder="Minimum 8 characters"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         className="pr-9 pl-9"
@@ -188,8 +188,8 @@ export function RegisterFormCard() {
                         </TooltipTrigger>
                         <TooltipContent side="top">
                           {showPassword
-                            ? "Sembunyikan kata sandi"
-                            : "Tampilkan kata sandi"}
+                            ? "Hide password"
+                            : "Show password"}
                         </TooltipContent>
                       </Tooltip>
                     </div>
@@ -197,13 +197,13 @@ export function RegisterFormCard() {
 
                   <div className="space-y-1">
                     <label className="text-xs font-semibold">
-                      Konfirmasi Kata Sandi
+                      Confirm Password
                     </label>
                     <div className="relative">
                       <Lock className="absolute top-2.5 left-3 h-4 w-4 text-muted-foreground" />
                       <Input
                         type={showConfirmPassword ? "text" : "password"}
-                        placeholder="Ulangi kata sandi"
+                        placeholder="Confirm Password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         className="pr-9 pl-9"
@@ -229,8 +229,8 @@ export function RegisterFormCard() {
                         </TooltipTrigger>
                         <TooltipContent side="top">
                           {showConfirmPassword
-                            ? "Sembunyikan kata sandi"
-                            : "Tampilkan kata sandi"}
+                            ? "Hide password"
+                            : "Show password"}
                         </TooltipContent>
                       </Tooltip>
                     </div>
@@ -241,18 +241,18 @@ export function RegisterFormCard() {
                     className="mt-3 w-full"
                     disabled={isLoading}
                   >
-                    <span>{isLoading ? "Memproses..." : "Buat Akun"}</span>
+                    {isLoading ? "Processing..." : "Create Account"}
                     <ArrowRight className="ml-1.5 h-4 w-4" />
                   </Button>
                 </form>
 
                 <div className="pt-2 text-center text-xs text-muted-foreground">
-                  Sudah memiliki akun?{" "}
+                  Already have an account?{" "}
                   <Link
                     to="/login"
                     className="font-semibold text-primary underline underline-offset-4"
                   >
-                    Masuk Sekarang
+                    Sign in Now
                   </Link>
                 </div>
               </>

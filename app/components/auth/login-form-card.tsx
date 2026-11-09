@@ -50,10 +50,10 @@ export function LoginFormCard() {
         <Card className="mx-auto w-full max-w-[440px]">
           <CardHeader className="pb-4 text-center">
             <CardTitle className="text-2xl font-bold">
-              Masuk ke KomikHQ
+              Log in to KomikHQ
             </CardTitle>
             <CardDescription>
-              Masukkan kredensial Anda untuk mengakses akun KomikHQ.
+              Enter your credentials to access your KomikHQ account.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -67,11 +67,10 @@ export function LoginFormCard() {
               <div className="space-y-2 rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 text-xs text-amber-500">
                 <div className="flex items-center gap-2 font-semibold text-amber-600 dark:text-amber-400">
                   <PaperPlaneRight className="h-4 w-4" />
-                  <span>Email Belum Diverifikasi</span>
+                  <span>Email Not Yet Verified</span>
                 </div>
                 <p className="leading-relaxed text-muted-foreground">
-                  Akun Anda belum aktif karena email belum diverifikasi. Silakan
-                  periksa email Anda atau minta kirim ulang tautan verifikasi.
+                  Your account is not yet active because your email has not been verified. Please check your email or request a verification link resend.
                 </p>
                 <Button
                   type="button"
@@ -100,21 +99,21 @@ export function LoginFormCard() {
               disabled={isLoading}
             >
               <GoogleLogo className="h-4 w-4 text-primary" weight="bold" />
-              <span>Masuk dengan Google</span>
+              <span>Sign in with Google</span>
             </Button>
 
             <div className="relative my-2 flex items-center justify-center text-xs text-muted-foreground uppercase">
-              <span className="bg-card px-2">Atau masuk dengan email</span>
+              <span className="bg-card px-2">Or sign in with email</span>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-3">
               <div className="space-y-1">
-                <label className="text-xs font-semibold">Alamat Email</label>
+                <label className="text-xs font-semibold">Email Address</label>
                 <div className="relative">
                   <EnvelopeSimple className="absolute top-2.5 left-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="email"
-                    placeholder="nama@email.com"
+                    placeholder="name@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="pl-9"
@@ -124,7 +123,7 @@ export function LoginFormCard() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-semibold">Kata Sandi</label>
+                <label className="text-xs font-semibold">Password</label>
                 <div className="relative">
                   <Lock className="absolute top-2.5 left-3 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -153,8 +152,8 @@ export function LoginFormCard() {
                     </TooltipTrigger>
                     <TooltipContent side="top">
                       {showPassword
-                        ? "Sembunyikan kata sandi"
-                        : "Tampilkan kata sandi"}
+                        ? "Hide password"
+                        : "Show password"}
                     </TooltipContent>
                   </Tooltip>
                 </div>
@@ -165,18 +164,18 @@ export function LoginFormCard() {
                 className="mt-3 w-full"
                 disabled={isLoading}
               >
-                <span>{isLoading ? "Memproses..." : "Masuk"}</span>
+                <span>{isLoading ? "Processing..." : "Login"}</span>
                 <ArrowRight className="ml-1.5 h-4 w-4" />
               </Button>
             </form>
 
             <div className="pt-2 text-center text-xs text-muted-foreground">
-              Belum memiliki akun?{" "}
+              Don't have an account?{" "}
               <Link
                 to="/register"
                 className="font-semibold text-primary underline underline-offset-4"
               >
-                Daftar Sekarang
+                Sign Up
               </Link>
             </div>
           </CardContent>

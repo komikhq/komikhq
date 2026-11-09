@@ -26,7 +26,7 @@ export function ThemeToggle() {
           size="icon"
           className="h-9 w-9 border-input bg-background hover:bg-accent hover:text-accent-foreground"
           onClick={handleThemeToggle}
-          aria-label={isDark ? "Ganti ke tema terang" : "Ganti ke tema gelap"}
+          aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
         >
           {isDark ? (
             <Sun className="h-4 w-4 text-amber-400" />
@@ -36,7 +36,7 @@ export function ThemeToggle() {
         </Button>
       </TooltipTrigger>
       <TooltipContent side="bottom">
-        {isDark ? "Ganti ke tema terang" : "Ganti ke tema gelap"}
+        {isDark ? "Switch to light theme" : "Switch to dark theme"}
       </TooltipContent>
     </Tooltip>
   )

@@ -58,7 +58,7 @@ export function useLoginForm() {
 
   const handleResendUnverified = async () => {
     if (!email) {
-      setAuthError("Masukkan alamat email Anda terlebih dahulu.")
+      setAuthError("Please enter your email address first.")
       return
     }
     if (isCooldownActive || isLoading) return

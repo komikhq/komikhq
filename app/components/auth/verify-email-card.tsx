@@ -12,17 +12,16 @@ export function VerifyEmailCard() {
             <CheckCircle className="h-8 w-8" />
           </div>
           <CardTitle className="text-2xl font-bold">
-            Email Berhasil Diverifikasi
+            Email verified successfully
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-sm leading-relaxed text-muted-foreground">
-            Terima kasih telah memverifikasi alamat email Anda. Akun KomikHQ
-            Anda sekarang telah aktif sepenuhnya.
+            Thank you for verifying your email address. Your KomikHQ account is now fully active.
           </p>
           <div className="pt-2">
             <Link to="/login">
-              <Button className="w-full">Masuk ke Akun Anda</Button>
+              <Button className="w-full">Sign in to your account</Button>
             </Link>
           </div>
         </CardContent>
