@@ -5,12 +5,21 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
 } from "react-router";
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import { SiteHeader } from "@/components/common/site-header";
+import { BottomNav } from "@/components/common/bottom-nav";
+import { SiteFooter } from "@/components/common/site-footer";
+import { Toaster } from "@/components/ui/sonner";
+import { GlobalPresenceListener } from "@/components/common/global-presence-listener";
+import { CookieConsent } from "@/components/common/cookie-consent";
+import { SITE_NAME, SITE_DESCRIPTION } from "@/constants";
 
 export const links: Route.LinksFunction = () => [
+  { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
     rel: "preconnect",
@@ -19,18 +28,47 @@ export const links: Route.LinksFunction = () => [
   },
   {
     rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
+    href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap",
   },
 ];
 
+export function meta(): Route.MetaDescriptors {
+  return [
+    { title: `${SITE_NAME} - Read Manga, Manhwa, and Manhua Online` },
+    { name: "description", content: SITE_DESCRIPTION },
+    { property: "og:site_name", content: SITE_NAME },
+    { property: "og:type", content: "website" },
+    { property: "og:image", content: "/images/og.png" },
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:image", content: "/images/og.png" },
+  ];
+}
+
+const themeScript = `
+(function () {
+  try {
+    var stored = localStorage.getItem("theme");
+    var supportDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if (stored === "dark" || (!stored && supportDark) || (stored === "system" && supportDark)) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  } catch (e) {
+    document.documentElement.classList.add("dark");
+  }
+})();
+`;
+
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body>
         {children}
@@ -42,7 +80,33 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  const location = useLocation();
+  // Check if current page is comic reader mode (e.g. /komik/:slug/:chapter)
+  const isReaderMode =
+    location.pathname.startsWith("/komik/") &&
+    location.pathname.split("/").filter(Boolean).length >= 3;
+
+  return (
+    <div
+      className={
+        isReaderMode
+          ? "min-h-screen bg-neutral-950 text-neutral-100 antialiased selection:bg-primary selection:text-primary-foreground"
+          : "min-h-screen bg-background text-foreground antialiased selection:bg-primary selection:text-primary-foreground"
+      }
+    >
+      <GlobalPresenceListener />
+      <div className="relative flex min-h-screen flex-col">
+        {!isReaderMode && <SiteHeader />}
+        <main className={isReaderMode ? "flex-1" : "flex-1 pb-16 md:pb-0"}>
+          <Outlet />
+        </main>
+        {!isReaderMode && <SiteFooter />}
+        {!isReaderMode && <BottomNav />}
+        <Toaster position="top-right" richColors />
+        <CookieConsent />
+      </div>
+    </div>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
@@ -62,14 +126,20 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   }
 
   return (
-    <main className="pt-16 p-4 container mx-auto">
-      <h1>{message}</h1>
-      <p>{details}</p>
-      {stack && (
-        <pre className="w-full p-4 overflow-x-auto">
-          <code>{stack}</code>
-        </pre>
-      )}
-    </main>
+    <div className="relative flex min-h-screen flex-col bg-background text-foreground">
+      <SiteHeader />
+      <main className="container mx-auto flex-1 px-4 py-16 text-center">
+        <h1 className="text-4xl font-bold tracking-tight text-primary sm:text-6xl">
+          {message}
+        </h1>
+        <p className="mt-4 text-base text-muted-foreground">{details}</p>
+        {stack && (
+          <pre className="mt-6 overflow-x-auto rounded-lg bg-muted p-4 text-left text-xs">
+            <code>{stack}</code>
+          </pre>
+        )}
+      </main>
+      <SiteFooter />
+    </div>
   );
 }
