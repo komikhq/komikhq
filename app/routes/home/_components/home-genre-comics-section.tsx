@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { Link } from "react-router"
 import {
   TagIcon as Tag,
   ArrowRightIcon as ArrowRight,
@@ -105,22 +106,22 @@ export function HomeGenreComicsSection() {
                 <span>{genre.name} Comics</span>
               </CardTitle>
 
-              <a
-                href={`/browse?genre=${genre.slug}`}
+              <Link
+                to={`/browse?genre=${genre.slug}`}
                 className="flex items-center gap-1 text-xs font-medium text-primary transition-all hover:underline"
               >
                 <span>View All</span>
                 <ArrowRight className="h-3.5 w-3.5" />
-              </a>
+              </Link>
             </CardHeader>
 
             <CardContent>
               {comicsList.length > 0 ? (
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8 xl:grid-cols-10">
                   {comicsList.slice(0, 10).map((comic) => (
-                    <a
+                    <Link
                       key={comic.id || comic.slug}
-                      href={`/komik/${comic.slug}`}
+                      to={`/komik/${comic.slug}`}
                       className="group flex flex-col space-y-2 rounded-lg border bg-card p-2 transition-colors hover:bg-accent"
                     >
                       <div className="relative aspect-[3/4] overflow-hidden rounded-md bg-muted">
@@ -148,7 +149,7 @@ export function HomeGenreComicsSection() {
                           views
                         </span>
                       </div>
-                    </a>
+                    </Link>
                   ))}
                 </div>
               ) : (

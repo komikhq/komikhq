@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react"
+import { Link } from "react-router"
 import {
   ClockIcon as Clock,
   ArrowRightIcon as ArrowRight,
@@ -117,13 +118,13 @@ export function HomeLatestAddedSection({ initialComics }: HomeLatestAddedSection
             </TabsList>
           </Tabs>
 
-          <a
-            href="/browse?sort=latest"
+          <Link
+            to="/browse?sort=latest"
             className="hidden shrink-0 items-center gap-1 text-xs font-medium text-primary transition-all hover:underline md:flex"
           >
             <span>View All</span>
             <ArrowRight className="h-3.5 w-3.5" />
-          </a>
+          </Link>
         </div>
       </CardHeader>
 
@@ -158,9 +159,9 @@ export function HomeLatestAddedSection({ initialComics }: HomeLatestAddedSection
                     : `Ch. ${comic.totalChapters || 1}`
 
                   return (
-                    <a
+                    <Link
                       key={comic.id || comic.slug}
-                      href={`/komik/${comic.slug}`}
+                      to={`/komik/${comic.slug}`}
                       className="group flex flex-col rounded-xl border border-border/50 bg-card p-2 shadow-sm transition-all duration-200 hover:border-primary/30 hover:bg-accent/40 hover:shadow-md"
                     >
                       <div className="relative aspect-[3/4] overflow-hidden rounded-lg bg-muted">
@@ -202,7 +203,7 @@ export function HomeLatestAddedSection({ initialComics }: HomeLatestAddedSection
                           </span>
                         </div>
                       </div>
-                    </a>
+                    </Link>
                   )
                 })}
               </div>

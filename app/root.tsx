@@ -13,6 +13,7 @@ import "./app.css";
 import { SiteHeader } from "@/components/common/site-header";
 import { BottomNav } from "@/components/common/bottom-nav";
 import { SiteFooter } from "@/components/common/site-footer";
+import { GlobalLoadingBar } from "@/components/common/global-loading-bar";
 import { Toaster } from "@/components/ui/sonner";
 import { GlobalPresenceListener } from "@/components/common/global-presence-listener";
 import { CookieConsent } from "@/components/common/cookie-consent";
@@ -95,6 +96,7 @@ export default function App() {
       }
     >
       <GlobalPresenceListener />
+      <GlobalLoadingBar />
       <div className="relative flex min-h-screen flex-col">
         {!isReaderMode && <SiteHeader />}
         <main className={isReaderMode ? "flex-1" : "flex-1 pb-16 md:pb-0"}>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router"
 import {
   ArrowLeftIcon as ArrowLeft,
   ArrowRightIcon as ArrowRight,
@@ -18,6 +19,7 @@ export function ReaderFooterNav({
   chapterSlug,
   initialData,
 }: ReaderFooterNavProps) {
+  const navigate = useNavigate()
   const [data, setData] = useState<any>(initialData ?? null)
   const [navData, setNavData] = useState<{
     prevSlug: string | null
@@ -69,7 +71,7 @@ export function ReaderFooterNav({
             variant="outline"
             className="border-neutral-700 bg-neutral-900 text-neutral-100 hover:bg-neutral-800 hover:text-white"
             onClick={() =>
-              (window.location.href = `/komik/${comicSlug}/${navData.prevSlug}`)
+              navigate(`/komik/${comicSlug}/${navData.prevSlug}`)
             }
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -90,7 +92,7 @@ export function ReaderFooterNav({
           <Button
             className="bg-primary text-primary-foreground hover:bg-primary/90"
             onClick={() =>
-              (window.location.href = `/komik/${comicSlug}/${navData.nextSlug}`)
+              navigate(`/komik/${comicSlug}/${navData.nextSlug}`)
             }
           >
             Next Chapter

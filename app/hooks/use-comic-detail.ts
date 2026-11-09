@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router"
 import { comicsApi, bookmarksApi } from "@/lib/sdk-client"
 import { invalidateCache } from "@/lib/coalescing-fetch"
 
@@ -10,6 +11,7 @@ export interface ComicDetailData {
 }
 
 export function useComicDetail(slug?: string, initialData?: ComicDetailData | null) {
+  const navigate = useNavigate()
   const [bookmarked, setBookmarked] = useState(false)
   const [comicData, setComicData] = useState<ComicDetailData | null>(initialData ?? null)
   const [isLoading, setIsLoading] = useState(!initialData)
@@ -98,12 +100,12 @@ export function useComicDetail(slug?: string, initialData?: ComicDetailData | nu
 
   const handleReadFirstChapter = () => {
     if (comicData?.chapters?.[0]) {
-      window.location.href = `/komik/${comicData.comic.slug}/${comicData.chapters[0].slug}`
+      navigate(`/komik/${comicData.comic.slug}/${comicData.chapters[0].slug}`)
     }
   }
 
   const handleNavigateCatalog = () => {
-    window.location.href = "/browse"
+    navigate("/browse")
   }
 
   return {

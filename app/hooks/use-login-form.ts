@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react"
+import { useNavigate } from "react-router"
 import { useAuth } from "./use-auth"
 import { useGuestOnly } from "./use-guest-only"
 import { useResendCooldown } from "./use-resend-cooldown"
 
 export function useLoginForm() {
+  const navigate = useNavigate()
   useGuestOnly("/account")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -42,7 +44,7 @@ export function useLoginForm() {
 
     const success = await handleSignInEmail(email, password)
     if (success) {
-      window.location.href = "/account"
+      navigate("/account")
     } else {
       if (
         authError &&

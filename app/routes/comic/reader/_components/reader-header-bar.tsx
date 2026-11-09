@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router"
 import { ArrowLeftIcon as ArrowLeft } from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -21,6 +22,7 @@ export function ReaderHeaderBar({
   chapterSlug,
   initialData,
 }: ReaderHeaderBarProps) {
+  const navigate = useNavigate()
   const [data, setData] = useState<any>(initialData ?? null)
 
   useEffect(() => {
@@ -51,7 +53,7 @@ export function ReaderHeaderBar({
                 size="icon"
                 variant="ghost"
                 className="h-8 w-8 text-neutral-300"
-                onClick={() => (window.location.href = `/komik/${comicSlug}`)}
+                onClick={() => navigate(`/komik/${comicSlug}`)}
               >
                 <ArrowLeft className="h-5 w-5" />
               </Button>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react"
+import { Link } from "react-router"
 import {
   BookmarkSimpleIcon as BookmarkSimple,
   TrashIcon as Trash,
@@ -79,9 +80,9 @@ export function BookmarkComicGrid() {
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {filteredBookmarks.map((item) => (
-            <a
+            <Link
               key={item.id}
-              href={`/komik/${item.comic.slug}`}
+              to={`/komik/${item.comic.slug}`}
               className="group relative flex flex-col space-y-2 rounded-lg border bg-card p-2 transition-colors hover:bg-accent"
             >
               <div className="relative aspect-[3/4] overflow-hidden rounded-md bg-muted">
@@ -105,7 +106,7 @@ export function BookmarkComicGrid() {
               <span className="w-fit rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary capitalize transition-colors group-hover:bg-accent-foreground/20 group-hover:text-accent-foreground">
                 {item.status.replace(/_/g, " ")}
               </span>
-            </a>
+            </Link>
           ))}
         </div>
       )}

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { Link } from "react-router"
 import {
   BookOpenIcon as BookOpen,
   StarIcon as Star,
@@ -99,9 +100,9 @@ export function BrowseComicGrid() {
         ) : comics.length > 0 ? (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5">
             {comics.map((comic) => (
-              <a
+              <Link
                 key={comic.id || comic.slug}
-                href={`/komik/${comic.slug}`}
+                to={`/komik/${comic.slug}`}
                 className="group flex flex-col space-y-2 rounded-lg border bg-card p-2 transition-colors hover:bg-accent"
               >
                 <div className="relative aspect-[3/4] overflow-hidden rounded-md bg-muted">
@@ -125,7 +126,7 @@ export function BrowseComicGrid() {
                   <span className="capitalize">{comic.type || "Manga"}</span>
                   <span>{comic.status || "Ongoing"}</span>
                 </div>
-              </a>
+              </Link>
             ))}
           </div>
         ) : (

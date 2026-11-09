@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { Link, useLocation } from "react-router"
 import {
   HouseIcon as House,
   CompassIcon as Compass,
@@ -24,16 +24,12 @@ const NAV_ICONS: Record<string, Icon> = {
 }
 
 export function BottomNav() {
-  const [currentPath, setCurrentPath] = useState("")
-
-  useEffect(() => {
-    setCurrentPath(window.location.pathname)
-  }, [])
+  const location = useLocation()
+  const currentPath = location.pathname
 
   if (
-    currentPath &&
-    currentPath.includes("/komik/") &&
-    currentPath.split("/").length > 3
+    currentPath.startsWith("/komik/") &&
+    currentPath.split("/").filter(Boolean).length >= 3
   ) {
     return null
   }
@@ -48,8 +44,8 @@ export function BottomNav() {
             return (
               <Tooltip key={item.href}>
                 <TooltipTrigger asChild>
-                  <a
-                    href={item.href}
+                  <Link
+                    to={item.href}
                     className={`flex h-full w-full flex-col items-center justify-center gap-1 py-1 text-xs transition-colors ${
                       isActive
                         ? "font-semibold text-primary"
@@ -63,7 +59,7 @@ export function BottomNav() {
                       />
                     )}
                     <span>{item.label}</span>
-                  </a>
+                  </Link>
                 </TooltipTrigger>
                 <TooltipContent side="top">{item.label}</TooltipContent>
               </Tooltip>

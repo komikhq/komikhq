@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import type { Route } from "./+types/terms";
 import { LegalShell } from "./legal-shell";
 import { SITE_NAME } from "@/constants";
@@ -59,7 +60,7 @@ export default function TermsRoute() {
           <strong>Comic Material</strong>: All comics, manga, manhwa, and manhua displayed on the platform are the property of their respective creators, publishers, and copyright holders. KomikHQ acts as a content index and reader interface.
         </li>
         <li>
-          If you are a copyright owner and believe your work is displayed without authorization, please refer to our <a href="/dmca">DMCA & Copyright Policy</a> for takedown procedures.
+          If you are a copyright owner and believe your work is displayed without authorization, please refer to our <Link to="/dmca">DMCA & Copyright Policy</Link> for takedown procedures.
         </li>
       </ul>
 

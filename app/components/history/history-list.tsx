@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { Link } from "react-router"
 import {
   ClockIcon as Clock,
   BookOpenIcon as BookOpen,
@@ -63,9 +64,9 @@ export function HistoryList() {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       {history.map((item) => (
-        <a
+        <Link
           key={item.id || item.comic.id}
-          href={`/komik/${item.comic.slug}`}
+          to={`/komik/${item.comic.slug}`}
           className="group flex items-center gap-3 rounded-lg border bg-card p-2 transition-colors hover:bg-accent"
         >
           <div className="h-20 w-16 shrink-0 overflow-hidden rounded-md bg-muted">
@@ -92,7 +93,7 @@ export function HistoryList() {
               </p>
             )}
           </div>
-        </a>
+        </Link>
       ))}
     </div>
   )

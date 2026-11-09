@@ -1,3 +1,4 @@
+import { Link } from "react-router"
 import {
   LockIcon as Lock,
   EnvelopeSimpleIcon as EnvelopeSimple,
@@ -171,12 +172,12 @@ export function LoginFormCard() {
 
             <div className="pt-2 text-center text-xs text-muted-foreground">
               Belum memiliki akun?{" "}
-              <a
-                href="/register"
+              <Link
+                to="/register"
                 className="font-semibold text-primary underline underline-offset-4"
               >
                 Daftar Sekarang
-              </a>
+              </Link>
             </div>
           </CardContent>
         </Card>

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react"
+import { Link } from "react-router"
 import {
   BookOpenIcon as BookOpen,
   ClockIcon as Clock,
@@ -119,9 +120,9 @@ export function ComicChapterList({ slug, initialChapters }: ComicChapterListProp
                 >
                   <div className="divide-y">
                     {filteredChapters.map((chapter) => (
-                      <a
+                      <Link
                         key={chapter.id}
-                        href={`/komik/${slug}/${chapter.slug}`}
+                        to={`/komik/${slug}/${chapter.slug}`}
                         className="flex items-center justify-between px-2 py-3.5 font-semibold transition-colors hover:bg-accent/50"
                       >
                         <div className="flex items-center gap-3">
@@ -143,7 +144,7 @@ export function ComicChapterList({ slug, initialChapters }: ComicChapterListProp
                         <Badge variant="secondary" className="text-xs">
                           Read
                         </Badge>
-                      </a>
+                      </Link>
                     ))}
                   </div>
                 </div>

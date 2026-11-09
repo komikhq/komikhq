@@ -1,3 +1,4 @@
+import { Link } from "react-router"
 import { SparkleIcon as Sparkle } from "@phosphor-icons/react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
@@ -20,13 +21,13 @@ export function HomeTopGenresCard() {
       <CardContent>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-6">
           {topGenres.map((genre: GenreDefinition) => (
-            <a
+            <Link
               key={genre.slug}
-              href={`/browse?genre=${genre.slug}`}
+              to={`/browse?genre=${genre.slug}`}
               className="flex items-center justify-center rounded-md border bg-card p-3 text-center text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
             >
               {genre.name}
-            </a>
+            </Link>
           ))}
         </div>
       </CardContent>

@@ -1,5 +1,6 @@
 "use client"
 
+import { Link } from "react-router"
 import { Logo } from "@/components/common/logo"
 import { SITE_NAME, SITE_TAGLINE, SITE_CONTACT_EMAIL } from "@/constants/site"
 import {
@@ -57,40 +58,40 @@ export function SiteFooter() {
             </h4>
             <ul className="space-y-2 text-xs text-muted-foreground">
               <li>
-                <a
-                  href="/browse"
+                <Link
+                  to="/browse"
                   className="flex items-center gap-2 transition-colors hover:text-foreground"
                 >
                   <Compass className="size-3.5" />
                   <span>Browse Comics</span>
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="/list-all"
+                <Link
+                  to="/list-all"
                   className="flex items-center gap-2 transition-colors hover:text-foreground"
                 >
                   <ListBullets className="size-3.5" />
                   <span>All Manga List</span>
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="/bookmark"
+                <Link
+                  to="/bookmark"
                   className="flex items-center gap-2 transition-colors hover:text-foreground"
                 >
                   <BookmarkSimple className="size-3.5" />
                   <span>My Bookmarks</span>
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="/history"
+                <Link
+                  to="/history"
                   className="flex items-center gap-2 transition-colors hover:text-foreground"
                 >
                   <ClockCounterClockwise className="size-3.5" />
                   <span>Reading History</span>
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -102,40 +103,40 @@ export function SiteFooter() {
             </h4>
             <ul className="space-y-2 text-xs text-muted-foreground">
               <li>
-                <a
-                  href="/privacy"
+                <Link
+                  to="/privacy"
                   className="flex items-center gap-2 transition-colors hover:text-foreground"
                 >
                   <ShieldCheck className="size-3.5" />
                   <span>Privacy Policy</span>
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="/terms"
+                <Link
+                  to="/terms"
                   className="flex items-center gap-2 transition-colors hover:text-foreground"
                 >
                   <FileText className="size-3.5" />
                   <span>Terms of Service</span>
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="/dmca"
+                <Link
+                  to="/dmca"
                   className="flex items-center gap-2 transition-colors hover:text-foreground"
                 >
                   <Copyright className="size-3.5" />
                   <span>DMCA Policy</span>
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="/contact"
+                <Link
+                  to="/contact"
                   className="flex items-center gap-2 transition-colors hover:text-foreground"
                 >
                   <EnvelopeSimple className="size-3.5" />
                   <span>Contact Us</span>
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

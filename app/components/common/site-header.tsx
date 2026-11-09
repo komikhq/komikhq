@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react"
+import { Link, useNavigate } from "react-router"
 import {
   HouseIcon as House,
   CompassIcon as Compass,
@@ -51,6 +52,7 @@ export function SiteHeader() {
   const navRef = useRef<HTMLElement>(null)
   const navMeasurementRef = useRef<HTMLDivElement>(null)
   const { user, isAuthenticated, handleSignOut } = useAuth()
+  const navigate = useNavigate()
 
   useEffect(() => {
     setMounted(true)
@@ -111,13 +113,13 @@ export function SiteHeader() {
           <div className="flex min-w-0 flex-1 items-center gap-6">
             <Tooltip>
               <TooltipTrigger asChild>
-                <a
-                  href="/"
+                <Link
+                  to="/"
                   aria-label={SITE_NAME}
                   className="flex items-center gap-2 font-bold tracking-tight text-primary"
                 >
                   <Logo size="header" />
-                </a>
+                </Link>
               </TooltipTrigger>
               <TooltipContent side="bottom">Go to Homepage</TooltipContent>
             </Tooltip>
@@ -133,15 +135,15 @@ export function SiteHeader() {
                   return (
                     <Tooltip key={item.href}>
                       <TooltipTrigger asChild>
-                        <a
-                          href={item.href}
+                        <Link
+                          to={item.href}
                           className="flex shrink-0 items-center gap-1.5 whitespace-nowrap text-muted-foreground transition-colors hover:text-foreground"
                         >
                           {IconComponent && (
                             <IconComponent className="h-4 w-4" />
                           )}
                           <span>{item.label}</span>
-                        </a>
+                        </Link>
                       </TooltipTrigger>
                       <TooltipContent side="bottom">
                         {item.label}
@@ -166,10 +168,10 @@ export function SiteHeader() {
                       const IconComponent = HEADER_NAV_ICONS[item.iconName]
                       return (
                         <DropdownMenuItem key={item.href} asChild>
-                          <a href={item.href}>
+                          <Link to={item.href}>
                             {IconComponent && <IconComponent />}
                             <span>{item.label}</span>
-                          </a>
+                          </Link>
                         </DropdownMenuItem>
                       )
                     })}
@@ -248,7 +250,7 @@ export function SiteHeader() {
                   {user.role === "admin" && (
                     <DropdownMenuItem
                       className="cursor-pointer font-semibold text-primary focus:bg-primary/10"
-                      onClick={() => (window.location.href = "/dashboard")}
+                      onClick={() => navigate("/dashboard")}
                     >
                       <ShieldCheck className="mr-2 h-4 w-4 text-primary" />
                       <span>Admin Dashboard</span>
@@ -256,28 +258,28 @@ export function SiteHeader() {
                   )}
                   <DropdownMenuItem
                     className="cursor-pointer"
-                    onClick={() => (window.location.href = "/account")}
+                    onClick={() => navigate("/account")}
                   >
                     <UserCircle className="mr-2 h-4 w-4 text-primary" />
                     <span>Profil Saya</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     className="cursor-pointer"
-                    onClick={() => (window.location.href = "/bookmark")}
+                    onClick={() => navigate("/bookmark")}
                   >
                     <BookmarkSimple className="mr-2 h-4 w-4 text-primary" />
                     <span>Bookmark Saya</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     className="cursor-pointer"
-                    onClick={() => (window.location.href = "/history")}
+                    onClick={() => navigate("/history")}
                   >
                     <ClockCounterClockwise className="mr-2 h-4 w-4 text-primary" />
                     <span>Riwayat Baca</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     className="cursor-pointer"
-                    onClick={() => (window.location.href = "/account/settings")}
+                    onClick={() => navigate("/account/settings")}
                   >
                     <Gear className="mr-2 h-4 w-4 text-muted-foreground" />
                     <span>Pengaturan Akun</span>
@@ -297,7 +299,7 @@ export function SiteHeader() {
                 <TooltipTrigger asChild>
                   <Button
                     className="hidden md:inline-flex"
-                    onClick={() => (window.location.href = "/login")}
+                    onClick={() => navigate("/login")}
                   >
                     <SignIn className="mr-1.5 h-4 w-4" />
                     <span>Masuk</span>

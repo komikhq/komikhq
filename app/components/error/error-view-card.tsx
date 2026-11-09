@@ -1,4 +1,5 @@
 import React, { useId, useState } from "react"
+import { useNavigate } from "react-router"
 import {
   MagnifyingGlassIcon as MagnifyingGlass,
   HouseIcon as House,
@@ -70,6 +71,7 @@ export function ErrorViewCard({
   error,
   errorId: providedErrorId,
 }: ErrorViewCardProps) {
+  const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState("")
   const [copied, setCopied] = useState(false)
   const [showDetails, setShowDetails] = useState(false)
@@ -85,7 +87,7 @@ export function ErrorViewCard({
   const handleSearch = (e: React.SubmitEvent) => {
     e.preventDefault()
     if (searchQuery.trim()) {
-      window.location.href = `/search?q=${encodeURIComponent(searchQuery.trim())}`
+      navigate(`/browse?search=${encodeURIComponent(searchQuery.trim())}`)
     }
   }
 
@@ -169,7 +171,7 @@ export function ErrorViewCard({
         <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
           <Button
             variant="default"
-            onClick={() => (window.location.href = "/")}
+            onClick={() => navigate("/")}
             className="gap-2 font-medium"
           >
             <House className="h-4 w-4" />

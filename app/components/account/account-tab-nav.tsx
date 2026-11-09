@@ -1,3 +1,4 @@
+import { Link } from "react-router"
 import {
   UserCircleIcon as UserCircle,
   GearIcon as Gear,
@@ -26,9 +27,9 @@ export function AccountTabNav({ currentTab }: AccountTabNavProps) {
         const isActive = currentTab === tab.id
 
         return (
-          <a
+          <Link
             key={tab.id}
-            href={tab.href}
+            to={tab.href}
             className={cn(
               "flex items-center gap-2 rounded-md px-4 py-1.5 text-xs font-semibold transition-all",
               isActive
@@ -38,7 +39,7 @@ export function AccountTabNav({ currentTab }: AccountTabNavProps) {
           >
             <Icon className="h-4 w-4" />
             <span>{tab.label}</span>
-          </a>
+          </Link>
         )
       })}
     </div>

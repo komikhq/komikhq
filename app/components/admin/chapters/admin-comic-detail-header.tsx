@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { Link, useNavigate } from "react-router"
 import {
   ArrowLeftIcon as ArrowLeft,
   BookOpenIcon as BookOpen,
@@ -15,6 +16,7 @@ interface AdminComicDetailHeaderProps {
 export function AdminComicDetailHeader({
   comicId,
 }: AdminComicDetailHeaderProps) {
+  const navigate = useNavigate()
   const [comic, setComic] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
@@ -46,9 +48,9 @@ export function AdminComicDetailHeader({
     return (
       <div className="rounded-xl bg-destructive/10 p-4 text-xs text-destructive">
         Comic not found.{" "}
-        <a href="/dashboard/comics" className="font-semibold underline">
+        <Link to="/dashboard/comics" className="font-semibold underline">
           Back to catalog
-        </a>
+        </Link>
       </div>
     )
   }
@@ -62,7 +64,7 @@ export function AdminComicDetailHeader({
           variant="outline"
           size="icon"
           className="h-9 w-9 shrink-0"
-          onClick={() => (window.location.href = "/dashboard/comics")}
+          onClick={() => navigate("/dashboard/comics")}
         >
           <ArrowLeft className="h-4 w-4" />
         </Button>

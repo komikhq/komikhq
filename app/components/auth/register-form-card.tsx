@@ -1,3 +1,4 @@
+import { Link } from "react-router"
 import {
   LockIcon as Lock,
   EnvelopeSimpleIcon as EnvelopeSimple,
@@ -92,11 +93,11 @@ export function RegisterFormCard() {
                     </span>
                   </Button>
 
-                  <a href="/login" className="block">
+                  <Link to="/login" className="block">
                     <Button variant="outline" className="w-full">
                       Kembali ke Halaman Masuk
                     </Button>
-                  </a>
+                  </Link>
                 </div>
               </div>
             ) : (
@@ -247,12 +248,12 @@ export function RegisterFormCard() {
 
                 <div className="pt-2 text-center text-xs text-muted-foreground">
                   Sudah memiliki akun?{" "}
-                  <a
-                    href="/login"
+                  <Link
+                    to="/login"
                     className="font-semibold text-primary underline underline-offset-4"
                   >
                     Masuk Sekarang
-                  </a>
+                  </Link>
                 </div>
               </>
             )}

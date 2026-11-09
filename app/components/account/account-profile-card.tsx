@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react"
+import { Link, useNavigate } from "react-router"
 import {
   UploadSimpleIcon as UploadSimple,
   WarningCircleIcon as WarningCircle,
@@ -25,6 +26,7 @@ import { useUploadAvatar } from "@/hooks/use-upload-avatar"
 import { AvatarCropDialog } from "./avatar-crop-dialog"
 
 export function AccountProfileCard() {
+  const navigate = useNavigate()
   const { user, isPending, handleSignOut, refetch } = useAuthContext()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -97,9 +99,9 @@ export function AccountProfileCard() {
         <p className="text-sm text-muted-foreground">
           Please sign in to your account first.
         </p>
-        <a href="/login">
+        <Link to="/login">
           <Button className="w-full">Sign In Now</Button>
-        </a>
+        </Link>
       </Card>
     )
   }
@@ -155,7 +157,7 @@ export function AccountProfileCard() {
               </div>
               <Button
                 size="sm"
-                onClick={() => (window.location.href = "/dashboard")}
+                onClick={() => navigate("/dashboard")}
                 className="h-8 text-xs font-semibold"
               >
                 Admin Dashboard

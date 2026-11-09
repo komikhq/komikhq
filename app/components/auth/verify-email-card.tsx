@@ -1,3 +1,4 @@
+import { Link } from "react-router"
 import { CheckCircleIcon as CheckCircle } from "@phosphor-icons/react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -20,9 +21,9 @@ export function VerifyEmailCard() {
             Anda sekarang telah aktif sepenuhnya.
           </p>
           <div className="pt-2">
-            <a href="/login">
+            <Link to="/login">
               <Button className="w-full">Masuk ke Akun Anda</Button>
-            </a>
+            </Link>
           </div>
         </CardContent>
       </Card>

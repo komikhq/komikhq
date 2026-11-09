@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { Link } from "react-router"
 import { CrownIcon as Crown } from "@phosphor-icons/react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { comicsApi } from "@/lib/sdk-client"
@@ -61,9 +62,9 @@ export function HomePopularSection({ initialComics }: HomePopularSectionProps) {
         ) : popularComics.length > 0 ? (
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8 xl:grid-cols-10">
             {popularComics.slice(0, 20).map((comic) => (
-              <a
+              <Link
                 key={comic.id}
-                href={`/komik/${comic.slug}`}
+                to={`/komik/${comic.slug}`}
                 className="group flex flex-col space-y-2 rounded-lg border bg-card p-2 transition-colors hover:bg-accent"
               >
                 <div className="aspect-[3/4] overflow-hidden rounded-md bg-muted">
@@ -80,7 +81,7 @@ export function HomePopularSection({ initialComics }: HomePopularSectionProps) {
                 <p className="text-xs text-muted-foreground transition-colors group-hover:text-accent-foreground/80">
                   {(comic.totalViews || 0).toLocaleString("en-US")} views
                 </p>
-              </a>
+              </Link>
             ))}
           </div>
         ) : (

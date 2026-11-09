@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react"
+import { Link } from "react-router"
 import {
   UsersIcon as Users,
   BookOpenIcon as BookOpen,
@@ -91,10 +92,10 @@ export function AdminTabNav({ currentTab }: AdminTabNavProps) {
           const Icon = tab.icon
           const isActive = currentTab === tab.id
           return (
-            <a
+            <Link
               key={tab.id}
-              ref={isActive ? activeTabRef : null}
-              href={tab.href}
+              ref={isActive ? (activeTabRef as any) : null}
+              to={tab.href}
               className={cn(
                 "flex shrink-0 items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-xs font-semibold whitespace-nowrap transition-all lg:flex-1",
                 isActive
@@ -109,7 +110,7 @@ export function AdminTabNav({ currentTab }: AdminTabNavProps) {
                 )}
               />
               <span>{tab.label}</span>
-            </a>
+            </Link>
           )
         })}
       </nav>

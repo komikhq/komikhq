@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Link } from "react-router";
 import { Badge } from "@/components/ui/badge";
 import {
   ShieldCheckIcon as ShieldCheck,
@@ -43,9 +44,9 @@ export function LegalShell({
         aria-label="Breadcrumb"
         className="mb-6 flex items-center gap-1.5 text-xs text-muted-foreground"
       >
-        <a href="/" className="transition-colors hover:text-foreground">
+        <Link to="/" className="transition-colors hover:text-foreground">
           Home
-        </a>
+        </Link>
         <CaretRight className="size-3.5 opacity-60" />
         <span>Legal</span>
         <CaretRight className="size-3.5 opacity-60" />
@@ -83,9 +84,9 @@ export function LegalShell({
           const isActive = item.slug === currentSlug;
           const Icon = item.icon;
           return (
-            <a
+            <Link
               key={item.slug}
-              href={item.href}
+              to={item.href}
               className={
                 isActive
                   ? "flex items-center gap-2 rounded-xl bg-background px-3.5 py-2 text-xs font-semibold text-foreground shadow-sm ring-1 ring-border/50 transition-all dark:bg-card"
@@ -98,7 +99,7 @@ export function LegalShell({
                 }
               />
               <span>{item.label}</span>
-            </a>
+            </Link>
           );
         })}
       </div>

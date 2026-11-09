@@ -1,3 +1,4 @@
+import { Link } from "react-router"
 import { TagIcon as Tag } from "@phosphor-icons/react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -15,14 +16,14 @@ export function HomeAllGenresCard() {
       <CardContent>
         <div className="flex flex-wrap gap-2">
           {COMMON_GENRES.map((genre: GenreDefinition) => (
-            <a key={genre.slug} href={`/browse?genre=${genre.slug}`}>
+            <Link key={genre.slug} to={`/browse?genre=${genre.slug}`}>
               <Badge
                 variant="outline"
                 className="cursor-pointer px-3 py-1.5 transition-colors hover:bg-primary hover:text-primary-foreground"
               >
                 {genre.name}
               </Badge>
-            </a>
+            </Link>
           ))}
         </div>
       </CardContent>

@@ -1,4 +1,5 @@
 import React, { useState } from "react"
+import { Link, useNavigate } from "react-router"
 import {
   BookOpenIcon as BookOpen,
   PlusIcon as Plus,
@@ -33,6 +34,7 @@ import { DataTable } from "@/components/ui/data-table"
 import type { ColumnDef } from "@tanstack/react-table"
 
 export function ComicTableSection() {
+  const navigate = useNavigate()
   const {
     comics,
     loading,
@@ -121,12 +123,12 @@ export function ComicTableSection() {
         accessorKey: "title",
         header: "Comic Title",
         cell: ({ row }) => (
-          <a
-            href={`/dashboard/comics/${row.original.id}`}
+          <Link
+            to={`/dashboard/comics/${row.original.id}`}
             className="font-semibold text-foreground transition-colors hover:text-primary"
           >
             {row.original.title}
-          </a>
+          </Link>
         ),
       },
       {
@@ -190,7 +192,7 @@ export function ComicTableSection() {
               size="icon"
               className="h-7 w-7 text-muted-foreground hover:text-foreground"
               onClick={() =>
-                (window.location.href = `/dashboard/comics/${row.original.id}`)
+                navigate(`/dashboard/comics/${row.original.id}`)
               }
             >
               <Eye className="h-3.5 w-3.5" />

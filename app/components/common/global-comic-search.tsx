@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react"
+import { Link, useNavigate } from "react-router"
 import {
   BookOpenIcon as BookOpen,
   CircleNotchIcon as CircleNotch,
@@ -32,6 +33,7 @@ interface ComicSearchSuggestion {
 }
 
 export function GlobalComicSearch() {
+  const navigate = useNavigate()
   const [query, setQuery] = useState("")
   const [suggestions, setSuggestions] = useState<ComicSearchSuggestion[]>([])
   const [isLoading, setIsLoading] = useState(false)
@@ -145,7 +147,10 @@ export function GlobalComicSearch() {
       )
     } else if (event.key === "Enter") {
       event.preventDefault()
-      window.location.href = `/komik/${suggestions[activeIndex].slug}`
+      if (suggestions[activeIndex]) {
+        navigate(`/komik/${suggestions[activeIndex].slug}`)
+        setIsDesktopOpen(false)
+      }
     }
   }
 
@@ -164,7 +169,10 @@ export function GlobalComicSearch() {
       )
     } else if (event.key === "Enter") {
       event.preventDefault()
-      window.location.href = `/komik/${suggestions[activeIndex].slug}`
+      if (suggestions[activeIndex]) {
+        navigate(`/komik/${suggestions[activeIndex].slug}`)
+        setIsMobileOpen(false)
+      }
     }
   }
 
@@ -438,12 +446,12 @@ function SearchSuggestionRow({
     suggestion.title.toLocaleLowerCase()
 
   return (
-    <a
+    <Link
       id={`${idPrefix}-comic-search-option-${index}`}
       role="option"
       aria-selected={isActive}
       tabIndex={-1}
-      href={`/komik/${suggestion.slug}`}
+      to={`/komik/${suggestion.slug}`}
       className={`flex min-w-0 items-center gap-3 rounded-md px-2 py-2 transition-colors hover:bg-accent focus-visible:bg-accent ${isActive ? "bg-accent" : ""}`}
       onMouseEnter={() => onActiveIndexChange(index)}
       onClick={onSelect}
@@ -484,6 +492,6 @@ function SearchSuggestionRow({
           )}
         </div>
       </div>
-    </a>
+    </Link>
   )
 }

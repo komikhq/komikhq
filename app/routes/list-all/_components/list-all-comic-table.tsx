@@ -1,3 +1,4 @@
+import { Link } from "react-router"
 import {
   BookBookmarkIcon as BookBookmark,
   ArrowRightIcon as ArrowRight,
@@ -27,9 +28,9 @@ export function ListAllComicTable() {
         ) : comics.length > 0 ? (
           <div className="divide-y rounded-lg border bg-card/40">
             {comics.map((comic) => (
-              <a
+              <Link
                 key={comic.id || comic.slug}
-                href={`/komik/${comic.slug}`}
+                to={`/komik/${comic.slug}`}
                 className="group flex items-center justify-between p-3.5 transition-colors hover:bg-accent"
               >
                 <div className="flex min-w-0 items-center gap-3">
@@ -60,7 +61,7 @@ export function ListAllComicTable() {
                   </Badge>
                   <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-accent-foreground" />
                 </div>
-              </a>
+              </Link>
             ))}
           </div>
         ) : (
