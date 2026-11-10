@@ -22,8 +22,8 @@ export function ComicCoverImage({
   const [isLoaded, setIsLoaded] = useState(false)
   const [isError, setIsError] = useState(!src)
 
-  // IntersectionObserver: Gambar HANYA mulai diunduh saat mendekati viewport
-  // Ini mencegah browser menahan loading spinner awal untuk 50+ gambar sekaligus
+  // IntersectionObserver: Only download the image asset when approaching the viewport
+  // This prevents the browser from holding the initial page-loading spinner for 50+ images at once
   useEffect(() => {
     if (priority || isVisible) return
 
@@ -42,7 +42,7 @@ export function ComicCoverImage({
           observer.disconnect()
         }
       },
-      { rootMargin: "300px" } // Mulai unduh saat jarak 300px mendekati layar
+      { rootMargin: "300px" } // Start preloading when within 300px of the viewport
     )
 
     observer.observe(element)
@@ -54,7 +54,7 @@ export function ComicCoverImage({
       ref={containerRef}
       className="relative aspect-[3/4] w-full overflow-hidden rounded-md bg-muted select-none"
     >
-      {/* Skeleton Shimmer Overlay: Aktif 100% menutupi bingkai sampai file gambar benar-benar selesai terunduh */}
+      {/* Skeleton Shimmer Overlay: Covers the frame until the image has completely loaded */}
       {(!isLoaded || !isVisible) && !isError && (
         <div
           aria-hidden="true"
@@ -65,7 +65,7 @@ export function ComicCoverImage({
         </div>
       )}
 
-      {/* Fallback jika gambar rusak atau URL tidak tersedia */}
+      {/* Fallback if the image URL is broken or unavailable */}
       {isError ? (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-muted p-2 text-center text-muted-foreground">
           <BookOpen className="h-8 w-8 opacity-40" />
@@ -87,7 +87,7 @@ export function ComicCoverImage({
         />
       ) : null}
 
-      {/* Floating Badges (posisi absolut di atas cover) */}
+      {/* Floating Badges (positioned absolutely over the cover) */}
       {children && <div className="pointer-events-none relative z-20">{children}</div>}
     </div>
   )

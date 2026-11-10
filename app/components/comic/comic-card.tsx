@@ -46,7 +46,7 @@ export function ComicCard({
   const views = comic.periodViews ?? comic.totalViews ?? 0
   const formattedViews = views > 0 ? `${views.toLocaleString("en-US")} views` : null
 
-  // Format label chapter jika ada
+  // Format chapter badge label if available
   let chapterLabel: string | null = null
   if (comic.latestChapter?.chapterNumber) {
     chapterLabel = `Ch. ${parseFloat(comic.latestChapter.chapterNumber).toString()}`
