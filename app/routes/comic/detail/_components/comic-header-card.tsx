@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react"
+import { flushSync } from "react-dom"
 import {
   BookmarkSimpleIcon as BookmarkSimple,
   BookOpenIcon as BookOpen,
@@ -93,29 +94,45 @@ export function ComicHeaderCard({ slug, initialData }: ComicHeaderCardProps) {
     const nextExpanded = !synopsisExpanded
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setSynopsisExpanded(nextExpanded)
-      container.style.height = "auto"
+      container.style.height = ""
       return
-    }
-
-    let collapsedHeight = 0
-    if (!nextExpanded) {
-      paragraph.classList.add("line-clamp-5", "sm:line-clamp-4")
-      collapsedHeight = paragraph.getBoundingClientRect().height
-      paragraph.classList.remove("line-clamp-5", "sm:line-clamp-4")
     }
 
     synopsisAnimationRef.current = true
     synopsisNextExpandedRef.current = nextExpanded
-    container.style.height = `${container.getBoundingClientRect().height}px`
-    void container.offsetHeight
-    if (nextExpanded) setSynopsisExpanded(true)
 
-    requestAnimationFrame(() => {
-      const targetHeight = nextExpanded
-        ? paragraph.scrollHeight
-        : collapsedHeight
+    if (nextExpanded) {
+      // Expanding ("Read more"):
+      // 1. Measure current clamped height
+      const startHeight = container.getBoundingClientRect().height
+
+      // 2. Synchronously apply expanded state so the paragraph renders all text
+      flushSync(() => {
+        setSynopsisExpanded(true)
+      })
+
+      // 3. Measure accurate full text height
+      const targetHeight = paragraph.scrollHeight
+
+      // 4. Animate from startHeight to targetHeight
+      container.style.height = `${startHeight}px`
+      void container.offsetHeight // Force reflow to register starting point
       container.style.height = `${targetHeight}px`
-    })
+    } else {
+      // Collapsing ("Show less"):
+      // 1. Measure current full height
+      const startHeight = container.getBoundingClientRect().height
+
+      // 2. Temporarily apply clamp to measure exact target collapsed height
+      paragraph.classList.add("line-clamp-5", "sm:line-clamp-4")
+      const collapsedHeight = paragraph.getBoundingClientRect().height
+      paragraph.classList.remove("line-clamp-5", "sm:line-clamp-4")
+
+      // 3. Animate from startHeight down to collapsedHeight
+      container.style.height = `${startHeight}px`
+      void container.offsetHeight // Force reflow
+      container.style.height = `${collapsedHeight}px`
+    }
   }
 
   if (isLoading) {
@@ -267,10 +284,20 @@ export function ComicHeaderCard({ slug, initialData }: ComicHeaderCardProps) {
                 )
                   return
 
-                if (!synopsisNextExpandedRef.current) setSynopsisExpanded(false)
+                const isExpanding = synopsisNextExpandedRef.current
                 synopsisNextExpandedRef.current = null
                 synopsisAnimationRef.current = false
-                event.currentTarget.style.height = "auto"
+
+                if (isExpanding) {
+                  // Free height to auto after expansion so dynamic content/resizing works
+                  event.currentTarget.style.height = "auto"
+                } else {
+                  // Synchronously commit line-clamp before clearing inline height to eliminate visual glitch
+                  flushSync(() => {
+                    setSynopsisExpanded(false)
+                  })
+                  event.currentTarget.style.height = ""
+                }
               }}
             >
               <p
