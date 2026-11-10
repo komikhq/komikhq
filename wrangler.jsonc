@@ -13,10 +13,10 @@
 	"preview_urls": false,
 	"keep_vars": true,
 	"main": "./workers/app.ts",
-	"cache": {
-		"enabled": true,
-		"cross_version_cache": true
-	},
+	// "cache": {
+	// 	"enabled": true,
+	// 	"cross_version_cache": true
+	// },
 	"routes": [
 		{
 			"pattern": "web.komikhq.dpdns.org",
