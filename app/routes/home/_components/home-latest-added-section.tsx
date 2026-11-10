@@ -7,7 +7,7 @@ import {
 } from "@phosphor-icons/react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Badge } from "@/components/ui/badge"
+import { ComicCard } from "@/components/comic/comic-card"
 import { comicsApi } from "@/lib/sdk-client"
 
 interface HomeLatestAddedSectionProps {
@@ -59,15 +59,6 @@ export function HomeLatestAddedSection({ initialComics }: HomeLatestAddedSection
       isMounted = false
     }
   }, [selectedType])
-
-  const getTypeBadgeColor = (type?: string) => {
-    const t = (type || "manga").toLowerCase()
-    if (t === "manhwa")
-      return "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
-    if (t === "manhua")
-      return "bg-amber-500/10 text-amber-500 border-amber-500/20"
-    return "bg-blue-500/10 text-blue-500 border-blue-500/20"
-  }
 
   return (
     <Card className="overflow-hidden border-border/60">
@@ -152,60 +143,13 @@ export function HomeLatestAddedSection({ initialComics }: HomeLatestAddedSection
           >
             {latestComics.length > 0 ? (
               <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-                {latestComics.map((comic) => {
-                  const latestCh = comic.latestChapter
-                  const chNumber = latestCh
-                    ? `Ch. ${parseFloat(latestCh.chapterNumber).toString()}`
-                    : `Ch. ${comic.totalChapters || 1}`
-
-                  return (
-                    <Link
-                      key={comic.id || comic.slug}
-                      to={`/komik/${comic.slug}`}
-                      className="group flex flex-col rounded-xl border border-border/50 bg-card p-2 shadow-sm transition-all duration-200 hover:border-primary/30 hover:bg-accent/40 hover:shadow-md"
-                    >
-                      <div className="relative aspect-[3/4] overflow-hidden rounded-lg bg-muted">
-                        <img
-                          src={comic.coverUrl}
-                          alt={comic.title}
-                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                          loading="lazy"
-                        />
-                        <div className="absolute top-2 left-2 flex flex-col gap-1">
-                          <Badge
-                            variant="outline"
-                            className={`px-1.5 py-0.5 text-[10px] font-semibold backdrop-blur-md ${getTypeBadgeColor(
-                              comic.type
-                            )}`}
-                          >
-                            {comic.type ? comic.type.toUpperCase() : "MANGA"}
-                          </Badge>
-                        </div>
-
-                        <div className="absolute right-2 bottom-2">
-                          <Badge className="border border-white/10 bg-black/75 px-2 py-0.5 text-[10px] font-bold text-white backdrop-blur-md hover:bg-black/90">
-                            {chNumber}
-                          </Badge>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-1 flex-col justify-between px-1 pt-2 pb-0.5">
-                        <h3 className="line-clamp-1 text-xs leading-snug font-semibold transition-colors group-hover:text-primary">
-                          {comic.title}
-                        </h3>
-                        <div className="mt-1 flex items-center justify-between text-[11px] text-muted-foreground">
-                          <span className="text-muted-foreground/80 capitalize">
-                            {comic.status || "Ongoing"}
-                          </span>
-                          <span>
-                            {(comic.totalViews || 0).toLocaleString("en-US")}{" "}
-                            views
-                          </span>
-                        </div>
-                      </div>
-                    </Link>
-                  )
-                })}
+                {latestComics.map((comic) => (
+                  <ComicCard
+                    key={comic.id || comic.slug}
+                    comic={comic}
+                    variant="badge"
+                  />
+                ))}
               </div>
             ) : (
               <div className="space-y-2 py-10 text-center">

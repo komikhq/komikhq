@@ -5,7 +5,7 @@ import {
   ArrowRightIcon as ArrowRight,
 } from "@phosphor-icons/react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { ComicCard } from "@/components/comic/comic-card"
 import { COMMON_GENRES, type GenreDefinition } from "@/constants"
 import { comicsApi } from "@/lib/sdk-client"
 
@@ -119,37 +119,17 @@ export function HomeGenreComicsSection() {
               {comicsList.length > 0 ? (
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8 xl:grid-cols-10">
                   {comicsList.slice(0, 10).map((comic) => (
-                    <Link
+                    <ComicCard
                       key={comic.id || comic.slug}
-                      to={`/komik/${comic.slug}`}
-                      className="group flex flex-col space-y-2 rounded-lg border bg-card p-2 transition-colors hover:bg-accent"
-                    >
-                      <div className="relative aspect-[3/4] overflow-hidden rounded-md bg-muted">
-                        <img
-                          src={comic.coverUrl}
-                          alt={comic.title}
-                          className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                          loading="lazy"
-                        />
-                        {comic.totalChapters > 0 && (
-                          <Badge className="absolute right-1.5 bottom-1.5 border border-white/10 bg-black/75 px-1.5 py-0.5 text-[10px] font-semibold text-white backdrop-blur-md">
-                            {comic.totalChapters} Ch
-                          </Badge>
-                        )}
-                      </div>
-                      <h3 className="line-clamp-1 pt-1 text-sm font-semibold transition-colors group-hover:text-accent-foreground">
-                        {comic.title}
-                      </h3>
-                      <div className="flex items-center justify-between text-xs text-muted-foreground transition-colors group-hover:text-accent-foreground/80">
-                        <span className="capitalize">
-                          {comic.type || "Manga"}
+                      comic={comic}
+                      variant="compact"
+                      extraMeta={
+                        <span className="flex items-center justify-between text-xs">
+                          <span className="capitalize">{comic.type || "Manga"}</span>
+                          <span>{(comic.totalViews || 0).toLocaleString("en-US")} views</span>
                         </span>
-                        <span>
-                          {(comic.totalViews || 0).toLocaleString("en-US")}{" "}
-                          views
-                        </span>
-                      </div>
-                    </Link>
+                      }
+                    />
                   ))}
                 </div>
               ) : (

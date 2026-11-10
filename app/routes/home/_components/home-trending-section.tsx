@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from "react"
-import { Link } from "react-router"
 import { TrendUpIcon as TrendUp } from "@phosphor-icons/react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { ComicCard } from "@/components/comic/comic-card"
 import { comicsApi } from "@/lib/sdk-client"
 
 interface HomeTrendingSectionProps {
@@ -107,26 +107,11 @@ export function HomeTrendingSection({ initialComics }: HomeTrendingSectionProps)
             {trendingComics.length > 0 ? (
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8 xl:grid-cols-10">
                 {trendingComics.slice(0, 20).map((comic) => (
-                  <Link
-                    key={comic.id}
-                    to={`/komik/${comic.slug}`}
-                    className="group flex flex-col space-y-2 rounded-lg border bg-card p-2 transition-colors hover:bg-accent"
-                  >
-                    <div className="aspect-[3/4] overflow-hidden rounded-md bg-muted">
-                      <img
-                        src={comic.coverUrl}
-                        alt={comic.title}
-                        className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                        loading="lazy"
-                      />
-                    </div>
-                    <h3 className="line-clamp-1 text-sm font-semibold transition-colors group-hover:text-accent-foreground">
-                      {comic.title}
-                    </h3>
-                    <p className="text-xs text-muted-foreground transition-colors group-hover:text-accent-foreground/80">
-                      {(comic.periodViews || 0).toLocaleString("en-US")} views
-                    </p>
-                  </Link>
+                  <ComicCard
+                    key={comic.id || comic.slug}
+                    comic={comic}
+                    variant="compact"
+                  />
                 ))}
               </div>
             ) : (

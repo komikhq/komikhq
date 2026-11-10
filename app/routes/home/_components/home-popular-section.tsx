@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
-import { Link } from "react-router"
 import { CrownIcon as Crown } from "@phosphor-icons/react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { ComicCard } from "@/components/comic/comic-card"
 import { comicsApi } from "@/lib/sdk-client"
 
 interface HomePopularSectionProps {
@@ -62,26 +62,11 @@ export function HomePopularSection({ initialComics }: HomePopularSectionProps) {
         ) : popularComics.length > 0 ? (
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8 xl:grid-cols-10">
             {popularComics.slice(0, 20).map((comic) => (
-              <Link
-                key={comic.id}
-                to={`/komik/${comic.slug}`}
-                className="group flex flex-col space-y-2 rounded-lg border bg-card p-2 transition-colors hover:bg-accent"
-              >
-                <div className="aspect-[3/4] overflow-hidden rounded-md bg-muted">
-                  <img
-                    src={comic.coverUrl}
-                    alt={comic.title}
-                    className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                    loading="lazy"
-                  />
-                </div>
-                <h3 className="line-clamp-1 text-sm font-semibold transition-colors group-hover:text-accent-foreground">
-                  {comic.title}
-                </h3>
-                <p className="text-xs text-muted-foreground transition-colors group-hover:text-accent-foreground/80">
-                  {(comic.totalViews || 0).toLocaleString("en-US")} views
-                </p>
-              </Link>
+              <ComicCard
+                key={comic.id || comic.slug}
+                comic={comic}
+                variant="compact"
+              />
             ))}
           </div>
         ) : (
