@@ -6,13 +6,14 @@ interface UseScrollPageTrackerProps {
   onPageChange?: (pageIndex: number) => void
   isProgrammaticScrollRef?: React.RefObject<boolean>
   isModeSwitchingRef?: React.RefObject<boolean>
+  isInitialMountingRef?: React.RefObject<boolean>
 }
 
 /**
  * Tracks the active page index using a high-performance Center-Band IntersectionObserver.
  * - rootMargin: "-48% 0px -48% 0px" shrinks the viewport detection zone to a narrow horizontal band in the vertical center.
  * - threshold: 0 ensures any image instantly triggers when crossing center screen.
- * - Guarded against programmatic scroll and mode-switch layout reflow.
+ * - Guarded against programmatic scroll, mode-switch layout reflow, and initial hydration drift.
  */
 export function useScrollPageTracker({
   totalCount,
@@ -20,6 +21,7 @@ export function useScrollPageTracker({
   onPageChange,
   isProgrammaticScrollRef,
   isModeSwitchingRef,
+  isInitialMountingRef,
 }: UseScrollPageTrackerProps) {
   const onPageChangeRef = useRef(onPageChange)
   onPageChangeRef.current = onPageChange
@@ -32,8 +34,14 @@ export function useScrollPageTracker({
     let isDisposed = false
 
     const observerCallback: IntersectionObserverCallback = (entries) => {
-      // Ignore scroll updates during programmatic slider scrubbing or layout mode switching
-      if (isProgrammaticScrollRef?.current || isModeSwitchingRef?.current) return
+      // Ignore scroll updates during initial mounting, programmatic slider scrubbing, or layout mode switching
+      if (
+        isProgrammaticScrollRef?.current ||
+        isModeSwitchingRef?.current ||
+        isInitialMountingRef?.current
+      ) {
+        return
+      }
 
       // Collect all entries currently intersecting the center midline band
       const intersecting = entries.filter((e) => e.isIntersecting)
@@ -102,7 +110,7 @@ export function useScrollPageTracker({
       mutationObserver.disconnect()
       observer.disconnect()
     }
-  }, [totalCount, enabled, isProgrammaticScrollRef, isModeSwitchingRef])
+  }, [totalCount, enabled, isProgrammaticScrollRef, isModeSwitchingRef, isInitialMountingRef])
 
   return {
     setReportedIndex: (index: number) => {

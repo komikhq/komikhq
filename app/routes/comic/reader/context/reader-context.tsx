@@ -5,8 +5,10 @@ import React, {
   useCallback,
   useRef,
   useEffect,
+  useMemo,
   type ReactNode,
 } from "react"
+import { useSearchParams } from "react-router"
 import type {
   ChapterFullData,
   ChapterNavInfo,
@@ -20,6 +22,7 @@ import { useChapterImageQueue } from "../hooks/use-chapter-image-queue"
 import { useReadingTracker } from "../hooks/use-reading-tracker"
 import { useScrollPageTracker } from "../hooks/use-scroll-page-tracker"
 import { useReaderShortcuts } from "../hooks/use-reader-shortcuts"
+import { getLocalReadingProgress } from "../lib/reader-helpers"
 
 interface ReaderContextValue {
   data: ChapterFullData | null | undefined
@@ -45,8 +48,10 @@ interface ReaderContextValue {
   isImageLoaded: (url: string) => boolean
   isImageFailed: (url: string) => boolean
   enqueueImmediate: (url: string, index: number) => void
+  isPageAuthorized: (pageIndex: number) => boolean
   isModeSwitchingRef: React.RefObject<boolean>
   finishModeSwitch: () => void
+  isInitialMountingRef: React.RefObject<boolean>
 }
 
 const ReaderContext = createContext<ReaderContextValue | null>(null)
@@ -64,6 +69,8 @@ export function ReaderProvider({
   comicSlug,
   chapterSlug,
 }: ReaderProviderProps) {
+  const [searchParams] = useSearchParams()
+
   const { comicTitle, chapterTitle, pages, navInfo, allChapters } = useChapterData({
     data: initialData,
     currentComicSlug: comicSlug,
@@ -72,7 +79,28 @@ export function ReaderProvider({
 
   const { settings, updateSettings } = useReaderSettings()
 
-  const [activePageIndex, setActivePageIndex] = useState(0)
+  // 1. Resolve Initial Page Index (URL ?page=X or Local/Cloud History or Fallback to 0)
+  const resolvedInitialIndex = useMemo(() => {
+    const queryPage = searchParams.get("page")
+    if (queryPage) {
+      const parsed = parseInt(queryPage, 10)
+      if (Number.isInteger(parsed) && parsed >= 1) {
+        return parsed - 1
+      }
+    }
+
+    const localLastRead = getLocalReadingProgress(
+      initialData?.comic?.id,
+      initialData?.chapter?.id
+    )
+    if (localLastRead && localLastRead >= 1) {
+      return localLastRead - 1
+    }
+
+    return 0
+  }, [searchParams, initialData?.comic?.id, initialData?.chapter?.id])
+
+  const [activePageIndex, setActivePageIndex] = useState(resolvedInitialIndex)
   const [isHudVisible, setHudVisible] = useState(true)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
@@ -80,8 +108,17 @@ export function ReaderProvider({
   const lastScrollY = useRef(0)
   const isProgrammaticScrollRef = useRef(false)
   const isModeSwitchingRef = useRef(false)
+  const isInitialMountingRef = useRef(true)
   const prevModeRef = useRef(settings.mode)
   const programmaticScrollTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Release initial mount lock after positioning has settled
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      isInitialMountingRef.current = false
+    }, 400)
+    return () => clearTimeout(timer)
+  }, [])
 
   // Detect mode changes from paged -> webtoon to activate transition mutex lock
   useEffect(() => {
@@ -101,7 +138,7 @@ export function ReaderProvider({
     setActivePageIndex(idx)
   }, [])
 
-  // 1. Center-band IntersectionObserver page tracker (for Webtoon vertical mode)
+  // 2. Center-band IntersectionObserver page tracker (for Webtoon vertical mode)
   const isWebtoonMode = settings.mode === "webtoon"
   const { setReportedIndex } = useScrollPageTracker({
     totalCount: pages.length,
@@ -109,16 +146,17 @@ export function ReaderProvider({
     onPageChange: handlePageChange,
     isProgrammaticScrollRef,
     isModeSwitchingRef,
+    isInitialMountingRef,
   })
 
-  // 2. Queue for sequential image loading with lookahead
-  const { isImageLoaded, isImageFailed, enqueueImmediate } = useChapterImageQueue({
+  // 3. Queue for sequential image loading with lookahead
+  const { isImageLoaded, isImageFailed, enqueueImmediate, isPageAuthorized } = useChapterImageQueue({
     pages,
     activePageIndex,
     lookahead: 3,
   })
 
-  // 3. Dual-tier reading history & view count tracker
+  // 4. Dual-tier reading history & view count tracker
   useReadingTracker({
     comicId: initialData?.comic?.id,
     chapterId: initialData?.chapter?.id,
@@ -131,7 +169,7 @@ export function ReaderProvider({
     setHudVisible((prev) => !prev)
   }, [])
 
-  // 4. Scroll smoothly to specific page element (with programmatic guard)
+  // 5. Scroll smoothly to specific page element (with programmatic guard)
   const scrollToPage = useCallback(
     (targetIndex: number) => {
       const boundedIndex = Math.max(0, Math.min(targetIndex, pages.length - 1))
@@ -156,15 +194,21 @@ export function ReaderProvider({
     [pages.length, isWebtoonMode, setReportedIndex]
   )
 
-  // 5. Smart auto-hide HUD on downward scroll; reveal on upward scroll
+  // 6. Smart auto-hide HUD on downward scroll; reveal on upward scroll
   useEffect(() => {
     if (!settings.autoHideHud || typeof window === "undefined" || !isWebtoonMode) {
       return
     }
 
     const handleHudScroll = () => {
-      // Don't auto-hide HUD while mode is transitioning or scrubbing
-      if (isModeSwitchingRef.current || isProgrammaticScrollRef.current) return
+      // Don't auto-hide HUD while initial mount, mode is transitioning or scrubbing
+      if (
+        isInitialMountingRef.current ||
+        isModeSwitchingRef.current ||
+        isProgrammaticScrollRef.current
+      ) {
+        return
+      }
 
       const currentScrollY = window.scrollY
       if (Math.abs(currentScrollY - lastScrollY.current) < 50) return
@@ -183,7 +227,7 @@ export function ReaderProvider({
     return () => window.removeEventListener("scroll", handleHudScroll)
   }, [settings.autoHideHud, isWebtoonMode])
 
-  // 6. Global keyboard shortcuts
+  // 7. Global keyboard shortcuts
   useReaderShortcuts({
     mode: settings.mode,
     totalPages: pages.length,
@@ -216,8 +260,10 @@ export function ReaderProvider({
     isImageLoaded,
     isImageFailed,
     enqueueImmediate,
+    isPageAuthorized,
     isModeSwitchingRef,
     finishModeSwitch,
+    isInitialMountingRef,
   }
 
   return (

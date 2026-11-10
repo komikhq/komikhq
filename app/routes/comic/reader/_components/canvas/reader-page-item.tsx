@@ -21,10 +21,17 @@ export function ReaderPageItem({
   totalPages,
   priorityImmediate = false,
 }: ReaderPageItemProps) {
-  const { isImageLoaded, isImageFailed, enqueueImmediate } = useReader()
+  const {
+    isImageLoaded,
+    isImageFailed,
+    enqueueImmediate,
+    isPageAuthorized,
+  } = useReader()
+
   const [internalLoaded, setInternalLoaded] = useState(false)
   const [hasError, setHasError] = useState(false)
   const [retryKey, setRetryKey] = useState(0)
+  const [naturalRatio, setNaturalRatio] = useState<string | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
   const imageWidth =
@@ -33,7 +40,7 @@ export function ReaderPageItem({
     Number.isInteger(page.height) && (page.height ?? 0) > 0 ? page.height! : undefined
   const hasKnownDimensions = imageWidth !== undefined && imageHeight !== undefined
 
-  // Sequential queue status
+  const isAuthorized = isPageAuthorized(pageIndex)
   const queueLoaded = isImageLoaded(page.imageUrl)
   const queueFailed = isImageFailed(page.imageUrl)
   const isReady = internalLoaded || queueLoaded
@@ -60,7 +67,7 @@ export function ReaderPageItem({
         }
       },
       {
-        rootMargin: "800px 0px 800px 0px", // Trigger when within 800px of viewport
+        rootMargin: "600px 0px 600px 0px",
         threshold: 0.01,
       }
     )
@@ -79,6 +86,10 @@ export function ReaderPageItem({
     enqueueImmediate(page.imageUrl, pageIndex)
   }
 
+  // Dynamic Aspect Ratio: naturalRatio from loaded image > metadata ratio > placeholder
+  const effectiveRatio =
+    naturalRatio || (hasKnownDimensions ? `${imageWidth} / ${imageHeight}` : undefined)
+
   return (
     <div
       ref={containerRef}
@@ -86,18 +97,16 @@ export function ReaderPageItem({
       data-page-index={pageIndex}
       className="relative w-full overflow-hidden bg-neutral-950 select-none"
       style={{
-        aspectRatio: hasKnownDimensions
-          ? `${imageWidth} / ${imageHeight}`
-          : undefined,
-        // No fixed 70svh: start at lightweight natural min-height to prevent empty padding on short ads
-        minHeight: hasKnownDimensions ? undefined : "60px",
+        aspectRatio: effectiveRatio,
+        // Before image loads with unknown dimensions, maintain stable placeholder to prevent layout collapse
+        minHeight: effectiveRatio ? 0 : "50vh",
       }}
     >
       {/* Loading Skeleton */}
       {!isReady && !hasError && !queueFailed && (
         <div
           className={`flex w-full flex-col items-center justify-center gap-2 bg-neutral-900/60 text-neutral-500 transition-opacity duration-300 ${
-            hasKnownDimensions ? "absolute inset-0" : "py-10"
+            effectiveRatio ? "absolute inset-0" : "h-[50vh]"
           }`}
         >
           <CircleNotch className="h-5 w-5 animate-spin text-primary" />
@@ -112,7 +121,9 @@ export function ReaderPageItem({
         <div className="flex w-full flex-col items-center justify-center gap-3 bg-neutral-900/90 py-12 text-center text-neutral-400">
           <WarningCircle className="h-8 w-8 text-amber-500/80" />
           <div className="text-xs">
-            <p className="font-medium text-neutral-300">Failed to load Page {page.pageNumber || pageIndex + 1}</p>
+            <p className="font-medium text-neutral-300">
+              Failed to load Page {page.pageNumber || pageIndex + 1}
+            </p>
             <p className="text-neutral-500">Tap below to retry</p>
           </div>
           <Button
@@ -127,27 +138,33 @@ export function ReaderPageItem({
         </div>
       )}
 
-      {/* Main Image */}
-      <img
-        key={`${page.imageUrl}-${retryKey}`}
-        src={page.imageUrl}
-        alt={`Page ${page.pageNumber || pageIndex + 1}`}
-        width={imageWidth}
-        height={imageHeight}
-        decoding="async"
-        loading={pageIndex <= 1 ? "eager" : "lazy"}
-        fetchPriority={pageIndex === 0 ? "high" : "auto"}
-        className={`block h-auto w-full object-contain transition-opacity duration-300 ${
-          isReady ? "opacity-100" : "opacity-0"
-        }`}
-        onLoad={() => {
-          setInternalLoaded(true)
-          setHasError(false)
-        }}
-        onError={() => {
-          setHasError(true)
-        }}
-      />
+      {/* Main Image: src is GATED until authorized by sequential dispatcher */}
+      {isAuthorized && (
+        <img
+          key={`${page.imageUrl}-${retryKey}`}
+          src={page.imageUrl}
+          alt={`Page ${page.pageNumber || pageIndex + 1}`}
+          width={imageWidth}
+          height={imageHeight}
+          decoding="async"
+          loading={pageIndex <= 1 ? "eager" : "lazy"}
+          fetchPriority={priorityImmediate ? "high" : "auto"}
+          className={`block h-auto w-full object-contain transition-opacity duration-300 ${
+            isReady ? "opacity-100" : "opacity-0"
+          }`}
+          onLoad={(e) => {
+            const img = e.currentTarget
+            if (img.naturalWidth && img.naturalHeight) {
+              setNaturalRatio(`${img.naturalWidth} / ${img.naturalHeight}`)
+            }
+            setInternalLoaded(true)
+            setHasError(false)
+          }}
+          onError={() => {
+            setHasError(true)
+          }}
+        />
+      )}
 
       {/* Subtle Floating Page Number Label (Bottom Right) */}
       <span className="pointer-events-none absolute right-2 bottom-2 rounded border border-neutral-800/80 bg-neutral-950/80 px-2 py-0.5 font-mono text-[10px] text-neutral-400 backdrop-blur">
@@ -156,4 +173,3 @@ export function ReaderPageItem({
     </div>
   )
 }
-

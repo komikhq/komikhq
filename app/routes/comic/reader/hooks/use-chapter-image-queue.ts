@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useMemo, useCallback } from "react"
+import { useEffect, useState, useMemo, useCallback, useRef } from "react"
 import { ChapterImageQueue } from "../lib/image-loader-queue"
 import { PagePriority, type ChapterPageItem } from "../types/reader.types"
 
@@ -15,6 +15,10 @@ export function useChapterImageQueue({
 }: UseChapterImageQueueProps) {
   const queue = useMemo(() => new ChapterImageQueue(2), [])
   const [, setLoadVersion] = useState(0)
+  const authorizedIndicesRef = useRef<Set<number>>(new Set())
+
+  // Keep track of authorized page indices to grant <img> src permission
+  const [authorizedVersion, setAuthorizedVersion] = useState(0)
 
   // Subscribe to queue completion events to force re-render when needed
   useEffect(() => {
@@ -27,38 +31,63 @@ export function useChapterImageQueue({
     }
   }, [queue])
 
-  // Sequential Priority Scheduler: Enqueue visible & lookahead window
+  // Sequential Priority Scheduler: Enqueue and authorize visible & lookahead window
   useEffect(() => {
     if (!pages.length) return
 
-    // 1. Visible page (Immediate)
-    if (pages[activePageIndex]?.imageUrl) {
-      queue.enqueue(pages[activePageIndex].imageUrl, activePageIndex, PagePriority.IMMEDIATE)
-    }
+    const newlyAuthorized = new Set(authorizedIndicesRef.current)
 
-    // 2. Next page ahead (High)
-    const nextIdx = activePageIndex + 1
-    if (nextIdx < pages.length && pages[nextIdx]?.imageUrl) {
-      queue.enqueue(pages[nextIdx].imageUrl, nextIdx, PagePriority.HIGH)
-    }
-
-    // 3. Further lookahead pages (Normal)
-    for (let offset = 2; offset <= lookahead; offset++) {
-      const idx = activePageIndex + offset
-      if (idx < pages.length && pages[idx]?.imageUrl) {
-        queue.enqueue(pages[idx].imageUrl, idx, PagePriority.NORMAL)
+    // 1. Visible page (Immediate priority)
+    if (activePageIndex >= 0 && activePageIndex < pages.length) {
+      newlyAuthorized.add(activePageIndex)
+      if (pages[activePageIndex]?.imageUrl) {
+        queue.enqueue(pages[activePageIndex].imageUrl, activePageIndex, PagePriority.IMMEDIATE)
       }
     }
 
-    // 4. Previous buffer page (Low)
-    const prevIdx = activePageIndex - 1
-    if (prevIdx >= 0 && pages[prevIdx]?.imageUrl) {
-      queue.enqueue(pages[prevIdx].imageUrl, prevIdx, PagePriority.LOW)
+    // 2. Next page ahead (High priority)
+    const nextIdx = activePageIndex + 1
+    if (nextIdx < pages.length) {
+      newlyAuthorized.add(nextIdx)
+      if (pages[nextIdx]?.imageUrl) {
+        queue.enqueue(pages[nextIdx].imageUrl, nextIdx, PagePriority.HIGH)
+      }
     }
+
+    // 3. Further lookahead pages (Normal priority)
+    for (let offset = 2; offset <= lookahead; offset++) {
+      const idx = activePageIndex + offset
+      if (idx < pages.length) {
+        newlyAuthorized.add(idx)
+        if (pages[idx]?.imageUrl) {
+          queue.enqueue(pages[idx].imageUrl, idx, PagePriority.NORMAL)
+        }
+      }
+    }
+
+    // 4. Previous buffer page (Low priority)
+    const prevIdx = activePageIndex - 1
+    if (prevIdx >= 0) {
+      newlyAuthorized.add(prevIdx)
+      if (pages[prevIdx]?.imageUrl) {
+        queue.enqueue(pages[prevIdx].imageUrl, prevIdx, PagePriority.LOW)
+      }
+    }
+
+    authorizedIndicesRef.current = newlyAuthorized
+    setAuthorizedVersion((v) => v + 1)
 
     // Dynamically reprioritize any pending tasks in the queue
     queue.reprioritize(activePageIndex, lookahead)
   }, [pages, activePageIndex, lookahead, queue])
+
+  const isPageAuthorized = useCallback(
+    (pageIndex: number) => {
+      return authorizedIndicesRef.current.has(pageIndex)
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [authorizedVersion]
+  )
 
   const isImageLoaded = useCallback(
     (url: string) => {
@@ -76,6 +105,7 @@ export function useChapterImageQueue({
 
   const enqueueImmediate = useCallback(
     (url: string, index: number) => {
+      authorizedIndicesRef.current.add(index)
       queue.enqueue(url, index, PagePriority.IMMEDIATE)
     },
     [queue]
@@ -85,6 +115,6 @@ export function useChapterImageQueue({
     isImageLoaded,
     isImageFailed,
     enqueueImmediate,
+    isPageAuthorized,
   }
 }
-

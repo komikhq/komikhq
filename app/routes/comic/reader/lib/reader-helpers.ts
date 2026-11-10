@@ -92,3 +92,23 @@ export function saveLocalReadingProgress(
   }
 }
 
+/**
+ * Retrieves guest or cached reading progress from localStorage for a specific comic and chapter
+ */
+export function getLocalReadingProgress(
+  comicId: string | undefined,
+  chapterId: string | undefined
+): number | null {
+  if (typeof window === "undefined" || !comicId || !chapterId) return null
+  try {
+    const raw = localStorage.getItem(`${READER_STORAGE_HISTORY_PREFIX}${comicId}`)
+    if (!raw) return null
+    const record = JSON.parse(raw)
+    if (record.chapterId === chapterId && Number.isInteger(record.lastReadPage)) {
+      return record.lastReadPage
+    }
+    return null
+  } catch {
+    return null
+  }
+}

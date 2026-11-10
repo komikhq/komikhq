@@ -64,36 +64,44 @@ export function HistoryList() {
 
   return (
     <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6">
-      {history.map((item) => (
-        <Link
-          key={item.id || item.comic.id}
-          to={`/komik/${item.comic.slug}`}
-          className="group flex items-center gap-3 rounded-lg border bg-card p-2 transition-colors hover:bg-accent"
-        >
-          <div className="h-20 w-16 shrink-0 overflow-hidden rounded-md">
-            <ComicCoverImage
-              src={item.comic.coverUrl}
-              alt={item.comic.title}
-            />
-          </div>
-          <div className="min-w-0 flex-1">
-            <h3 className="line-clamp-1 text-sm font-semibold transition-colors group-hover:text-accent-foreground">
-              {item.comic.title}
-            </h3>
-            <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground transition-colors group-hover:text-accent-foreground/80">
-              <BookOpen className="h-3.5 w-3.5 shrink-0" />
-              <span className="truncate">
-                Chapter {item.chapter?.chapterNumber || "Latest"}
-              </span>
-            </p>
-            {item.lastReadPage && (
-              <p className="mt-0.5 text-[11px] text-muted-foreground/70 transition-colors group-hover:text-accent-foreground/70">
-                Page {item.lastReadPage} of {item.snapshotTotalPages || 1}
+      {history.map((item) => {
+        const targetUrl = item.chapter?.slug
+          ? `/komik/${item.comic.slug}/${item.chapter.slug}${
+              item.lastReadPage ? `?page=${item.lastReadPage}` : ""
+            }`
+          : `/komik/${item.comic.slug}`
+
+        return (
+          <Link
+            key={item.id || item.comic.id}
+            to={targetUrl}
+            className="group flex items-center gap-3 rounded-lg border bg-card p-2 transition-colors hover:bg-accent"
+          >
+            <div className="h-20 w-16 shrink-0 overflow-hidden rounded-md">
+              <ComicCoverImage
+                src={item.comic.coverUrl}
+                alt={item.comic.title}
+              />
+            </div>
+            <div className="min-w-0 flex-1">
+              <h3 className="line-clamp-1 text-sm font-semibold transition-colors group-hover:text-accent-foreground">
+                {item.comic.title}
+              </h3>
+              <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground transition-colors group-hover:text-accent-foreground/80">
+                <BookOpen className="h-3.5 w-3.5 shrink-0" />
+                <span className="truncate">
+                  Chapter {item.chapter?.chapterNumber || "Latest"}
+                </span>
               </p>
-            )}
-          </div>
-        </Link>
-      ))}
+              {item.lastReadPage && (
+                <p className="mt-0.5 text-[11px] text-muted-foreground/70 transition-colors group-hover:text-accent-foreground/70">
+                  Page {item.lastReadPage} of {item.snapshotTotalPages || 1}
+                </p>
+              )}
+            </div>
+          </Link>
+        )
+      })}
     </div>
   )
 }
