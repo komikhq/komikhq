@@ -86,9 +86,9 @@ export function ReaderPageItem({
     enqueueImmediate(page.imageUrl, pageIndex)
   }
 
-  // Dynamic Aspect Ratio: naturalRatio from loaded image > metadata ratio > placeholder
+  // Dynamic Aspect Ratio: naturalRatio from loaded image > metadata ratio > stable comic portrait ratio (2/3)
   const effectiveRatio =
-    naturalRatio || (hasKnownDimensions ? `${imageWidth} / ${imageHeight}` : undefined)
+    naturalRatio || (hasKnownDimensions ? `${imageWidth} / ${imageHeight}` : "2 / 3")
 
   return (
     <div
@@ -98,17 +98,11 @@ export function ReaderPageItem({
       className="relative w-full overflow-hidden bg-neutral-950 select-none"
       style={{
         aspectRatio: effectiveRatio,
-        // Before image loads with unknown dimensions, maintain stable placeholder to prevent layout collapse
-        minHeight: effectiveRatio ? 0 : "50vh",
       }}
     >
       {/* Loading Skeleton */}
       {!isReady && !hasError && !queueFailed && (
-        <div
-          className={`flex w-full flex-col items-center justify-center gap-2 bg-neutral-900/60 text-neutral-500 transition-opacity duration-300 ${
-            effectiveRatio ? "absolute inset-0" : "h-[50vh]"
-          }`}
-        >
+        <div className="absolute inset-0 flex w-full flex-col items-center justify-center gap-2 bg-neutral-900/60 text-neutral-500 transition-opacity duration-300">
           <CircleNotch className="h-5 w-5 animate-spin text-primary" />
           <span className="font-mono text-xs text-neutral-400">
             Page {page.pageNumber || pageIndex + 1}
