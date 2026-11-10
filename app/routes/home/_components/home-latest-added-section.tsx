@@ -121,7 +121,7 @@ export function HomeLatestAddedSection({ initialComics }: HomeLatestAddedSection
 
       <CardContent>
         {isInitialLoading ? (
-          <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+          <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 2xl:grid-cols-8">
             {Array.from({ length: 12 }).map((_, i) => (
               <div
                 key={i}
@@ -142,7 +142,7 @@ export function HomeLatestAddedSection({ initialComics }: HomeLatestAddedSection
             }`}
           >
             {latestComics.length > 0 ? (
-              <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+              <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 2xl:grid-cols-8">
                 {latestComics.map((comic) => (
                   <ComicCard
                     key={comic.id || comic.slug}

@@ -47,7 +47,7 @@ export function HomePopularSection({ initialComics }: HomePopularSectionProps) {
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8 xl:grid-cols-10">
+          <div className="grid grid-cols-2 gap-3 min-[480px]:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10">
             {Array.from({ length: 10 }).map((_, i) => (
               <div
                 key={i}
@@ -60,7 +60,7 @@ export function HomePopularSection({ initialComics }: HomePopularSectionProps) {
             ))}
           </div>
         ) : popularComics.length > 0 ? (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8 xl:grid-cols-10">
+          <div className="grid grid-cols-2 gap-3 min-[480px]:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10">
             {popularComics.slice(0, 20).map((comic) => (
               <ComicCard
                 key={comic.id || comic.slug}

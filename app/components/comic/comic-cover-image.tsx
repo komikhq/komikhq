@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import { BookOpenIcon as BookOpen } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
 
@@ -17,29 +17,61 @@ export function ComicCoverImage({
   priority = false,
   children,
 }: ComicCoverImageProps) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [isVisible, setIsVisible] = useState(priority)
   const [isLoaded, setIsLoaded] = useState(false)
   const [isError, setIsError] = useState(!src)
 
+  // IntersectionObserver: Gambar HANYA mulai diunduh saat mendekati viewport
+  // Ini mencegah browser menahan loading spinner awal untuk 50+ gambar sekaligus
+  useEffect(() => {
+    if (priority || isVisible) return
+
+    const element = containerRef.current
+    if (!element) return
+
+    if (!("IntersectionObserver" in window)) {
+      setIsVisible(true)
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true)
+          observer.disconnect()
+        }
+      },
+      { rootMargin: "300px" } // Mulai unduh saat jarak 300px mendekati layar
+    )
+
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [priority, isVisible])
+
   return (
-    <div className="relative aspect-[3/4] w-full overflow-hidden rounded-md bg-muted select-none">
-      {/* Skeleton overlay yang aktif 100% menutupi bingkai sampai gambar selesai dimuat */}
-      {!isLoaded && !isError && (
+    <div
+      ref={containerRef}
+      className="relative aspect-[3/4] w-full overflow-hidden rounded-md bg-muted select-none"
+    >
+      {/* Skeleton Shimmer Overlay: Aktif 100% menutupi bingkai sampai file gambar benar-benar selesai terunduh */}
+      {(!isLoaded || !isVisible) && !isError && (
         <div
           aria-hidden="true"
-          className="absolute inset-0 z-10 flex items-center justify-center bg-muted/80 backdrop-blur-xs transition-opacity duration-300"
+          className="absolute inset-0 z-10 flex items-center justify-center bg-muted/90 backdrop-blur-xs transition-opacity duration-300"
         >
-          <div className="h-full w-full animate-pulse bg-gradient-to-t from-muted-foreground/10 to-transparent" />
+          <div className="h-full w-full animate-pulse bg-gradient-to-t from-muted-foreground/15 to-transparent" />
           <BookOpen className="absolute h-6 w-6 animate-pulse text-muted-foreground/30" />
         </div>
       )}
 
-      {/* Fallback jika gambar error / tidak ditemukan */}
+      {/* Fallback jika gambar rusak atau URL tidak tersedia */}
       {isError ? (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-muted p-2 text-center text-muted-foreground">
           <BookOpen className="h-8 w-8 opacity-40" />
           <span className="text-[10px] font-medium opacity-60">No Cover</span>
         </div>
-      ) : (
+      ) : isVisible ? (
         <img
           src={src || undefined}
           alt={alt}
@@ -53,11 +85,10 @@ export function ComicCoverImage({
             className
           )}
         />
-      )}
+      ) : null}
 
       {/* Floating Badges (posisi absolut di atas cover) */}
       {children && <div className="pointer-events-none relative z-20">{children}</div>}
     </div>
   )
 }
-

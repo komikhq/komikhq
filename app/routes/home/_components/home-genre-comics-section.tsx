@@ -117,7 +117,7 @@ export function HomeGenreComicsSection() {
 
             <CardContent>
               {comicsList.length > 0 ? (
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8 xl:grid-cols-10">
+                <div className="grid grid-cols-2 gap-3 min-[480px]:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10">
                   {comicsList.slice(0, 10).map((comic) => (
                     <ComicCard
                       key={comic.id || comic.slug}
