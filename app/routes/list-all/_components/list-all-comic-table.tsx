@@ -139,7 +139,7 @@ export function ListAllComicTable({
                   <div className="ml-2 flex shrink-0 items-center gap-3">
                     <Badge
                       variant="outline"
-                      className="text-xs group-hover:border-accent-foreground/30"
+                      className="text-xs transition-colors group-hover:border-accent-foreground/40 group-hover:text-accent-foreground group-active:border-accent-foreground/60 group-active:text-accent-foreground"
                     >
                       {comic.status || "Ongoing"}
                     </Badge>
