@@ -6,6 +6,7 @@ import {
 } from "@phosphor-icons/react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { ComicCoverImage } from "@/components/comic/comic-cover-image"
 import { genresApi, comicsApi } from "@/lib/sdk-client"
 import { BROWSE_FILTERS_CHANGE_EVENT } from "@/hooks/use-browse-filters"
 
@@ -85,8 +86,8 @@ export function BrowseComicGrid() {
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5">
-            {Array.from({ length: 10 }).map((_, i) => (
+          <div className="grid grid-cols-2 gap-3 min-[480px]:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10">
+            {Array.from({ length: 15 }).map((_, i) => (
               <div
                 key={i}
                 className="flex flex-col space-y-2 rounded-lg border bg-card p-2"
@@ -98,27 +99,26 @@ export function BrowseComicGrid() {
             ))}
           </div>
         ) : comics.length > 0 ? (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5">
+          <div className="grid grid-cols-2 gap-3 min-[480px]:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10">
             {comics.map((comic) => (
               <Link
                 key={comic.id || comic.slug}
                 to={`/komik/${comic.slug}`}
                 className="group flex flex-col space-y-2 rounded-lg border bg-card p-2 transition-colors hover:bg-accent"
               >
-                <div className="relative aspect-[3/4] overflow-hidden rounded-md bg-muted">
-                  <img
-                    src={comic.coverUrl || comic.cover}
-                    alt={comic.title}
-                    className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                    loading="lazy"
-                  />
+                <ComicCoverImage
+                  src={comic.coverUrl || comic.cover}
+                  alt={comic.title}
+                >
                   {comic.rating && (
-                    <Badge className="absolute top-2 right-2 gap-1 bg-black/70 text-xs text-amber-400">
-                      <Star className="h-3 w-3 fill-current" />
-                      <span>{comic.rating}</span>
-                    </Badge>
+                    <div className="absolute top-2 right-2">
+                      <Badge className="gap-1 bg-black/75 px-1.5 py-0.5 text-xs text-amber-400 backdrop-blur-md">
+                        <Star className="h-3 w-3 fill-current" />
+                        <span>{comic.rating}</span>
+                      </Badge>
+                    </div>
                   )}
-                </div>
+                </ComicCoverImage>
                 <h3 className="line-clamp-1 pt-1 text-sm font-semibold transition-colors group-hover:text-accent-foreground">
                   {comic.title}
                 </h3>

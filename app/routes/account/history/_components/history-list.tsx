@@ -5,6 +5,7 @@ import {
   BookOpenIcon as BookOpen,
 } from "@phosphor-icons/react"
 import { Card } from "@/components/ui/card"
+import { ComicCoverImage } from "@/components/comic/comic-cover-image"
 import { readingHistoryApi } from "@/lib/sdk-client"
 
 export function HistoryList() {
@@ -36,8 +37,8 @@ export function HistoryList() {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, i) => (
+      <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6">
+        {Array.from({ length: 6 }).map((_, i) => (
           <Card key={i} className="flex animate-pulse items-center gap-3 p-3">
             <div className="h-20 w-16 shrink-0 rounded-md bg-muted" />
             <div className="flex-1 space-y-2">
@@ -62,19 +63,17 @@ export function HistoryList() {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+    <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6">
       {history.map((item) => (
         <Link
           key={item.id || item.comic.id}
           to={`/komik/${item.comic.slug}`}
           className="group flex items-center gap-3 rounded-lg border bg-card p-2 transition-colors hover:bg-accent"
         >
-          <div className="h-20 w-16 shrink-0 overflow-hidden rounded-md bg-muted">
-            <img
+          <div className="h-20 w-16 shrink-0 overflow-hidden rounded-md">
+            <ComicCoverImage
               src={item.comic.coverUrl}
               alt={item.comic.title}
-              className="h-full w-full object-cover transition-transform group-hover:scale-105"
-              loading="lazy"
             />
           </div>
           <div className="min-w-0 flex-1">

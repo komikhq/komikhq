@@ -18,6 +18,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { ComicCoverImage } from "@/components/comic/comic-cover-image"
 import { useComicDetail } from "@/hooks/use-comic-detail"
 
 interface ComicHeaderCardProps {
@@ -180,11 +181,11 @@ export function ComicHeaderCard({ slug, initialData }: ComicHeaderCardProps) {
     <TooltipProvider>
       <Card className="overflow-hidden">
         <div className="flex flex-col items-center gap-6 p-6 sm:flex-row sm:items-start">
-          <div className="relative aspect-[3/4] w-44 shrink-0 overflow-hidden rounded-md border bg-muted shadow-sm sm:w-48">
-            <img
+          <div className="w-44 shrink-0 sm:w-48">
+            <ComicCoverImage
               src={comic.coverUrl}
               alt={comic.title}
-              className="h-full w-full object-cover"
+              priority={true}
             />
           </div>
 

@@ -6,6 +6,7 @@ import {
 } from "@phosphor-icons/react"
 import { Card } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { ComicCoverImage } from "@/components/comic/comic-cover-image"
 import { bookmarksApi } from "@/lib/sdk-client"
 import { invalidateCache } from "@/lib/coalescing-fetch"
 
@@ -57,8 +58,8 @@ export function BookmarkComicGrid() {
       </div>
 
       {isLoading ? (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          {Array.from({ length: 5 }).map((_, i) => (
+        <div className="grid grid-cols-2 gap-3 min-[480px]:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10">
+          {Array.from({ length: 10 }).map((_, i) => (
             <div
               key={i}
               className="flex animate-pulse flex-col space-y-2 rounded-lg border bg-card p-2"
@@ -78,28 +79,26 @@ export function BookmarkComicGrid() {
           </p>
         </Card>
       ) : (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-3 min-[480px]:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10">
           {filteredBookmarks.map((item) => (
             <Link
               key={item.id}
               to={`/komik/${item.comic.slug}`}
               className="group relative flex flex-col space-y-2 rounded-lg border bg-card p-2 transition-colors hover:bg-accent"
             >
-              <div className="relative aspect-[3/4] overflow-hidden rounded-md bg-muted">
-                <img
-                  src={item.comic.coverUrl}
-                  alt={item.comic.title}
-                  className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                  loading="lazy"
-                />
+              <ComicCoverImage
+                src={item.comic.coverUrl}
+                alt={item.comic.title}
+              >
                 <button
+                  type="button"
                   onClick={(e) => handleRemove(e, item.comic.id)}
                   title="Remove Bookmark"
-                  className="absolute top-2 right-2 rounded-full bg-black/60 p-1.5 text-white opacity-0 transition-colors group-hover:opacity-100 hover:bg-red-600"
+                  className="pointer-events-auto absolute top-2 right-2 rounded-full bg-black/60 p-1.5 text-white opacity-0 transition-all hover:scale-110 hover:bg-destructive group-hover:opacity-100 active:scale-95"
                 >
                   <Trash className="h-3.5 w-3.5" />
                 </button>
-              </div>
+              </ComicCoverImage>
               <h3 className="line-clamp-1 text-sm font-semibold transition-colors group-hover:text-accent-foreground">
                 {item.comic.title}
               </h3>
