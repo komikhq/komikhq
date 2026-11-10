@@ -1,4 +1,3 @@
-import { useState } from "react"
 import { ListBulletsIcon as ListBullets } from "@phosphor-icons/react"
 import {
   Card,
@@ -16,57 +15,63 @@ const ALPHABET = [
 ]
 
 interface ListAllFilterBarProps {
-  onLetterSelect?: (letter: string) => void
+  activeLetter: string
+  onLetterSelect: (letter: string) => void
+  availableLetters: Set<string>
+  totalCount: number
 }
 
-export function ListAllFilterBar({ onLetterSelect }: ListAllFilterBarProps) {
-  const [activeLetter, setActiveLetter] = useState("ALL")
-
-  const handleSelect = (letter: string) => {
-    setActiveLetter(letter)
-    if (onLetterSelect) onLetterSelect(letter)
-
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search)
-      if (letter === "ALL") {
-        params.delete("letter")
-      } else {
-        params.set("letter", letter)
-      }
-      const queryString = params.toString()
-      const newUrl = queryString
-        ? `${window.location.pathname}?${queryString}`
-        : window.location.pathname
-      window.history.replaceState(null, "", newUrl)
-    }
-  }
-
+export function ListAllFilterBar({
+  activeLetter,
+  onLetterSelect,
+  availableLetters,
+  totalCount,
+}: ListAllFilterBarProps) {
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-xl font-bold">
-          <ListBullets className="h-5 w-5 text-primary" />
-          <span>Daftar Lengkap Komik (A-Z)</span>
-        </CardTitle>
-        <CardDescription>
-          Temukan judul komik favorit Anda berdasarkan abjad judul awal.
+    <Card className="sticky top-16 z-20 border shadow-sm backdrop-blur-md bg-card/95 transition-all">
+      <CardHeader className="pb-2 pt-3 px-4 sm:px-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+          <CardTitle className="flex items-center gap-2 text-lg sm:text-xl font-bold">
+            <ListBullets className="h-5 w-5 text-primary shrink-0" />
+            <span>Comic Dictionary Index (A-Z)</span>
+          </CardTitle>
+          {totalCount > 0 && (
+            <span className="text-xs text-muted-foreground font-medium">
+              {totalCount} comics indexed
+            </span>
+          )}
+        </div>
+        <CardDescription className="text-xs text-muted-foreground">
+          Quick alphabetical dictionary navigation. Click any letter to jump directly to its anchor section.
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="flex flex-wrap gap-1.5 pt-1">
+      <CardContent className="px-3 pb-3 pt-1 sm:px-6">
+        {/* Horizontal scrollable or wrapping thumb index bar */}
+        <div className="flex flex-wrap items-center gap-1 sm:gap-1.5 pt-1">
           {ALPHABET.map((char) => {
             const isSpecial = char.length > 1
+            const isActive = activeLetter === char
+            const hasEntries = char === "ALL" || availableLetters.has(char)
+
             return (
               <Button
                 key={char}
-                variant={activeLetter === char ? "default" : "outline"}
+                variant={isActive ? "default" : "outline"}
                 size="sm"
-                className={`h-8 shrink-0 text-xs font-semibold ${
-                  isSpecial
-                    ? "px-3"
-                    : "flex w-8 items-center justify-center p-0"
-                }`}
-                onClick={() => handleSelect(char)}
+                disabled={!hasEntries}
+                title={
+                  !hasEntries
+                    ? `No comics starting with "${char}"`
+                    : `Jump to letter ${char}`
+                }
+                className={`h-7 sm:h-8 shrink-0 text-xs font-semibold transition-all ${
+                  isSpecial ? "px-2.5 sm:px-3" : "w-7 sm:w-8 p-0"
+                } ${
+                  !hasEntries
+                    ? "opacity-30 cursor-not-allowed border-dashed"
+                    : "hover:border-primary/50"
+                } ${isActive ? "shadow-sm ring-1 ring-primary/40" : ""}`}
+                onClick={() => onLetterSelect(char)}
               >
                 {char}
               </Button>
