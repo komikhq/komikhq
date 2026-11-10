@@ -40,7 +40,7 @@ export function ListAllComicTable({
             <CardContent className="divide-y p-0">
               {Array.from({ length: 5 }).map((_, itemIdx) => (
                 <div key={itemIdx} className="flex items-center gap-3 p-3.5">
-                  <div className="h-12 w-9 shrink-0 animate-pulse rounded bg-muted" />
+                  <div className="h-10 w-8 shrink-0 animate-pulse rounded bg-muted" />
                   <div className="flex-1 space-y-2">
                     <div className="h-4 w-1/3 animate-pulse rounded bg-muted" />
                     <div className="h-3 w-1/4 animate-pulse rounded bg-muted" />
@@ -73,7 +73,6 @@ export function ListAllComicTable({
     <div className="space-y-8">
       {sectionKeys.map((letter) => {
         const items = groupedComics[letter] || []
-        const isCurrentActive = activeLetter === letter
 
         return (
           <section
@@ -82,23 +81,17 @@ export function ListAllComicTable({
             className="scroll-mt-48 transition-all"
           >
             {/* Dictionary thumb index header with anchor label */}
-            <div
-              className={`sticky top-36 z-10 mb-3 flex items-center justify-between rounded-lg border px-4 py-2.5 shadow-sm backdrop-blur-md transition-colors ${
-                isCurrentActive
-                  ? "border-primary/50 bg-primary/10"
-                  : "border-border/70 bg-card/90"
-              }`}
-            >
+            <div className="sticky top-20 z-10 mb-3 flex items-center justify-between rounded-lg border bg-card/95 px-4 py-2.5 shadow-sm backdrop-blur">
               <div className="flex items-center gap-3">
                 {/* Dictionary thumb tab badge */}
-                <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary text-base font-extrabold text-primary-foreground shadow-sm">
+                <div className="flex h-8 w-8 items-center justify-center rounded bg-primary text-sm font-bold text-primary-foreground">
                   {letter}
                 </div>
                 <div className="flex items-baseline gap-2">
-                  <h2 className="text-sm sm:text-base font-bold tracking-tight">
+                  <h2 className="text-sm font-bold tracking-tight">
                     Letter {letter}
                   </h2>
-                  <span className="text-xs font-medium text-muted-foreground">
+                  <span className="text-xs text-muted-foreground">
                     ({items.length} {items.length === 1 ? "comic" : "comics"})
                   </span>
                 </div>
@@ -108,7 +101,7 @@ export function ListAllComicTable({
               <button
                 type="button"
                 onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                className="flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+                className="flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
                 title="Back to top"
               >
                 <span>Top</span>
@@ -122,19 +115,18 @@ export function ListAllComicTable({
                 <Link
                   key={comic.id || comic.slug}
                   to={`/komik/${comic.slug}`}
-                  className="group flex items-center justify-between p-3.5 transition-colors hover:bg-accent/60"
+                  className="group flex items-center justify-between p-3.5 transition-colors hover:bg-accent"
                 >
                   <div className="flex min-w-0 items-center gap-3">
-                    <div className="h-12 w-9 shrink-0 overflow-hidden rounded bg-muted shadow-xs">
+                    <div className="h-10 w-8 shrink-0 overflow-hidden rounded bg-muted">
                       <ComicCoverImage
                         src={comic.coverUrl || comic.cover}
                         alt={comic.title}
-                        aspectRatio="3/4"
                         className="h-full w-full object-cover"
                       />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <h3 className="truncate text-sm font-semibold transition-colors group-hover:text-primary">
+                      <h3 className="truncate text-sm font-semibold transition-colors group-hover:text-accent-foreground">
                         {comic.title}
                       </h3>
                       <p className="truncate text-xs text-muted-foreground transition-colors group-hover:text-accent-foreground/80">
@@ -151,7 +143,7 @@ export function ListAllComicTable({
                     >
                       {comic.status || "Ongoing"}
                     </Badge>
-                    <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-primary" />
+                    <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-accent-foreground" />
                   </div>
                 </Link>
               ))}
