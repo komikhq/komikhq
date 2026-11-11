@@ -5,3 +5,5 @@
 allowBuilds:
   esbuild: true
   workerd: true
+minimumReleaseAgeExclude:
+  - '@komikhq/komikhq-typescript@1.1.1'
