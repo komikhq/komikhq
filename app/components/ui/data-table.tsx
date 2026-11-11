@@ -33,6 +33,8 @@ import {
   CaretDoubleLeftIcon as CaretDoubleLeft,
   CaretDoubleRightIcon as CaretDoubleRight,
 } from "@phosphor-icons/react"
+import { Skeleton } from "@/components/ui/skeleton"
+import { cn } from "cn"
 import { DataTableColumnHeader } from "./data-table-column-header"
 
 export interface BulkActionItem {
@@ -63,6 +65,9 @@ export interface DataTableProps<TData, TValue> {
   bulkActions?: BulkActionItem[]
   onBulkAction?: (action: string, selectedRows: TData[]) => void | Promise<void>
   serverPagination?: ServerPaginationConfig
+  fixedHeight?: boolean
+  skeletonRows?: number
+  showGhostRows?: boolean
 }
 
 export function DataTable<TData, TValue>({
@@ -80,6 +85,9 @@ export function DataTable<TData, TValue>({
   bulkActions,
   onBulkAction,
   serverPagination,
+  fixedHeight = true,
+  skeletonRows,
+  showGhostRows = true,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({})
@@ -232,6 +240,8 @@ export function DataTable<TData, TValue>({
     : data.length
 
   const currentPageSize = table.getState().pagination.pageSize
+  const targetRowCount =
+    skeletonRows ?? (isServer ? pageSize : (currentPageSize || pageSize))
   const startEntry =
     data.length === 0 ? 0 : (currentPage - 1) * currentPageSize + 1
   const endEntry = Math.min(currentPage * currentPageSize, totalEntries)
@@ -343,38 +353,111 @@ export function DataTable<TData, TValue>({
           </TableHeader>
           <TableBody className="divide-y divide-border/40">
             {loading ? (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center text-muted-foreground"
-                >
-                  {loadingMessage}
-                </TableCell>
-              </TableRow>
-            ) : table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                  className="border-border/40 transition-colors hover:bg-muted/30 data-[state=selected]:bg-primary/5"
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="p-3">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
+              fixedHeight ? (
+                Array.from({ length: targetRowCount }).map((_, rIdx) => (
+                  <TableRow
+                    key={`skeleton-row-${rIdx}`}
+                    className="h-[52px] border-border/40"
+                  >
+                    {columns.map((col, cIdx) => {
+                      const colId = (col as any).id || ""
+                      return (
+                        <TableCell
+                          key={`skeleton-cell-${rIdx}-${cIdx}`}
+                          className="p-3"
+                        >
+                          {colId === "_select" ? (
+                            <div className="flex items-center justify-center">
+                              <Skeleton className="h-4 w-4 rounded-sm" />
+                            </div>
+                          ) : colId === "_number" ? (
+                            <div className="flex items-center justify-center">
+                              <Skeleton className="h-3 w-4 rounded-sm" />
+                            </div>
+                          ) : (
+                            <Skeleton
+                              className={cn(
+                                "h-4 rounded-md",
+                                cIdx === columns.length - 1
+                                  ? "ml-auto h-7 w-16"
+                                  : (rIdx + cIdx) % 3 === 0
+                                    ? "w-2/3"
+                                    : (rIdx + cIdx) % 3 === 1
+                                      ? "w-4/5"
+                                      : "w-1/2"
+                              )}
+                            />
+                          )}
+                        </TableCell>
+                      )
+                    })}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center text-muted-foreground"
+                  >
+                    {loadingMessage}
+                  </TableCell>
                 </TableRow>
-              ))
+              )
+            ) : table.getRowModel().rows?.length ? (
+              <>
+                {table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                    className="h-[52px] border-border/40 transition-colors hover:bg-muted/30 data-[state=selected]:bg-primary/5"
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id} className="p-3">
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+                {fixedHeight &&
+                  showGhostRows &&
+                  targetRowCount > table.getRowModel().rows.length &&
+                  Array.from({
+                    length: targetRowCount - table.getRowModel().rows.length,
+                  }).map((_, gIdx) => (
+                    <TableRow
+                      key={`ghost-row-${gIdx}`}
+                      className="h-[52px] border-border/20 pointer-events-none select-none"
+                      aria-hidden="true"
+                    >
+                      <TableCell
+                        colSpan={columns.length}
+                        className="p-3 opacity-0"
+                      >
+                        &nbsp;
+                      </TableCell>
+                    </TableRow>
+                  ))}
+              </>
             ) : (
-              <TableRow>
+              <TableRow className="border-none hover:bg-transparent">
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center text-muted-foreground"
+                  style={
+                    fixedHeight
+                      ? { height: `${Math.max(targetRowCount * 52, 200)}px` }
+                      : undefined
+                  }
+                  className={cn(
+                    "text-center text-muted-foreground",
+                    !fixedHeight && "h-24"
+                  )}
                 >
-                  {emptyMessage}
+                  <div className="flex flex-col items-center justify-center gap-2 py-8">
+                    <p className="text-xs font-medium">{emptyMessage}</p>
+                  </div>
                 </TableCell>
               </TableRow>
             )}

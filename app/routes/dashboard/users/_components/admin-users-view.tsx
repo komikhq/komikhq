@@ -1,10 +1,10 @@
 import { AdminGuard } from "@/routes/dashboard/_components/admin-guard"
-import { AdminUserManagementCard } from "./admin-user-management-card"
+import { UserTableSection } from "./user-table-section"
 
 export function AdminUsersView() {
   return (
     <AdminGuard>
-      <AdminUserManagementCard />
+      <UserTableSection />
     </AdminGuard>
   )
 }
