@@ -16,7 +16,8 @@ export interface ChapterItem {
 
 export function useAdminChapters(comicId: string) {
   const [chapters, setChapters] = useState<ChapterItem[]>([])
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [isFetching, setIsFetching] = useState(false)
   const [submitting, setSubmitting] = useState(false)
 
   const getImageDimensions = async (file: File) => {
@@ -38,9 +39,13 @@ export function useAdminChapters(comicId: string) {
     }
   }
 
-  const fetchChapters = useCallback(async () => {
+  const fetchChapters = useCallback(async (isBackground = false) => {
     if (!comicId) return
-    setLoading(true)
+    if (isBackground) {
+      setIsFetching(true)
+    } else {
+      setLoading(true)
+    }
     try {
       const data: any = await administrationApi.adminListChapters({ comicId })
       if (data && data.chapters) {
@@ -52,11 +57,12 @@ export function useAdminChapters(comicId: string) {
       toast.error(err.message || "Failed to fetch chapter data")
     } finally {
       setLoading(false)
+      setIsFetching(false)
     }
   }, [comicId])
 
   useEffect(() => {
-    fetchChapters()
+    fetchChapters(false)
   }, [fetchChapters])
 
   const createChapterBatch = async (
@@ -257,6 +263,7 @@ export function useAdminChapters(comicId: string) {
   return {
     chapters,
     loading,
+    isFetching,
     submitting,
     fetchChapters,
     createChapter,

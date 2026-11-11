@@ -66,6 +66,7 @@ export interface DataTableProps<TData, TValue> {
   onBulkAction?: (action: string, selectedRows: TData[]) => void | Promise<void>
   serverPagination?: ServerPaginationConfig
   fixedHeight?: boolean
+  rowHeight?: number
   skeletonRows?: number
   showGhostRows?: boolean
 }
@@ -86,6 +87,7 @@ export function DataTable<TData, TValue>({
   onBulkAction,
   serverPagination,
   fixedHeight = true,
+  rowHeight = 52,
   skeletonRows,
   showGhostRows = true,
 }: DataTableProps<TData, TValue>) {
@@ -357,10 +359,16 @@ export function DataTable<TData, TValue>({
                 Array.from({ length: targetRowCount }).map((_, rIdx) => (
                   <TableRow
                     key={`skeleton-row-${rIdx}`}
-                    className="h-[52px] border-border/40"
+                    style={{ height: `${rowHeight}px` }}
+                    className="border-border/40"
                   >
                     {columns.map((col, cIdx) => {
-                      const colId = (col as any).id || ""
+                      const colId = (col as any).id || (col as any).accessorKey || ""
+                      const isCoverCol =
+                        colId === "coverUrl" ||
+                        colId.toLowerCase().includes("cover") ||
+                        (rowHeight > 60 && cIdx === (enableRowSelection ? 1 : 0))
+
                       return (
                         <TableCell
                           key={`skeleton-cell-${rIdx}-${cIdx}`}
@@ -373,6 +381,10 @@ export function DataTable<TData, TValue>({
                           ) : colId === "_number" ? (
                             <div className="flex items-center justify-center">
                               <Skeleton className="h-3 w-4 rounded-sm" />
+                            </div>
+                          ) : isCoverCol ? (
+                            <div className="w-12">
+                              <Skeleton className="h-12 w-9 rounded border border-border/60" />
                             </div>
                           ) : (
                             <Skeleton
@@ -409,7 +421,8 @@ export function DataTable<TData, TValue>({
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
-                    className="h-[52px] border-border/40 transition-colors hover:bg-muted/30 data-[state=selected]:bg-primary/5"
+                    style={{ height: `${rowHeight}px` }}
+                    className="border-border/40 transition-colors hover:bg-muted/30 data-[state=selected]:bg-primary/5"
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id} className="p-3">
@@ -429,7 +442,8 @@ export function DataTable<TData, TValue>({
                   }).map((_, gIdx) => (
                     <TableRow
                       key={`ghost-row-${gIdx}`}
-                      className="h-[52px] border-border/20 pointer-events-none select-none"
+                      style={{ height: `${rowHeight}px` }}
+                      className="border-border/20 pointer-events-none select-none"
                       aria-hidden="true"
                     >
                       <TableCell
@@ -447,7 +461,7 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   style={
                     fixedHeight
-                      ? { height: `${Math.max(targetRowCount * 52, 200)}px` }
+                      ? { height: `${Math.max(targetRowCount * rowHeight, 200)}px` }
                       : undefined
                   }
                   className={cn(

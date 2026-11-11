@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { toast } from "sonner"
 import { administrationApi } from "@/lib/sdk-client"
 
@@ -19,25 +19,34 @@ export interface ComicAdminItem {
   creators: string[]
 }
 
-export function useAdminComics() {
+export function useAdminComics(initialPageSize = 15) {
   const [comics, setComics] = useState<ComicAdminItem[]>([])
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [isFetching, setIsFetching] = useState(false)
   const [submitting, setSubmitting] = useState(false)
 
   const [search, setSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(initialPageSize)
   const [totalPages, setTotalPages] = useState(1)
   const [totalCount, setTotalCount] = useState(0)
 
-  const fetchComics = useCallback(async () => {
-    setLoading(true)
+  const isInitialMount = useRef(true)
+
+  const fetchComics = useCallback(async (isBackground = false) => {
+    if (isBackground) {
+      setIsFetching(true)
+    } else {
+      setLoading(true)
+    }
+
     try {
       const data: any = await administrationApi.adminListComics({
         q: search.trim() || undefined,
         status: statusFilter && statusFilter !== "all" ? statusFilter : undefined,
         page: String(page),
-        limit: "15",
+        limit: String(pageSize),
       })
       if (data && data.comics) {
         setComics(data.comics)
@@ -50,12 +59,25 @@ export function useAdminComics() {
       toast.error(err.message || "Failed to fetch comics")
     } finally {
       setLoading(false)
+      setIsFetching(false)
     }
-  }, [search, statusFilter, page])
+  }, [search, statusFilter, page, pageSize])
 
+  // Fetch when page, pageSize, or statusFilter changes
   useEffect(() => {
-    fetchComics()
-  }, [fetchComics])
+    fetchComics(false)
+    isInitialMount.current = false
+  }, [page, pageSize, statusFilter])
+
+  // Debounced search
+  useEffect(() => {
+    if (isInitialMount.current) return
+    const timer = setTimeout(() => {
+      setPage(1)
+      fetchComics(true)
+    }, 350)
+    return () => clearTimeout(timer)
+  }, [search])
 
   const createComic = async (formData: FormData) => {
     setSubmitting(true)
@@ -125,6 +147,7 @@ export function useAdminComics() {
   return {
     comics,
     loading,
+    isFetching,
     submitting,
     search,
     setSearch,
@@ -132,6 +155,8 @@ export function useAdminComics() {
     setStatusFilter,
     page,
     setPage,
+    pageSize,
+    setPageSize,
     totalPages,
     totalCount,
     fetchComics,

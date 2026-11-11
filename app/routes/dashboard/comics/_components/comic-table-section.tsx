@@ -7,6 +7,7 @@ import {
   PencilSimpleIcon as PencilSimple,
   TrashIcon as Trash,
   EyeIcon as Eye,
+  ArrowsClockwiseIcon as ArrowsClockwise,
 } from "@phosphor-icons/react"
 import {
   Card,
@@ -38,6 +39,7 @@ export function ComicTableSection() {
   const {
     comics,
     loading,
+    isFetching,
     submitting,
     search,
     setSearch,
@@ -45,11 +47,14 @@ export function ComicTableSection() {
     setStatusFilter,
     page,
     setPage,
+    pageSize,
     totalPages,
+    totalCount,
+    fetchComics,
     createComic,
     updateComic,
     deleteComic,
-  } = useAdminComics()
+  } = useAdminComics(15)
 
   const [formOpen, setFormOpen] = useState(false)
   const [selectedComic, setSelectedComic] = useState<ComicAdminItem | null>(
@@ -234,14 +239,28 @@ export function ComicTableSection() {
           </CardDescription>
         </div>
 
-        <Button
-          size="sm"
-          className="w-full gap-1.5 text-xs sm:w-auto"
-          onClick={handleOpenAdd}
-        >
-          <Plus className="h-4 w-4" />
-          <span>Add New Comic</span>
-        </Button>
+        <div className="flex w-full items-center gap-2 sm:w-auto">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => fetchComics(false)}
+            disabled={loading || isFetching}
+            className="gap-1.5 text-xs cursor-pointer"
+          >
+            <ArrowsClockwise
+              className={`h-3.5 w-3.5 ${isFetching || loading ? "animate-spin text-primary" : ""}`}
+            />
+            <span>Refresh</span>
+          </Button>
+          <Button
+            size="sm"
+            className="flex-1 gap-1.5 text-xs sm:flex-initial cursor-pointer"
+            onClick={handleOpenAdd}
+          >
+            <Plus className="h-4 w-4" />
+            <span>Add New Comic</span>
+          </Button>
+        </div>
       </CardHeader>
 
       <CardContent className="space-y-4">
@@ -258,7 +277,7 @@ export function ComicTableSection() {
           </div>
 
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="h-9 w-full text-xs sm:w-40">
+            <SelectTrigger className="h-9 w-full text-xs sm:w-40 bg-background">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
@@ -275,8 +294,13 @@ export function ComicTableSection() {
           columns={columns}
           data={comics}
           loading={loading}
-          loadingMessage="Loading comics..."
-          emptyMessage="No comics found."
+          loadingMessage="Loading comics catalog..."
+          emptyMessage="No comics found matching your criteria."
+          pageSize={pageSize}
+          pageSizeOptions={[10, 15, 20, 50]}
+          rowHeight={72}
+          fixedHeight={true}
+          showGhostRows={true}
           enableRowSelection={true}
           enableRowNumbers={true}
           bulkActions={[
@@ -290,6 +314,7 @@ export function ComicTableSection() {
           serverPagination={{
             page,
             totalPages,
+            totalRecords: totalCount,
             onPageChange: setPage,
           }}
         />

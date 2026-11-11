@@ -1,10 +1,12 @@
-import React, { useState } from "react"
+import React, { useState, useMemo } from "react"
 import {
   ListNumbersIcon as ListNumbers,
   PlusIcon as Plus,
   PencilSimpleIcon as PencilSimple,
   TrashIcon as Trash,
   ImageIcon,
+  MagnifyingGlassIcon as MagnifyingGlass,
+  ArrowsClockwiseIcon as ArrowsClockwise,
 } from "@phosphor-icons/react"
 import {
   Card,
@@ -13,6 +15,7 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
@@ -32,11 +35,14 @@ export function ChapterTableSection({ comicId }: ChapterTableSectionProps) {
   const {
     chapters,
     loading,
+    isFetching,
     submitting,
+    fetchChapters,
     createChapterBatch,
     updateChapter,
     deleteChapter,
   } = useAdminChapters(comicId)
+  const [searchQuery, setSearchQuery] = useState("")
   const [formOpen, setFormOpen] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
   const [editingChapter, setEditingChapter] = useState<ChapterItem | null>(null)
@@ -45,6 +51,16 @@ export function ChapterTableSection({ comicId }: ChapterTableSectionProps) {
   const [deletingChapter, setDeletingChapter] = useState<ChapterItem | null>(
     null
   )
+
+  const filteredChapters = useMemo(() => {
+    if (!searchQuery.trim()) return chapters
+    const q = searchQuery.toLowerCase().trim()
+    return chapters.filter(
+      (ch) =>
+        ch.chapterNumber.toLowerCase().includes(q) ||
+        ch.title?.toLowerCase().includes(q)
+    )
+  }, [chapters, searchQuery])
 
   const handleOpenEdit = (ch: ChapterItem) => {
     setEditingChapter(ch)
@@ -183,25 +199,53 @@ export function ChapterTableSection({ comicId }: ChapterTableSectionProps) {
           </CardDescription>
         </div>
 
-        <Button
-          size="sm"
-          className="w-full gap-1.5 text-xs sm:w-auto"
-          onClick={() => setFormOpen(true)}
-        >
-          <Plus className="h-4 w-4" />
-          <span>Add New Chapter</span>
-        </Button>
+        <div className="flex w-full items-center gap-2 sm:w-auto">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => fetchChapters(false)}
+            disabled={loading || isFetching}
+            className="gap-1.5 text-xs cursor-pointer"
+          >
+            <ArrowsClockwise
+              className={`h-3.5 w-3.5 ${isFetching || loading ? "animate-spin text-primary" : ""}`}
+            />
+            <span>Refresh</span>
+          </Button>
+          <Button
+            size="sm"
+            className="flex-1 gap-1.5 text-xs sm:flex-initial cursor-pointer"
+            onClick={() => setFormOpen(true)}
+          >
+            <Plus className="h-4 w-4" />
+            <span>Add New Chapter</span>
+          </Button>
+        </div>
       </CardHeader>
 
       <CardContent className="space-y-4">
+        {/* Quick Chapter Search Bar */}
+        <div className="relative w-full max-w-sm">
+          <MagnifyingGlass className="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search chapter number or title..."
+            className="h-9 pl-9 text-xs"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+
         <DataTable
           columns={columns}
-          data={chapters}
+          data={filteredChapters}
           loading={loading}
           loadingMessage="Loading released chapters..."
-          emptyMessage="No chapters released for this comic yet."
+          emptyMessage="No chapters found for this comic."
           pageSize={10}
           pageSizeOptions={[10, 20, 50, 100]}
+          rowHeight={52}
+          fixedHeight={true}
+          showGhostRows={true}
           enableRowSelection={true}
           enableRowNumbers={true}
           bulkActions={[
