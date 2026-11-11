@@ -13,20 +13,17 @@ export interface GenreItem {
 
 export function useAdminGenres() {
   const [genres, setGenres] = useState<GenreItem[]>([])
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [isFetching, setIsFetching] = useState(false)
   const [submitting, setSubmitting] = useState(false)
 
-  // Form & Accordion State encapsulated inside Hook
-  const [newName, setNewName] = useState("")
-  const [newDesc, setNewDesc] = useState("")
+  const fetchGenres = useCallback(async (isBackground = false) => {
+    if (isBackground) {
+      setIsFetching(true)
+    } else {
+      setLoading(true)
+    }
 
-  const [expandedId, setExpandedId] = useState<string | null>(null)
-  const [editName, setEditName] = useState("")
-  const [editDesc, setEditDesc] = useState("")
-  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
-
-  const fetchGenres = useCallback(async () => {
-    setLoading(true)
     try {
       const data: any = await administrationApi.adminListGenres()
       if (data && data.genres) {
@@ -38,104 +35,100 @@ export function useAdminGenres() {
       toast.error(err.message || "Network error occurred")
     } finally {
       setLoading(false)
+      setIsFetching(false)
     }
   }, [])
 
   useEffect(() => {
-    fetchGenres()
+    fetchGenres(false)
   }, [fetchGenres])
 
-  const handleAdd = async (e: React.SubmitEvent) => {
-    e.preventDefault()
-    if (!newName.trim()) return
+  const createGenre = async (data: { name: string; description?: string }): Promise<boolean> => {
+    if (!data.name.trim()) {
+      toast.error("Genre name is required.")
+      return false
+    }
+
     setSubmitting(true)
     try {
-      const data: any = await administrationApi.adminCreateGenre({
-        adminCreateGenreRequest: { name: newName, description: newDesc },
+      const res: any = await administrationApi.adminCreateGenre({
+        adminCreateGenreRequest: { name: data.name.trim(), description: data.description?.trim() || undefined },
       })
-      if (data && data.success) {
-        toast.success(`Genre "${newName}" successfully added.`)
-        setNewName("")
-        setNewDesc("")
-        fetchGenres()
+      if (res && res.success) {
+        toast.success(`Genre "${data.name}" successfully added.`)
+        fetchGenres(true)
+        return true
       } else {
         toast.error("Failed to create new genre")
+        return false
       }
     } catch (err: any) {
       toast.error(err.message || "Failed to create genre")
+      return false
     } finally {
       setSubmitting(false)
     }
   }
 
-  const toggleExpand = (g: GenreItem) => {
-    if (expandedId === g.id) {
-      setExpandedId(null)
-    } else {
-      setExpandedId(g.id)
-      setEditName(g.name)
-      setEditDesc(g.description || "")
-      setConfirmDeleteId(null)
+  const updateGenre = async (
+    id: string,
+    data: { name: string; description?: string }
+  ): Promise<boolean> => {
+    if (!data.name.trim()) {
+      toast.error("Genre name is required.")
+      return false
     }
-  }
 
-  const handleSaveEdit = async (id: string) => {
-    if (!editName.trim()) return
     setSubmitting(true)
     try {
-      const data: any = await administrationApi.adminUpdateGenre({
+      const res: any = await administrationApi.adminUpdateGenre({
         id,
-        adminUpdateGenreRequest: { name: editName, description: editDesc },
+        adminUpdateGenreRequest: { name: data.name.trim(), description: data.description?.trim() || undefined },
       })
-      if (data && data.success) {
-        toast.success("Genre successfully updated.")
-        setExpandedId(null)
-        fetchGenres()
+      if (res && res.success) {
+        toast.success(`Genre "${data.name}" successfully updated.`)
+        fetchGenres(true)
+        return true
       } else {
         toast.error("Failed to edit genre")
+        return false
       }
     } catch (err: any) {
       toast.error(err.message || "Failed to edit genre")
+      return false
     } finally {
       setSubmitting(false)
     }
   }
 
-  const handleDeleteConfirm = async (id: string) => {
+  const deleteGenre = async (id: string): Promise<boolean> => {
+    setSubmitting(true)
     try {
-      const data: any = await administrationApi.adminDeleteGenre({ id })
-      if (data && data.success) {
-        toast.success(data.message || "Genre successfully deleted")
-        setConfirmDeleteId(null)
-        if (expandedId === id) setExpandedId(null)
-        fetchGenres()
+      const res: any = await administrationApi.adminDeleteGenre({ id })
+      if (res && res.success) {
+        toast.success(res.message || "Genre successfully deleted.")
+        fetchGenres(true)
+        return true
       } else {
         toast.error("Failed to delete genre")
+        return false
       }
     } catch (err: any) {
       toast.error(err.message || "Failed to delete genre")
+      return false
+    } finally {
+      setSubmitting(false)
     }
   }
 
   return {
     genres,
     loading,
+    isFetching,
     submitting,
-    newName,
-    setNewName,
-    newDesc,
-    setNewDesc,
-    expandedId,
-    setExpandedId,
-    editName,
-    setEditName,
-    editDesc,
-    setEditDesc,
-    confirmDeleteId,
-    setConfirmDeleteId,
-    handleAdd,
-    toggleExpand,
-    handleSaveEdit,
-    handleDeleteConfirm,
+    fetchGenres,
+    createGenre,
+    updateGenre,
+    deleteGenre,
   }
 }

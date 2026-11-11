@@ -1,13 +1,11 @@
-import React from "react"
+import { useState, useMemo } from "react"
 import {
-  PlusIcon as Plus,
   TagIcon as Tag,
+  PlusIcon as Plus,
   PencilSimpleIcon as PencilSimple,
   TrashIcon as Trash,
-  CaretDownIcon as CaretDown,
-  CaretUpIcon as CaretUp,
-  InfoIcon as Info,
-  FloppyDiskIcon as FloppyDisk,
+  MagnifyingGlassIcon as MagnifyingGlass,
+  ArrowsClockwiseIcon as ArrowsClockwise,
 } from "@phosphor-icons/react"
 import {
   Card,
@@ -19,315 +17,271 @@ import {
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { useAdminGenres } from "@/hooks/use-admin-genres"
+import { DataTable } from "@/components/ui/data-table"
+import type { ColumnDef } from "@tanstack/react-table"
+import { useAdminGenres, type GenreItem } from "@/hooks/use-admin-genres"
+import { GenreEditSheet } from "./genre-edit-sheet"
+import { GenreDeleteDialog } from "./genre-delete-dialog"
 
 export function GenreTableSection() {
   const {
     genres,
     loading,
+    isFetching,
     submitting,
-    newName,
-    setNewName,
-    newDesc,
-    setNewDesc,
-    expandedId,
-    setExpandedId,
-    editName,
-    setEditName,
-    editDesc,
-    setEditDesc,
-    confirmDeleteId,
-    setConfirmDeleteId,
-    handleAdd,
-    toggleExpand,
-    handleSaveEdit,
-    handleDeleteConfirm,
+    fetchGenres,
+    createGenre,
+    updateGenre,
+    deleteGenre,
   } = useAdminGenres()
 
-  return (
-    <Card className="w-full border-border/60 shadow-xs">
-      <CardHeader className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-        <div>
-          <CardTitle className="flex items-center gap-2 text-lg font-bold">
-            <Tag className="h-5 w-5 text-primary" />
-            <span>Genre Management</span>
-          </CardTitle>
-          <CardDescription className="text-xs">
-            Manage comic categories & genres directly and swiftly on KomikHQ.
-          </CardDescription>
-        </div>
-      </CardHeader>
+  // Search & Filter
+  const [searchQuery, setSearchQuery] = useState("")
 
-      <CardContent className="space-y-4">
-        {/* Cloudflare-style Inline Add New Genre Bar */}
-        <form
-          onSubmit={handleAdd}
-          className="flex flex-col items-center gap-2.5 rounded-xl border border-border/60 bg-muted/40 p-3.5 shadow-2xs sm:flex-row"
-        >
-          <div className="w-full flex-1 space-y-1">
-            <Input
-              placeholder="New Genre Name (e.g. Action, Sci-Fi)"
-              className="h-9 bg-background text-xs"
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-            />
+  // Quick Inline Add form state
+  const [newName, setNewName] = useState("")
+  const [newDesc, setNewDesc] = useState("")
+
+  // Sheet & Dialog state
+  const [editSheetOpen, setEditSheetOpen] = useState(false)
+  const [editingGenre, setEditingGenre] = useState<GenreItem | null>(null)
+
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [deletingGenre, setDeletingGenre] = useState<GenreItem | null>(null)
+
+  const filteredGenres = useMemo(() => {
+    if (!searchQuery.trim()) return genres
+    const q = searchQuery.toLowerCase().trim()
+    return genres.filter(
+      (g) =>
+        g.name.toLowerCase().includes(q) ||
+        g.slug.toLowerCase().includes(q) ||
+        g.description?.toLowerCase().includes(q)
+    )
+  }, [genres, searchQuery])
+
+  const handleInlineAdd = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newName.trim()) return
+    const ok = await createGenre({ name: newName, description: newDesc })
+    if (ok) {
+      setNewName("")
+      setNewDesc("")
+    }
+  }
+
+  const handleOpenEdit = (genre: GenreItem) => {
+    setEditingGenre(genre)
+    setEditSheetOpen(true)
+  }
+
+  const handleOpenDelete = (genre: GenreItem) => {
+    setDeletingGenre(genre)
+    setDeleteDialogOpen(true)
+  }
+
+  const handleConfirmDelete = async () => {
+    if (deletingGenre) {
+      const ok = await deleteGenre(deletingGenre.id)
+      if (ok) {
+        setDeleteDialogOpen(false)
+        setDeletingGenre(null)
+      }
+    }
+  }
+
+  const handleBulkAction = async (action: string, selectedRows: GenreItem[]) => {
+    if (action === "delete") {
+      const ok = window.confirm(
+        `Are you sure you want to permanently delete ${selectedRows.length} selected genre(s)?`
+      )
+      if (!ok) return
+      for (const g of selectedRows) {
+        await deleteGenre(g.id)
+      }
+    }
+  }
+
+  const columns = useMemo<ColumnDef<GenreItem>[]>(
+    () => [
+      {
+        accessorKey: "name",
+        header: "Genre Name",
+        cell: ({ row }) => (
+          <div className="flex items-center gap-2">
+            <span className="font-semibold text-foreground">
+              {row.original.name}
+            </span>
           </div>
-          <div className="w-full flex-[1.5] space-y-1">
-            <Input
-              placeholder="Brief Genre Description (optional)"
-              className="h-9 bg-background text-xs"
-              value={newDesc}
-              onChange={(e) => setNewDesc(e.target.value)}
-            />
-          </div>
-          <Button
-            type="submit"
-            size="sm"
-            disabled={submitting || !newName.trim()}
-            className="h-9 w-full shrink-0 gap-1.5 text-xs sm:w-auto"
+        ),
+      },
+      {
+        accessorKey: "slug",
+        header: "Slug",
+        cell: ({ row }) => (
+          <Badge
+            variant="outline"
+            className="font-mono text-[11px] text-muted-foreground bg-muted/30"
           >
-            <Plus className="h-4 w-4" />
-            <span>{submitting ? "Adding..." : "Add Genre"}</span>
+            {row.original.slug}
+          </Badge>
+        ),
+      },
+      {
+        accessorKey: "description",
+        header: "Description",
+        cell: ({ row }) => (
+          <span className="line-clamp-1 max-w-sm text-muted-foreground">
+            {row.original.description || "-"}
+          </span>
+        ),
+      },
+      {
+        id: "actions",
+        header: () => <div className="text-right">Actions</div>,
+        enableSorting: false,
+        cell: ({ row }) => (
+          <div className="flex items-center justify-end gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7 cursor-pointer text-muted-foreground hover:text-foreground"
+              onClick={() => handleOpenEdit(row.original)}
+              title="Edit Genre (Drawer)"
+            >
+              <PencilSimple className="h-3.5 w-3.5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7 cursor-pointer text-destructive hover:bg-destructive/10"
+              onClick={() => handleOpenDelete(row.original)}
+              title="Delete Genre"
+            >
+              <Trash className="h-3.5 w-3.5" />
+            </Button>
+          </div>
+        ),
+      },
+    ],
+    []
+  )
+
+  return (
+    <>
+      <Card className="w-full border-border/60 shadow-xs">
+        <CardHeader className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+          <div>
+            <CardTitle className="flex items-center gap-2 text-lg font-bold">
+              <Tag className="h-5 w-5 text-primary" />
+              <span>Genre Management</span>
+            </CardTitle>
+            <CardDescription className="text-xs">
+              Manage comic categories and taxonomy directly across KomikHQ.
+            </CardDescription>
+          </div>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => fetchGenres(false)}
+            disabled={loading || isFetching}
+            className="gap-1.5 text-xs cursor-pointer"
+          >
+            <ArrowsClockwise
+              className={`h-3.5 w-3.5 ${isFetching || loading ? "animate-spin text-primary" : ""}`}
+            />
+            <span>Refresh</span>
           </Button>
-        </form>
+        </CardHeader>
 
-        {/* Cloudflare DNS Style Expandable Accordion Table */}
-        <div className="overflow-hidden rounded-xl border border-border/60">
-          <table className="w-full border-collapse text-left text-xs">
-            <thead className="border-b border-border/60 bg-muted/60 font-semibold text-muted-foreground select-none">
-              <tr>
-                <th className="w-10 p-3 text-center">#</th>
-                <th className="p-3">Genre Name</th>
-                <th className="p-3">Slug</th>
-                <th className="p-3">Description</th>
-                <th className="p-3 text-right">Actions & Quick Edit</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/40">
-              {loading ? (
-                <tr>
-                  <td
-                    colSpan={5}
-                    className="p-8 text-center text-muted-foreground"
-                  >
-                    <div className="flex items-center justify-center gap-2">
-                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-                      <span>Loading genres...</span>
-                    </div>
-                  </td>
-                </tr>
-              ) : genres.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={5}
-                    className="p-8 text-center text-muted-foreground"
-                  >
-                    No genres registered yet. Add your first genre above.
-                  </td>
-                </tr>
-              ) : (
-                genres.map((g, index) => {
-                  const isExpanded = expandedId === g.id
-                  const isConfirmingDelete = confirmDeleteId === g.id
+        <CardContent className="space-y-4">
+          {/* Quick Inline Add Genre Bar */}
+          <form
+            onSubmit={handleInlineAdd}
+            className="flex flex-col items-center gap-2.5 rounded-xl border border-border/60 bg-muted/30 p-3 shadow-2xs sm:flex-row"
+          >
+            <div className="w-full flex-1">
+              <Input
+                placeholder="New Genre Name (e.g. Action, Isekai)"
+                className="h-9 bg-background text-xs"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+              />
+            </div>
+            <div className="w-full flex-[1.5]">
+              <Input
+                placeholder="Brief Genre Description (optional)"
+                className="h-9 bg-background text-xs"
+                value={newDesc}
+                onChange={(e) => setNewDesc(e.target.value)}
+              />
+            </div>
+            <Button
+              type="submit"
+              size="sm"
+              disabled={submitting || !newName.trim()}
+              className="h-9 w-full shrink-0 gap-1.5 text-xs sm:w-auto cursor-pointer"
+            >
+              <Plus className="h-4 w-4" />
+              <span>{submitting ? "Adding..." : "Add Genre"}</span>
+            </Button>
+          </form>
 
-                  return (
-                    <React.Fragment key={g.id}>
-                      {/* Main Summary Row */}
-                      <tr
-                        onClick={() => toggleExpand(g)}
-                        className={`cursor-pointer transition-colors ${
-                          isExpanded
-                            ? "border-b-0 bg-muted/50"
-                            : "hover:bg-muted/30"
-                        }`}
-                      >
-                        <td className="p-3 text-center font-mono text-[11px] text-muted-foreground">
-                          {index + 1}
-                        </td>
-                        <td className="p-3 font-semibold text-foreground">
-                          <div className="flex items-center gap-2">
-                            <span>{g.name}</span>
-                            {isExpanded && (
-                              <Badge
-                                variant="secondary"
-                                className="bg-primary/10 text-[10px] text-primary"
-                              >
-                                Editing
-                              </Badge>
-                            )}
-                          </div>
-                        </td>
-                        <td className="p-3 font-mono text-[11px] text-muted-foreground">
-                          {g.slug}
-                        </td>
-                        <td className="max-w-xs truncate p-3 text-muted-foreground">
-                          {g.description || "-"}
-                        </td>
-                        <td
-                          className="p-3 text-right"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <div className="flex items-center justify-end gap-1.5">
-                            <Button
-                              size="sm"
-                              variant={isExpanded ? "secondary" : "outline"}
-                              className="h-7 gap-1 px-2.5 text-[11px]"
-                              onClick={() => toggleExpand(g)}
-                            >
-                              {isExpanded ? (
-                                <CaretUp className="h-3.5 w-3.5" />
-                              ) : (
-                                <CaretDown className="h-3.5 w-3.5" />
-                              )}
-                              <span>{isExpanded ? "Close" : "Edit"}</span>
-                            </Button>
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              className="h-7 w-7 text-destructive hover:bg-destructive/10"
-                              onClick={() =>
-                                setConfirmDeleteId(
-                                  isConfirmingDelete ? null : g.id
-                                )
-                              }
-                            >
-                              <Trash className="h-3.5 w-3.5" />
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
+          {/* Quick Search Bar */}
+          <div className="relative w-full max-w-sm">
+            <MagnifyingGlass className="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search genre by name, slug, or description..."
+              className="h-9 pl-9 text-xs"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
 
-                      {/* Expandable Accordion Panel Row (Cloudflare DNS Style Editor) */}
-                      {isExpanded && (
-                        <tr className="border-b border-border/60 bg-muted/40">
-                          <td colSpan={5} className="p-4 pt-2">
-                            <div className="space-y-4 rounded-xl border border-border/60 bg-background p-4 shadow-2xs">
-                              <div className="flex items-center justify-between border-b border-border/40 pb-2">
-                                <h4 className="flex items-center gap-1.5 text-xs font-bold text-foreground">
-                                  <PencilSimple className="h-4 w-4 text-primary" />
-                                  <span>Quick Edit Genre</span>
-                                </h4>
-                                <span className="font-mono text-[11px] text-muted-foreground">
-                                  ID: {g.id}
-                                </span>
-                              </div>
+          {/* Stable Height DataTable */}
+          <DataTable
+            columns={columns}
+            data={filteredGenres}
+            loading={loading}
+            loadingMessage="Loading genres taxonomy..."
+            emptyMessage="No genres found matching your search."
+            pageSize={10}
+            pageSizeOptions={[10, 20, 50, 100]}
+            rowHeight={52}
+            fixedHeight={true}
+            showGhostRows={true}
+            enableRowSelection={true}
+            enableRowNumbers={true}
+            bulkActions={[
+              {
+                label: "Delete Selected",
+                value: "delete",
+                variant: "destructive",
+              },
+            ]}
+            onBulkAction={handleBulkAction}
+          />
+        </CardContent>
+      </Card>
 
-                              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                <div className="space-y-1">
-                                  <label className="text-[11px] font-semibold text-muted-foreground">
-                                    Genre Name
-                                  </label>
-                                  <Input
-                                    className="h-8 bg-background text-xs"
-                                    value={editName}
-                                    onChange={(e) =>
-                                      setEditName(e.target.value)
-                                    }
-                                    placeholder="Genre Name"
-                                  />
-                                </div>
+      {/* Edit Drawer Sheet */}
+      <GenreEditSheet
+        open={editSheetOpen}
+        onOpenChange={setEditSheetOpen}
+        genre={editingGenre}
+        onSubmit={updateGenre}
+        submitting={submitting}
+      />
 
-                                <div className="space-y-1">
-                                  <label className="text-[11px] font-semibold text-muted-foreground">
-                                    Slug (Automatic)
-                                  </label>
-                                  <Input
-                                    disabled
-                                    className="h-8 bg-muted font-mono text-xs text-muted-foreground"
-                                    value={g.slug}
-                                  />
-                                </div>
-
-                                <div className="space-y-1 sm:col-span-2">
-                                  <label className="text-[11px] font-semibold text-muted-foreground">
-                                    Genre Description
-                                  </label>
-                                  <Input
-                                    className="h-8 bg-background text-xs"
-                                    value={editDesc}
-                                    onChange={(e) =>
-                                      setEditDesc(e.target.value)
-                                    }
-                                    placeholder="Write genre description..."
-                                  />
-                                </div>
-                              </div>
-
-                              <div className="flex items-center justify-between border-t border-border/40 pt-2">
-                                <span className="flex items-center gap-1 text-[11px] text-muted-foreground">
-                                  <Info className="h-3.5 w-3.5" />
-                                  <span>
-                                    Changes will immediately update associated
-                                    comic relations.
-                                  </span>
-                                </span>
-
-                                <div className="flex items-center gap-2">
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className="h-7 text-xs"
-                                    onClick={() => setExpandedId(null)}
-                                  >
-                                    Cancel
-                                  </Button>
-                                  <Button
-                                    size="sm"
-                                    className="h-7 gap-1 text-xs"
-                                    disabled={submitting}
-                                    onClick={() => handleSaveEdit(g.id)}
-                                  >
-                                    <FloppyDisk className="h-3.5 w-3.5" />
-                                    <span>
-                                      {submitting
-                                        ? "Saving..."
-                                        : "Save Changes"}
-                                    </span>
-                                  </Button>
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-                        </tr>
-                      )}
-
-                      {/* Inline Delete Confirmation Drawer */}
-                      {isConfirmingDelete && (
-                        <tr className="border-b border-destructive/20 bg-destructive/10">
-                          <td colSpan={5} className="p-3 text-center">
-                            <div className="flex items-center justify-center gap-3">
-                              <span className="text-xs font-semibold text-destructive">
-                                Permanently delete genre{" "}
-                                <strong>"{g.name}"</strong>?
-                              </span>
-                              <Button
-                                size="sm"
-                                variant="destructive"
-                                className="h-7 text-xs"
-                                onClick={() => handleDeleteConfirm(g.id)}
-                              >
-                                Yes, Delete
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                className="h-7 text-xs"
-                                onClick={() => setConfirmDeleteId(null)}
-                              >
-                                Cancel
-                              </Button>
-                            </div>
-                          </td>
-                        </tr>
-                      )}
-                    </React.Fragment>
-                  )
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
-      </CardContent>
-    </Card>
+      {/* Delete Confirmation Alert Dialog */}
+      <GenreDeleteDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        genre={deletingGenre}
+        onConfirm={handleConfirmDelete}
+        submitting={submitting}
+      />
+    </>
   )
 }
