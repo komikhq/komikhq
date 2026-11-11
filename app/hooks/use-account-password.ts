@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from "react"
 import { toast } from "sonner"
-import { authClient } from "@/lib/auth-client"
-import { usersApi } from "@/lib/sdk-client"
+import { usersApi, BASE_PATH } from "@/lib/sdk-client"
 
 export function useAccountPassword() {
   const [hasPassword, setHasPassword] = useState<boolean | null>(null)
@@ -51,54 +50,49 @@ export function useAccountPassword() {
       setIsSubmitting(true)
 
       try {
-        if (hasPassword) {
-          if (!currentPassword) {
-            const msg = "Current password is required."
-            setErrorMsg(msg)
-            setIsSubmitting(false)
-            return false
-          }
+        if (hasPassword && !currentPassword) {
+          const msg = "Current password is required."
+          setErrorMsg(msg)
+          setIsSubmitting(false)
+          return false
+        }
 
-          const { error } = await authClient.changePassword({
-            currentPassword,
+        const res = await fetch(`${BASE_PATH}/v1/user/password`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            currentPassword: hasPassword ? currentPassword : undefined,
             newPassword,
             revokeOtherSessions: true,
-          })
+          }),
+        })
 
-          if (error) {
-            const msg =
-              error.message ||
-              "Failed to change password. Please check your current password."
-            setErrorMsg(msg)
-            setIsSubmitting(false)
-            return false
-          }
+        const resJson: any = await res.json().catch(() => ({}))
 
-          toast.success("Password updated successfully!")
-          setCurrentPassword("")
-          setNewPassword("")
-          setConfirmPassword("")
-          return true
-        } else {
-          const { error } = await (authClient as any).setPassword({
-            newPassword,
-          })
-
-          if (error) {
-            const msg = error.message || "Failed to set new password."
-            setErrorMsg(msg)
-            setIsSubmitting(false)
-            return false
-          }
-
-          toast.success(
-            "New password set successfully! You can now log in using email & password."
-          )
-          setHasPassword(true)
-          setNewPassword("")
-          setConfirmPassword("")
-          return true
+        if (!res.ok) {
+          const msg =
+            resJson?.error ||
+            resJson?.message ||
+            "Failed to update password. Please check your current password."
+          setErrorMsg(msg)
+          setIsSubmitting(false)
+          return false
         }
+
+        toast.success(
+          resJson?.message ||
+            (hasPassword
+              ? "Password updated successfully!"
+              : "New password set successfully! You can now log in using email & password.")
+        )
+        setHasPassword(true)
+        setCurrentPassword("")
+        setNewPassword("")
+        setConfirmPassword("")
+        return true
       } catch (err: any) {
         const msg =
           err.message || "An error occurred while processing password."
