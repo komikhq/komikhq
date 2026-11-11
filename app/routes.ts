@@ -16,6 +16,8 @@ export default [
   route("login", "routes/auth/login/route.tsx"),
   route("register", "routes/auth/register/route.tsx"),
   route("verify-email", "routes/auth/verify-email/route.tsx"),
+  route("forgot-password", "routes/auth/forgot-password/route.tsx"),
+  route("reset-password", "routes/auth/reset-password/route.tsx"),
 
   // 5. Akun & Perpustakaan Pengguna
   route("account", "routes/account/profile/route.tsx"),

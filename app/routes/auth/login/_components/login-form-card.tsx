@@ -123,7 +123,15 @@ export function LoginFormCard() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-semibold">Password</label>
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-semibold">Password</label>
+                  <Link
+                    to="/forgot-password"
+                    className="text-xs text-muted-foreground hover:text-primary transition-colors underline-offset-4 hover:underline"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
                 <div className="relative">
                   <Lock className="absolute top-2.5 left-3 h-4 w-4 text-muted-foreground" />
                   <Input

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { toast } from "sonner"
-import { usersApi, BASE_PATH } from "@/lib/sdk-client"
+import { usersApi } from "@/lib/sdk-client"
+import { authClient } from "@/lib/auth-client"
 
 export function useAccountPassword() {
   const [hasPassword, setHasPassword] = useState<boolean | null>(null)
@@ -57,36 +58,39 @@ export function useAccountPassword() {
           return false
         }
 
-        const res = await fetch(`${BASE_PATH}/v1/user/password`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify({
-            currentPassword: hasPassword ? currentPassword : undefined,
+        if (hasPassword) {
+          const res = await authClient.changePassword({
+            currentPassword,
             newPassword,
             revokeOtherSessions: true,
-          }),
-        })
+          })
 
-        const resJson: any = await res.json().catch(() => ({}))
+          if (res.error) {
+            const msg =
+              res.error.message ||
+              "Failed to update password. Please check your current password."
+            setErrorMsg(msg)
+            setIsSubmitting(false)
+            return false
+          }
+        } else {
+          const res = await (authClient as any).setPassword({
+            newPassword,
+          })
 
-        if (!res.ok) {
-          const msg =
-            resJson?.error ||
-            resJson?.message ||
-            "Failed to update password. Please check your current password."
-          setErrorMsg(msg)
-          setIsSubmitting(false)
-          return false
+          if (res.error) {
+            const msg =
+              res.error.message || "Failed to set password for this account."
+            setErrorMsg(msg)
+            setIsSubmitting(false)
+            return false
+          }
         }
 
         toast.success(
-          resJson?.message ||
-            (hasPassword
-              ? "Password updated successfully!"
-              : "New password set successfully! You can now log in using email & password.")
+          hasPassword
+            ? "Password updated successfully!"
+            : "New password set successfully! You can now log in using email & password."
         )
         setHasPassword(true)
         setCurrentPassword("")
