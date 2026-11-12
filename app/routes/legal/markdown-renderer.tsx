@@ -40,33 +40,68 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
               </a>
             );
           },
-          h2: ({ id, children, ...props }) => (
-            <h2 id={id} className="group relative scroll-mt-24" {...props}>
+          h1: ({ id, children, ...props }) => (
+            <h1
+              id={id}
+              className="group relative scroll-mt-24 font-heading text-2xl font-bold tracking-tight text-foreground sm:text-3xl mt-8 mb-4"
+              {...props}
+            >
               {children}
               {id && (
                 <a
                   href={`#${id}`}
-                  aria-label={`Direct link to ${typeof children === "string" ? children : "section"}`}
-                  className="ml-2 inline-opacity-0 text-muted-foreground opacity-0 transition-opacity hover:text-primary group-hover:opacity-100"
+                  aria-label="Direct link to heading"
+                  className="ml-2 inline-flex text-muted-foreground opacity-0 transition-opacity hover:text-primary group-hover:opacity-100"
                 >
-                  <LinkIcon className="inline size-3.5 align-baseline" />
+                  <LinkIcon className="size-4 inline" />
+                </a>
+              )}
+            </h1>
+          ),
+          h2: ({ id, children, ...props }) => (
+            <h2
+              id={id}
+              className="group relative scroll-mt-24 font-heading text-lg sm:text-xl font-bold tracking-tight text-foreground border-b border-border/70 pb-2 mt-8 mb-4 flex items-center justify-between"
+              {...props}
+            >
+              <span>{children}</span>
+              {id && (
+                <a
+                  href={`#${id}`}
+                  aria-label="Direct link to section"
+                  className="text-muted-foreground opacity-0 transition-opacity hover:text-primary group-hover:opacity-100"
+                >
+                  <LinkIcon className="size-4" />
                 </a>
               )}
             </h2>
           ),
           h3: ({ id, children, ...props }) => (
-            <h3 id={id} className="group relative scroll-mt-24" {...props}>
-              {children}
+            <h3
+              id={id}
+              className="group relative scroll-mt-24 font-heading text-base font-semibold tracking-tight text-foreground/90 mt-6 mb-3 flex items-center justify-between"
+              {...props}
+            >
+              <span>{children}</span>
               {id && (
                 <a
                   href={`#${id}`}
-                  aria-label={`Direct link to section`}
-                  className="ml-2 inline-opacity-0 text-muted-foreground opacity-0 transition-opacity hover:text-primary group-hover:opacity-100"
+                  aria-label="Direct link to sub-section"
+                  className="text-muted-foreground opacity-0 transition-opacity hover:text-primary group-hover:opacity-100"
                 >
-                  <LinkIcon className="inline size-3 align-baseline" />
+                  <LinkIcon className="size-3.5" />
                 </a>
               )}
             </h3>
+          ),
+          h4: ({ id, children, ...props }) => (
+            <h4
+              id={id}
+              className="group relative scroll-mt-24 font-heading text-sm font-semibold tracking-tight text-foreground/80 mt-4 mb-2"
+              {...props}
+            >
+              {children}
+            </h4>
           ),
         }}
       >
@@ -75,4 +110,3 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
     </div>
   );
 }
-

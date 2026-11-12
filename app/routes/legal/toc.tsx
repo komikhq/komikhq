@@ -125,7 +125,7 @@ export function TableOfContents({ items }: TocProps) {
             {items.map((item) => (
               <li
                 key={item.id}
-                className={item.depth === 3 ? "pl-3 text-[11px]" : ""}
+                className={item.depth === 3 ? "pl-5 text-[11px]" : "pl-1 font-medium"}
               >
                 <a
                   href={`#${item.id}`}
@@ -136,6 +136,7 @@ export function TableOfContents({ items }: TocProps) {
                       : "text-muted-foreground"
                   }`}
                 >
+                  {item.depth === 3 && <span className="mr-1.5 opacity-50">↳</span>}
                   {item.text}
                 </a>
               </li>
@@ -156,16 +157,17 @@ export function TableOfContents({ items }: TocProps) {
             <ul className="space-y-1.5 border-l border-border/60 text-xs">
               {items.map((item) => {
                 const isActive = activeId === item.id;
+                const isSubItem = item.depth === 3;
                 return (
                   <li key={item.id}>
                     <a
                       href={`#${item.id}`}
                       onClick={(e) => handleItemClick(e, item.id)}
-                      className={`block border-l -ml-px transition-colors ${
-                        item.depth === 3
-                          ? "pl-4 text-[11px]"
-                          : "pl-3 text-xs"
-                      } py-1 ${
+                      className={`block border-l -ml-px transition-colors py-1 ${
+                        isSubItem
+                          ? "pl-6 text-[11px] text-muted-foreground/80"
+                          : "pl-3 text-xs font-medium"
+                      } ${
                         isActive
                           ? "border-primary font-semibold text-foreground"
                           : "border-transparent text-muted-foreground hover:border-border hover:text-foreground"

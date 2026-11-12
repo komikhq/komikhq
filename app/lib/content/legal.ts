@@ -1,3 +1,5 @@
+import GithubSlugger from "github-slugger";
+
 export type LegalSlug = "privacy" | "terms" | "dmca" | "contact" | string;
 
 export interface LegalDocFrontmatter {
@@ -28,15 +30,6 @@ const rawLegalModules = import.meta.glob<string>(
   { query: "?raw", import: "default", eager: true }
 );
 
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
 function parseFrontmatter(raw: string): { data: Record<string, string>; content: string } {
   const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
   if (!match) return { data: {}, content: raw };
@@ -66,7 +59,7 @@ function parseFrontmatter(raw: string): { data: Record<string, string>; content:
 function extractToc(markdownContent: string): TocItem[] {
   const lines = markdownContent.split("\n");
   const items: TocItem[] = [];
-  const slugCounts = new Map<string, number>();
+  const slugger = new GithubSlugger();
 
   for (const line of lines) {
     const match = line.match(/^(#{2,3})\s+(.+)$/);
@@ -74,14 +67,7 @@ function extractToc(markdownContent: string): TocItem[] {
 
     const depth = match[1].length;
     const text = match[2].replace(/\[(.*?)\]\(.*?\)/g, "$1").trim();
-    let id = slugify(text);
-
-    // Handle duplicate heading IDs like GitHub/rehype-slug does (e.g. heading-1)
-    const count = slugCounts.get(id) || 0;
-    slugCounts.set(id, count + 1);
-    if (count > 0) {
-      id = `${id}-${count}`;
-    }
+    const id = slugger.slug(text);
 
     items.push({ id, text, depth });
   }
