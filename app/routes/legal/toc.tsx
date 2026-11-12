@@ -7,33 +7,64 @@ interface TocProps {
 }
 
 export function TableOfContents({ items }: TocProps) {
-  const [activeId, setActiveId] = React.useState<string>("");
+  const [activeId, setActiveId] = React.useState<string>(items[0]?.id || "");
   const [mobileOpen, setMobileOpen] = React.useState<boolean>(false);
+  const isClickScrolling = React.useRef<boolean>(false);
+  const scrollTimeoutRef = React.useRef<number | null>(null);
 
+  // Deterministic, DOM-ordered ScrollSpy (Fumadocs & Starlight standard)
   React.useEffect(() => {
     if (!items || items.length === 0) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setActiveId(entry.target.id);
+    const handleScroll = () => {
+      // Don't fight with user click while smooth scroll animation is running
+      if (isClickScrolling.current) return;
+
+      // When reaching the bottom of the page, always highlight the last heading
+      if (
+        window.innerHeight + window.scrollY >=
+        document.documentElement.scrollHeight - 60
+      ) {
+        setActiveId(items[items.length - 1].id);
+        return;
+      }
+
+      const headerOffset = 110;
+      let currentId = items[0]?.id || "";
+
+      // Evaluate in strict document order so items never jump or get skipped
+      for (const item of items) {
+        const el = document.getElementById(item.id);
+        if (el) {
+          const top = el.getBoundingClientRect().top;
+          if (top <= headerOffset) {
+            currentId = item.id;
+          } else {
             break;
           }
         }
-      },
-      {
-        rootMargin: "0% 0% -70% 0%",
-        threshold: 0.1,
       }
-    );
 
-    for (const item of items) {
-      const el = document.getElementById(item.id);
-      if (el) observer.observe(el);
+      if (currentId) {
+        setActiveId(currentId);
+      }
+    };
+
+    // Initial check on mount
+    const hash = window.location.hash.replace(/^#/, "");
+    if (hash && items.some((item) => item.id === hash)) {
+      setActiveId(hash);
+    } else {
+      handleScroll();
     }
 
-    return () => observer.disconnect();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (scrollTimeoutRef.current) {
+        window.clearTimeout(scrollTimeoutRef.current);
+      }
+    };
   }, [items]);
 
   if (!items || items.length === 0) return null;
@@ -41,12 +72,32 @@ export function TableOfContents({ items }: TocProps) {
   const handleItemClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
     const target = document.getElementById(id);
-    if (target) {
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
-      window.history.pushState(null, "", `#${id}`);
-      setActiveId(id);
-      setMobileOpen(false);
+    if (!target) return;
+
+    // Immediately highlight the clicked item for instant responsiveness
+    setActiveId(id);
+    setMobileOpen(false);
+    window.history.pushState(null, "", `#${id}`);
+
+    // Lock scrollspy updates during smooth scrolling animation
+    isClickScrolling.current = true;
+    if (scrollTimeoutRef.current) {
+      window.clearTimeout(scrollTimeoutRef.current);
     }
+
+    const headerOffset = 95;
+    const elementPosition = target.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.scrollY - headerOffset;
+
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: "smooth",
+    });
+
+    // Re-enable scroll listener after smooth scroll finishes
+    scrollTimeoutRef.current = window.setTimeout(() => {
+      isClickScrolling.current = false;
+    }, 700);
   };
 
   return (
@@ -132,4 +183,3 @@ export function TableOfContents({ items }: TocProps) {
     </>
   );
 }
-
