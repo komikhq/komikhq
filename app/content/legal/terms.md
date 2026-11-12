@@ -38,7 +38,7 @@ You agree **not** to:
 
 - **Platform Assets**: The KomikHQ name, logo, UI/UX designs, code, stylesheets, and custom algorithms are protected by copyright, trademark, and intellectual property laws.
 - **Comic Material**: All comics, manga, manhwa, and manhua displayed on the platform are the property of their respective creators, publishers, and copyright holders. KomikHQ acts as a content index and reader interface.
-- If you are a copyright owner and believe your work is displayed without authorization, please refer to our [DMCA & Copyright Policy](/dmca) for takedown procedures.
+- If you are a copyright owner and believe your work is displayed without authorization, please refer to our [DMCA & Copyright Policy](/legal/dmca) for takedown procedures.
 
 ---
 

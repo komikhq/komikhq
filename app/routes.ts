@@ -37,11 +37,9 @@ export default [
     route("dashboard/settings", "routes/dashboard/settings/route.tsx"),
   ]),
 
-  // 7. Legal & Kebijakan
-  route("privacy", "routes/legal/privacy.tsx"),
-  route("terms", "routes/legal/terms.tsx"),
-  route("dmca", "routes/legal/dmca.tsx"),
-  route("contact", "routes/legal/contact.tsx"),
+  // 7. Legal & Kebijakan (Pure Dynamic Routing by Markdown File)
+  route("legal/:slug", "routes/legal/route.tsx"),
+  route("legal/:slug.md", "routes/legal/route.md.ts"),
 
   // 8. Resource Routes (Sitemaps)
   route("sitemap.xml", "routes/resources/sitemap.xml.ts"),

@@ -1,13 +1,27 @@
 @import "tailwindcss";
+@import "./typeset.css";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @plugin "@tailwindcss/typography";
 @import "@fontsource-variable/inter";
 @import "@fontsource-variable/instrument-sans";
+@import "@fontsource-variable/jetbrains-mono";
+
+.typeset-docs {
+  --typeset-font-body: var(--font-inter);
+  --typeset-font-heading: var(--font-instrument-sans);
+  --typeset-font-mono: var(--font-jetbrains-mono);
+  --typeset-size: 15px;
+  --typeset-leading: 1.75;
+  --typeset-flow: 1.25em;
+}
 
 @custom-variant dark (&:is(.dark *));
 
 :root {
+    --font-inter: 'Inter Variable', sans-serif;
+    --font-instrument-sans: 'Instrument Sans Variable', sans-serif;
+    --font-jetbrains-mono: 'JetBrains Mono Variable', monospace;
     --background: oklch(1 0 0);
     --foreground: oklch(0.147 0.004 49.3);
     --card: oklch(1 0 0);

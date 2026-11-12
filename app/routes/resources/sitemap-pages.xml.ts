@@ -1,17 +1,23 @@
 import { SITE_URL } from "@/constants";
+import { getAllLegalDocs } from "@/lib/content/legal";
 
 export async function loader() {
   const today = new Date().toISOString().split("T")[0];
+  const legalDocs = getAllLegalDocs();
 
-  const pages = [
+  const staticPages = [
     { loc: "/", changefreq: "daily", priority: "1.0" },
     { loc: "/browse", changefreq: "daily", priority: "0.9" },
     { loc: "/list-all", changefreq: "daily", priority: "0.8" },
-    { loc: "/dmca", changefreq: "monthly", priority: "0.3" },
-    { loc: "/privacy", changefreq: "monthly", priority: "0.3" },
-    { loc: "/terms", changefreq: "monthly", priority: "0.3" },
-    { loc: "/contact", changefreq: "monthly", priority: "0.3" },
   ];
+
+  const legalPages = legalDocs.map((doc) => ({
+    loc: `/legal/${doc.slug}`,
+    changefreq: "monthly",
+    priority: "0.3",
+  }));
+
+  const pages = [...staticPages, ...legalPages];
 
   const urlsXml = pages
     .map(

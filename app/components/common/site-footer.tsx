@@ -104,7 +104,7 @@ export function SiteFooter() {
             <ul className="space-y-2 text-xs text-muted-foreground">
               <li>
                 <Link
-                  to="/privacy"
+                  to="/legal/privacy"
                   className="flex items-center gap-2 transition-colors hover:text-foreground"
                 >
                   <ShieldCheck className="size-3.5" />
@@ -113,7 +113,7 @@ export function SiteFooter() {
               </li>
               <li>
                 <Link
-                  to="/terms"
+                  to="/legal/terms"
                   className="flex items-center gap-2 transition-colors hover:text-foreground"
                 >
                   <FileText className="size-3.5" />
@@ -122,7 +122,7 @@ export function SiteFooter() {
               </li>
               <li>
                 <Link
-                  to="/dmca"
+                  to="/legal/dmca"
                   className="flex items-center gap-2 transition-colors hover:text-foreground"
                 >
                   <Copyright className="size-3.5" />
@@ -131,7 +131,7 @@ export function SiteFooter() {
               </li>
               <li>
                 <Link
-                  to="/contact"
+                  to="/legal/contact"
                   className="flex items-center gap-2 transition-colors hover:text-foreground"
                 >
                   <EnvelopeSimple className="size-3.5" />
