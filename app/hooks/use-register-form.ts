@@ -16,9 +16,11 @@ export function useRegisterForm() {
       const params = new URLSearchParams(window.location.search)
       const urlEmail = params.get("email")
       const urlSent = params.get("sent")
+
       if (urlEmail) {
         setEmail(urlEmail)
       }
+
       if (urlSent === "true" && urlEmail) {
         setIsSuccess(true)
       }
@@ -39,19 +41,23 @@ export function useRegisterForm() {
 
   const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault()
+
     if (password !== confirmPassword) {
-      setAuthError("Konfirmasi kata sandi tidak cocok.")
+      setAuthError("Password confirmation does not match.")
       return
     }
+
     if (password.length < 8) {
-      setAuthError("Kata sandi minimal 8 karakter.")
+      setAuthError("Password must be at least 8 characters long.")
       return
     }
 
     const success = await handleSignUpEmail(name, email, password)
+
     if (success) {
       setIsSuccess(true)
       startCooldown(60)
+
       if (typeof window !== "undefined") {
         const newUrl = `${window.location.pathname}?sent=true&email=${encodeURIComponent(email)}`
         window.history.pushState({ path: newUrl }, "", newUrl)
@@ -61,7 +67,9 @@ export function useRegisterForm() {
 
   const handleResend = async () => {
     if (isCooldownActive || isLoading) return
+
     const ok = await handleSendVerificationEmail(email)
+
     if (ok) {
       startCooldown(60)
     }

@@ -21,29 +21,32 @@ export function useUpdateUserName() {
 
   const saveName = useCallback(async (): Promise<boolean> => {
     if (!editedName.trim()) {
-      const msg = "Nama tidak boleh kosong."
+      const msg = "Name cannot be empty."
       setErrorMsg(msg)
       toast.error(msg)
       return false
     }
+
     setIsSavingName(true)
     setErrorMsg(null)
+
     try {
       const res = await authClient.updateUser({
         name: editedName.trim(),
       })
+
       if (res.error) {
-        const msg = res.error.message || "Gagal memperbarui nama profil."
+        const msg = res.error.message || "Failed to update profile name."
         setErrorMsg(msg)
         toast.error(msg)
         return false
       } else {
-        toast.success("Nama profil berhasil diperbarui!")
+        toast.success("Profile name updated successfully!")
         setIsEditingName(false)
         return true
       }
     } catch (err: any) {
-      const msg = err?.message || "Terjadi kesalahan saat memperbarui nama."
+      const msg = err?.message || "An error occurred while updating the name."
       setErrorMsg(msg)
       toast.error(msg)
       return false
