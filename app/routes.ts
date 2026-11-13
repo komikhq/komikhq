@@ -20,8 +20,10 @@ export default [
   route("reset-password", "routes/auth/reset-password/route.tsx"),
 
   // 5. Akun & Perpustakaan Pengguna
-  route("account", "routes/account/profile/route.tsx"),
-  route("account/settings", "routes/account/settings/route.tsx"),
+  layout("routes/account/layout.tsx", [
+    route("account", "routes/account/profile/route.tsx"),
+    route("account/settings", "routes/account/settings/route.tsx"),
+  ]),
   route("bookmark", "routes/account/bookmarks/route.tsx"),
   route("history", "routes/account/history/route.tsx"),
 

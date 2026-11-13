@@ -1,6 +1,12 @@
 import type { Route } from "./+types/route";
 import { ForgotPasswordCard } from "./_components/forgot-password-card";
 import { SITE_NAME } from "@/constants";
+import { requireGuest } from "@/lib/auth-server";
+
+export async function loader({ request }: Route.LoaderArgs) {
+  await requireGuest(request, "/account");
+  return null;
+}
 
 export function meta(): Route.MetaDescriptors {
   return [

@@ -234,13 +234,23 @@ export function AccountProfileCard() {
                   </div>
                 )}
 
-                <Badge
-                  variant="secondary"
-                  className="cursor-default gap-1 text-xs"
-                >
-                  <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
-                  <span>Verified Member</span>
-                </Badge>
+                {user.emailVerified ? (
+                  <Badge
+                    variant="secondary"
+                    className="cursor-default gap-1 border-emerald-500/20 text-xs text-emerald-600 dark:text-emerald-400"
+                  >
+                    <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
+                    <span>Verified Member</span>
+                  </Badge>
+                ) : (
+                  <Badge
+                    variant="secondary"
+                    className="cursor-default gap-1 border-amber-500/20 text-xs text-amber-600 dark:text-amber-400"
+                  >
+                    <WarningCircle className="h-3.5 w-3.5 text-amber-500" />
+                    <span>Unverified Email</span>
+                  </Badge>
+                )}
               </div>
 
               <p className="text-sm text-muted-foreground">{user.email}</p>

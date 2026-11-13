@@ -53,6 +53,20 @@ export async function getSession(request: Request): Promise<AuthSessionData | nu
 }
 
 /**
+ * Guard for guest-only routes (e.g. /login, /register, /forgot-password, /reset-password).
+ * If authenticated, performs an immediate HTTP 302 redirect on the server.
+ */
+export async function requireGuest(
+  request: Request,
+  redirectTo: string = "/account"
+): Promise<void> {
+  const session = await getSession(request)
+  if (session && session.user) {
+    throw redirect(redirectTo)
+  }
+}
+
+/**
  * Guard for authenticated user routes (e.g. /account, /bookmark, /history).
  * If unauthenticated, performs an immediate HTTP 302 redirect on the server.
  */
