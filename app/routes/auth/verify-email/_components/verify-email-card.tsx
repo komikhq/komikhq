@@ -18,16 +18,23 @@ export function VerifyEmailCard() {
   const [searchParams] = useSearchParams()
   const token = searchParams.get("token") || ""
   const initialEmail = searchParams.get("email") || ""
+  const isVerifiedParam = searchParams.get("verified") === "true"
 
   const [email, setEmail] = useState(initialEmail)
   const [status, setStatus] = useState<"idle" | "verifying" | "success" | "error">(
-    token ? "verifying" : "idle"
+    isVerifiedParam ? "success" : token ? "verifying" : "idle"
   )
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [isResending, setIsResending] = useState(false)
 
   const { cooldownSeconds, isCooldownActive, startCooldown } =
     useResendCooldown(email, 60)
+
+  useEffect(() => {
+    if (isVerifiedParam) {
+      toast.success("Email verified successfully! Your account is now active.")
+    }
+  }, [isVerifiedParam])
 
   // Automatic token verification when token is in URL
   useEffect(() => {
@@ -79,7 +86,7 @@ export function VerifyEmailCard() {
     try {
       const res = await authClient.sendVerificationEmail({
         email: email.trim(),
-        callbackURL: `${window.location.origin}/verify-email`,
+        callbackURL: `${window.location.origin}/verify-email?verified=true`,
       })
 
       if (res.error) {
@@ -135,9 +142,12 @@ export function VerifyEmailCard() {
             <p className="text-sm leading-relaxed text-muted-foreground">
               Thank you for verifying your email address. Your KomikHQ account is now fully active.
             </p>
-            <div className="pt-2">
-              <Link to="/login">
-                <Button className="w-full">Sign in to your account</Button>
+            <div className="flex flex-col gap-2 pt-2">
+              <Link to="/account" className="w-full">
+                <Button className="w-full cursor-pointer">Go to My Account</Button>
+              </Link>
+              <Link to="/browse" className="w-full">
+                <Button variant="outline" className="w-full cursor-pointer">Explore Comics</Button>
               </Link>
             </div>
           </CardContent>

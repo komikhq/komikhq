@@ -103,7 +103,7 @@ export function useAuth(): UseAuthReturn {
         name,
         email,
         password,
-        callbackURL: window.location.origin + "/verify-email",
+        callbackURL: window.location.origin + "/verify-email?verified=true",
       })
 
       if (err) {
@@ -134,7 +134,7 @@ export function useAuth(): UseAuthReturn {
     try {
       const { error: err } = await sendVerificationEmail({
         email: emailToVerify,
-        callbackURL: window.location.origin + "/verify-email",
+        callbackURL: window.location.origin + "/verify-email?verified=true",
       })
 
       if (err) {
