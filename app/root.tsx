@@ -21,6 +21,8 @@ import { CookieConsent } from "@/components/common/cookie-consent";
 import { GoogleAnalytics, MicrosoftClarity } from "@/components/common/analytics";
 import { ErrorViewCard } from "@/components/common/error-view-card";
 import { getSession } from "@/lib/auth-server";
+import { useAuth } from "@/hooks/use-auth";
+import { AuthProvider } from "@/components/common/auth/auth-provider";
 import { SITE_NAME, SITE_DESCRIPTION } from "@/constants";
 
 export const links: Route.LinksFunction = () => [
@@ -107,6 +109,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App({ loaderData }: Route.ComponentProps) {
+  const authState = useAuth();
   const location = useLocation();
   // Check if current page is comic reader mode (e.g. /komik/:slug/:chapter)
   const isReaderMode =
@@ -114,28 +117,30 @@ export default function App({ loaderData }: Route.ComponentProps) {
     location.pathname.split("/").filter(Boolean).length >= 3;
 
   return (
-    <div
-      className={
-        isReaderMode
-          ? "min-h-screen bg-neutral-950 text-neutral-100 antialiased selection:bg-primary selection:text-primary-foreground"
-          : "min-h-screen bg-background text-foreground antialiased selection:bg-primary selection:text-primary-foreground"
-      }
-    >
-      <GlobalPresenceListener />
-      <GlobalLoadingBar />
-      <GoogleAnalytics measurementId={loaderData?.gaId} />
-      <MicrosoftClarity projectId={loaderData?.clarityId} />
-      <div className="relative flex min-h-screen flex-col">
-        {!isReaderMode && <SiteHeader />}
-        <main className={isReaderMode ? "flex-1" : "flex-1 pb-16 md:pb-0"}>
-          <Outlet />
-        </main>
-        {!isReaderMode && <SiteFooter />}
-        {!isReaderMode && <BottomNav />}
-        <Toaster position="top-right" richColors />
-        <CookieConsent />
+    <AuthProvider value={authState}>
+      <div
+        className={
+          isReaderMode
+            ? "min-h-screen bg-neutral-950 text-neutral-100 antialiased selection:bg-primary selection:text-primary-foreground"
+            : "min-h-screen bg-background text-foreground antialiased selection:bg-primary selection:text-primary-foreground"
+        }
+      >
+        <GlobalPresenceListener />
+        <GlobalLoadingBar />
+        <GoogleAnalytics measurementId={loaderData?.gaId} />
+        <MicrosoftClarity projectId={loaderData?.clarityId} />
+        <div className="relative flex min-h-screen flex-col">
+          {!isReaderMode && <SiteHeader />}
+          <main className={isReaderMode ? "flex-1" : "flex-1 pb-16 md:pb-0"}>
+            <Outlet />
+          </main>
+          {!isReaderMode && <SiteFooter />}
+          {!isReaderMode && <BottomNav />}
+          <Toaster position="top-right" richColors />
+          <CookieConsent />
+        </div>
       </div>
-    </div>
+    </AuthProvider>
   );
 }
 

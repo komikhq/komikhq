@@ -1,9 +1,8 @@
-import { useState, useEffect } from "react"
-import { useRouteLoaderData } from "react-router"
+import { useState, useCallback } from "react"
+import { useRouteLoaderData, useRevalidator } from "react-router"
 import { toast } from "sonner"
 import {
   authClient,
-  useSession,
   sendVerificationEmail,
 } from "@/lib/auth-client"
 
@@ -29,14 +28,18 @@ export interface UseAuthReturn {
 
 export function useAuth(): UseAuthReturn {
   const rootData = useRouteLoaderData<{ user?: any; session?: any }>("root")
-  const { data: sessionData, isPending: clientPending, refetch } = useSession()
+  const revalidator = useRevalidator()
   const [authError, setAuthError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
-  const user = sessionData?.user ?? rootData?.user ?? null
-  const session = sessionData?.session ?? rootData?.session ?? null
+  const user = rootData?.user ?? null
+  const session = rootData?.session ?? null
   const isAuthenticated = Boolean(user)
-  const isPending = clientPending && !rootData?.user
+  const isPending = revalidator.state === "loading"
+
+  const refetch = useCallback(async () => {
+    revalidator.revalidate()
+  }, [revalidator])
 
   const handleSignInEmail = async (
     email: string,
@@ -59,7 +62,7 @@ export function useAuth(): UseAuthReturn {
       }
 
       toast.success("Login success!")
-      await refetch()
+      revalidator.revalidate()
       return true
     } catch (e: any) {
       const msg = e.message || "Login failed."
@@ -114,7 +117,7 @@ export function useAuth(): UseAuthReturn {
       }
 
       toast.success("Register success!")
-      await refetch()
+      revalidator.revalidate()
       return true
     } catch (e: any) {
       const msg = e.message || "Failed to register."
@@ -161,7 +164,7 @@ export function useAuth(): UseAuthReturn {
     setIsLoading(true)
     try {
       await authClient.signOut()
-      await refetch()
+      revalidator.revalidate()
       toast.success("Logout success!")
       window.location.href = "/login"
     } catch (e: any) {
