@@ -84,6 +84,20 @@ export function useAdminComics(initialPageSize = 15) {
       for (const [key, val] of formData.entries()) {
         params[key] = val
       }
+
+      if (!params.slug && params.title) {
+        const slugify = (t: string) =>
+          t
+            .toLowerCase()
+            .trim()
+            .replace(/\s+/g, "-")
+            .replace(/[^\w\-]+/g, "")
+            .replace(/\-\-+/g, "-")
+            .replace(/^-+/, "")
+            .replace(/-+$/, "")
+        params.slug = `${slugify(params.title)}-${Date.now().toString().slice(-4)}`
+      }
+
       const data: any = await administrationApi.adminCreateComic(params)
       if (data && (data.status === "ok" || data.success)) {
         toast.success("New comic successfully added.")
