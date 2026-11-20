@@ -35,6 +35,10 @@ export async function loader({ request }: Route.LoaderArgs) {
       genresApi.listGenres(),
     ]);
 
+    if (comicsRes.status === "rejected" && genresRes.status === "rejected") {
+      throw new Response("Failed to load catalog from server", { status: 503 });
+    }
+
     const comics =
       comicsRes.status === "fulfilled"
         ? (comicsRes.value as any)?.data?.items ||
@@ -49,7 +53,8 @@ export async function loader({ request }: Route.LoaderArgs) {
     const genres = sortGenresByNaturalName(rawGenres);
 
     return { comics, genres };
-  } catch {
+  } catch (err) {
+    if (err instanceof Response) throw err;
     return { comics: [], genres: [] };
   }
 }

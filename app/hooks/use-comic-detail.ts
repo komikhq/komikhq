@@ -18,17 +18,25 @@ export function useComicDetail(slug?: string, initialData?: ComicDetailData | nu
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    if (initialData) {
+      setComicData(initialData)
+      setIsLoading(false)
+    }
+  }, [initialData])
+
+  useEffect(() => {
     if (!slug) return
     // If initialData was provided by SSR, skip the fetch on first mount
     if (initialData) {
       // Still check bookmark status for authenticated users
-      if (initialData.comic?.id) {
+      const comicId = initialData.comic?.id || (initialData as any).id
+      if (comicId) {
         bookmarksApi
           .listBookmarks()
           .then((res: any) => {
             if (res.data) {
               const isSaved = res.data.some(
-                (b: any) => b.comic.id === initialData.comic.id
+                (b: any) => b.comic?.id === comicId || b.comicId === comicId
               )
               setBookmarked(isSaved)
             }
@@ -47,14 +55,26 @@ export function useComicDetail(slug?: string, initialData?: ComicDetailData | nu
       .getComicBySlug({ slug })
       .then((data: any) => {
         if (isMounted) {
-          setComicData(data)
-          if (data.comic?.id) {
+          const raw = data?.data || data
+          const comic = raw.comic || raw
+          const normalized = {
+            ...raw,
+            comic,
+            title: comic.title || raw.title,
+            synopsis: comic.synopsis || raw.synopsis,
+            chapters: raw.chapters || comic.chapters || [],
+            genres: raw.genres || comic.genres || [],
+            creators: raw.creators || comic.creators || [],
+          }
+          setComicData(normalized)
+          const comicId = comic?.id || raw?.id
+          if (comicId) {
             bookmarksApi
               .listBookmarks()
               .then((res: any) => {
                 if (isMounted && res.data) {
                   const isSaved = res.data.some(
-                    (b: any) => b.comic.id === data.comic.id
+                    (b: any) => b.comic?.id === comicId || b.comicId === comicId
                   )
                   setBookmarked(isSaved)
                 }

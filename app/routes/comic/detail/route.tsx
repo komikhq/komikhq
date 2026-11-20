@@ -7,21 +7,41 @@ import { SITE_NAME } from "@/constants";
 
 export async function loader({ params }: Route.LoaderArgs) {
   const { slug } = params;
-  let comicData: any = null;
-  if (slug) {
-    try {
-      comicData = await comicsApi.getComicBySlug({ slug });
-    } catch {
-      comicData = null;
-    }
+  if (!slug) {
+    throw new Response("Comic slug is required", { status: 400 });
   }
 
-  const rawData = comicData?.data || comicData;
-  const resolvedComic = rawData?.comic || rawData;
+  let response: any;
+  try {
+    response = await comicsApi.getComicBySlug({ slug });
+  } catch (err: any) {
+    const status = err?.status || err?.response?.status || 404;
+    throw new Response(err?.message || "Comic Not Found", { status });
+  }
+
+  const rawData = response?.data || response;
+  if (!rawData || (!rawData.id && !rawData.title)) {
+    throw new Response("Comic Not Found", { status: 404 });
+  }
+
+  const resolvedComic = rawData.comic || rawData;
+  const normalizedData = {
+    ...rawData,
+    comic: resolvedComic,
+    title: resolvedComic.title || rawData.title,
+    synopsis: resolvedComic.synopsis || rawData.synopsis,
+    coverUrl: resolvedComic.coverUrl || rawData.coverUrl,
+    type: resolvedComic.type || rawData.type,
+    status: resolvedComic.status || rawData.status,
+    accessTier: resolvedComic.accessTier || rawData.accessTier,
+    genres: rawData.genres || resolvedComic.genres || [],
+    creators: rawData.creators || resolvedComic.creators || [],
+    chapters: rawData.chapters || resolvedComic.chapters || [],
+  };
 
   return {
     slug,
-    comicData: rawData,
+    comicData: normalizedData,
     comic: resolvedComic,
   };
 }

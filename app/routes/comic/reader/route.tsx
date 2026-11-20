@@ -13,21 +13,25 @@ import type { ChapterFullData } from "./types/reader.types"
 
 export async function loader({ params }: Route.LoaderArgs) {
   const { slug, chapterSlug } = params
+  if (!slug || !chapterSlug) {
+    throw new Response("Comic and chapter slugs are required", { status: 400 })
+  }
+
   let chapterData: ChapterFullData | null = null
 
-  if (slug && chapterSlug) {
-    try {
-      const res = (await chaptersApi.getChapterReaderPages({
-        comicSlug: slug,
-        chapterSlug,
-      })) as any
-      chapterData = (res?.data || res) as unknown as ChapterFullData
-    } catch (error) {
-      console.warn(
-        `[ReaderPage] Failed to load chapter metadata for ${slug}/${chapterSlug}:`,
-        error
-      )
-    }
+  try {
+    const res = (await chaptersApi.getChapterReaderPages({
+      comicSlug: slug,
+      chapterSlug,
+    })) as any
+    chapterData = (res?.data || res) as unknown as ChapterFullData
+  } catch (error: any) {
+    const status = error?.status || error?.response?.status || 404
+    throw new Response(error?.message || "Chapter Not Found", { status })
+  }
+
+  if (!chapterData || !chapterData.pages || chapterData.pages.length === 0) {
+    throw new Response("Chapter pages not found", { status: 404 })
   }
 
   const formatSlug = (value: string | undefined, fallback: string) =>
@@ -42,8 +46,12 @@ export async function loader({ params }: Route.LoaderArgs) {
     ? `Chapter ${chapterSlug.replace(/^(chapter-|ch-)/i, "")}`
     : "Chapter"
 
-  const comicTitle = chapterData?.comic?.title || formattedSlug
-  const chapterTitle = chapterData?.chapter?.title || fallbackChapter
+  const comicTitle = chapterData.comic?.title || formattedSlug
+  const chapterTitle =
+    chapterData.chapter?.title ||
+    (chapterData.chapter?.chapterNumber
+      ? `Chapter ${chapterData.chapter.chapterNumber}`
+      : fallbackChapter)
 
   return {
     slug,

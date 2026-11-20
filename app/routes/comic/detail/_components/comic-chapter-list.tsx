@@ -22,6 +22,13 @@ export function ComicChapterList({ slug, initialChapters }: ComicChapterListProp
   const [searchQuery, setSearchQuery] = useState("")
   const chapterListRef = useRef<HTMLDivElement>(null)
 
+  useEffect(() => {
+    if (initialChapters) {
+      setChapters(initialChapters)
+      setIsLoading(false)
+    }
+  }, [initialChapters])
+
   const normalizedSearch = searchQuery.trim().toLowerCase()
   const filteredChapters = chapters.filter((chapter) =>
     `Chapter ${chapter.chapterNumber} ${chapter.title ?? ""}`
@@ -43,7 +50,8 @@ export function ComicChapterList({ slug, initialChapters }: ComicChapterListProp
       .getComicBySlug({ slug })
       .then((data: any) => {
         if (isMounted) {
-          setChapters(data.chapters || [])
+          const raw = data?.data || data
+          setChapters(raw.chapters || raw.comic?.chapters || [])
         }
       })
       .catch(() => {

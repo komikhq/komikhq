@@ -33,6 +33,14 @@ export async function loader() {
       comicsApi.listComics({ limit: 12, sort: "latest" }),
     ]);
 
+    if (
+      trendingRes.status === "rejected" &&
+      popularRes.status === "rejected" &&
+      latestRes.status === "rejected"
+    ) {
+      throw new Response("Failed to load platform data from server", { status: 503 });
+    }
+
     const getItems = (res: PromiseSettledResult<any>) => {
       if (res.status !== "fulfilled" || !res.value) return [];
       const v = res.value;
@@ -45,6 +53,7 @@ export async function loader() {
       latestComics: getItems(latestRes),
     };
   } catch (err) {
+    if (err instanceof Response) throw err;
     console.error("Home loader error:", err);
     return {
       trendingComics: [],

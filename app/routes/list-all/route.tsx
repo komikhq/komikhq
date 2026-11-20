@@ -29,8 +29,9 @@ export async function loader() {
     const res: any = await comicsApi.listComics({ limit: 500 })
     const comics = res?.data?.items || res?.comics || res?.data || []
     return { comics }
-  } catch {
-    return { comics: [] }
+  } catch (err: any) {
+    const status = err?.status || err?.response?.status || 500
+    throw new Response(err?.message || "Failed to load comic catalog", { status })
   }
 }
 

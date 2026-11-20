@@ -63,9 +63,13 @@ export function ComicHeaderCard({ slug, initialData }: ComicHeaderCardProps) {
     handleReadFirstChapter,
     handleNavigateCatalog,
   } = useComicDetail(slug, initialData)
-  const comicTitle = comicData?.comic?.title ?? ""
+
+  const raw: any = (comicData as any)?.data || comicData || {}
+  const comic = raw.comic || raw
+  const comicTitle = comic.title || raw.title || ""
   const comicSynopsis =
-    comicData?.comic?.synopsis || "No synopsis available for this comic."
+    comic.synopsis || raw.synopsis || "No synopsis available for this comic."
+
   const [titleExpanded, setTitleExpanded] = useState(false)
   const [synopsisExpanded, setSynopsisExpanded] = useState(false)
   const synopsisContainerRef = useRef<HTMLDivElement>(null)
@@ -189,8 +193,6 @@ export function ComicHeaderCard({ slug, initialData }: ComicHeaderCardProps) {
     )
   }
 
-  const raw: any = (comicData as any)?.data || comicData || {}
-  const comic = raw.comic || raw
   const genres = raw.genres || []
   const creators = raw.creators || []
   const chapters = raw.chapters || []
