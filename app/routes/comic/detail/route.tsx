@@ -15,8 +15,14 @@ export async function loader({ params }: Route.LoaderArgs) {
   try {
     response = await comicsApi.getComicBySlug({ slug });
   } catch (err: any) {
-    const status = err?.status || err?.response?.status || 404;
-    throw new Response(err?.message || "Comic Not Found", { status });
+    const status = err?.status || err?.response?.status;
+    if (status === 404) {
+      throw new Response("Comic Not Found", { status: 404 });
+    }
+    console.error(`[Comic Detail Loader] Failed to fetch comic slug "${slug}":`, err);
+    throw new Response(err?.message || "Failed to load comic details", {
+      status: status && status >= 400 && status < 600 ? status : 500,
+    });
   }
 
   const rawData = response?.data || response;

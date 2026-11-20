@@ -26,8 +26,14 @@ export async function loader({ params }: Route.LoaderArgs) {
     })) as any
     chapterData = (res?.data || res) as unknown as ChapterFullData
   } catch (error: any) {
-    const status = error?.status || error?.response?.status || 404
-    throw new Response(error?.message || "Chapter Not Found", { status })
+    const status = error?.status || error?.response?.status
+    if (status === 404) {
+      throw new Response("Chapter Not Found", { status: 404 })
+    }
+    console.error(`[Comic Reader Loader] Failed to load chapter "${chapterSlug}" for comic "${slug}":`, error)
+    throw new Response(error?.message || "Failed to load chapter reader", {
+      status: status && status >= 400 && status < 600 ? status : 500,
+    })
   }
 
   if (!chapterData || !chapterData.pages || chapterData.pages.length === 0) {

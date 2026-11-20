@@ -2,26 +2,58 @@
  * Coalescing Fetch — In-Flight Request Deduplication & In-Memory TTL Cache.
  *
  * For GET requests:
- *   1. If a valid cached response exists in memory → return its clone.
+ *   1. If a valid cached entry exists in memory → construct and return a fresh new Response.
  *   2. If a request to the same URL is already in-flight → await the same
- *      Promise, so only 1 HTTP connection is opened even when N callers
- *      invoke it simultaneously.
- *   3. If neither → execute a new fetch, cache the response, and return it.
+ *      Promise, buffer the body once, and return independent fresh Responses.
+ *   3. If neither → execute a new fetch, cache serialized payload, and return a fresh Response.
+ *
+ * Note on Cloudflare Workers / Fetch standard:
+ * Raw WHATWG `Response` objects must NEVER be stored directly in memory cache across requests
+ * because their `ReadableStream` bodies become locked/disturbed once consumed. Storing serialized
+ * payload (bodyText + metadata) guarantees clean, unconsumed streams for every request.
  *
  * For non-GET requests (POST, PUT, DELETE, etc.): bypass directly to fetch().
  */
 
-const inFlightRequests = new Map<string, Promise<Response>>()
-const memoryCache = new Map<
-  string,
-  { response: Response; expiresAt: number }
->()
+interface CachedPayload {
+  bodyText: string
+  status: number
+  statusText: string
+  headers: [string, string][]
+  expiresAt: number
+}
 
-/** Resolve the TTL (ms) based on the endpoint path. */
+const inFlightRequests = new Map<string, Promise<CachedPayload>>()
+const memoryCache = new Map<string, CachedPayload>()
+
+/** Resolve the TTL (ms) based on the endpoint path. Only public data is cached. */
 function resolveTtl(url: string): number {
-  if (url.includes("/genres")) return 3_600_000 // 1 hour — genre data rarely changes
+  // Never cache authenticated, user-specific, or administrative endpoints
+  if (
+    url.includes("/bookmarks") ||
+    url.includes("/history") ||
+    url.includes("/users") ||
+    url.includes("/account") ||
+    url.includes("/auth") ||
+    url.includes("/admin") ||
+    url.includes("/moderation") ||
+    url.includes("/ratings")
+  ) {
+    return 0
+  }
+
+  if (url.includes("/genres")) return 3_600_000 // 1 hour — genre list rarely changes
   if (url.includes("/trending")) return 30_000 // 30 seconds
-  return 15_000 // 15 seconds — default for detail, browse, etc.
+  if (url.includes("/comics") || url.includes("/chapters")) return 30_000 // 30 seconds
+  return 0 // Default: do not cache in memory
+}
+
+function createFreshResponse(payload: CachedPayload): Response {
+  return new Response(payload.bodyText, {
+    status: payload.status,
+    statusText: payload.statusText,
+    headers: new Headers(payload.headers),
+  })
 }
 
 /**
@@ -40,32 +72,43 @@ export async function coalescingFetch(
   }
 
   const urlKey = typeof input === "string" ? input : input.toString()
+  const ttl = resolveTtl(urlKey)
 
-  // 1. Check memory cache
-  const cached = memoryCache.get(urlKey)
-  if (cached && cached.expiresAt > Date.now()) {
-    return cached.response.clone()
+  // 1. Check memory cache (only for cacheable endpoints)
+  if (ttl > 0) {
+    const cached = memoryCache.get(urlKey)
+    if (cached && cached.expiresAt > Date.now()) {
+      return createFreshResponse(cached)
+    }
   }
 
   // 2. Coalesce with an already in-flight request
   const pending = inFlightRequests.get(urlKey)
   if (pending) {
-    const res = await pending
-    return res.clone()
+    const payload = await pending
+    return createFreshResponse(payload)
   }
 
   // 3. Execute a new request
-  const executionPromise = (async () => {
+  const executionPromise = (async (): Promise<CachedPayload> => {
     try {
       const response = await fetch(input, init)
-      if (response.ok) {
-        const ttl = resolveTtl(urlKey)
-        memoryCache.set(urlKey, {
-          response: response.clone(),
-          expiresAt: Date.now() + ttl,
-        })
+      const bodyText = await response.text()
+      const headers = Array.from(response.headers.entries())
+
+      const payload: CachedPayload = {
+        bodyText,
+        status: response.status,
+        statusText: response.statusText,
+        headers,
+        expiresAt: response.ok && ttl > 0 ? Date.now() + ttl : 0,
       }
-      return response
+
+      if (payload.expiresAt > 0) {
+        memoryCache.set(urlKey, payload)
+      }
+
+      return payload
     } finally {
       inFlightRequests.delete(urlKey)
     }
@@ -73,7 +116,7 @@ export async function coalescingFetch(
 
   inFlightRequests.set(urlKey, executionPromise)
   const result = await executionPromise
-  return result.clone()
+  return createFreshResponse(result)
 }
 
 /**
@@ -92,3 +135,4 @@ export function invalidateCache(urlSubstring?: string): void {
     }
   }
 }
+
