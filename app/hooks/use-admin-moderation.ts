@@ -34,16 +34,14 @@ export function useAdminModeration(initialPageSize = 10) {
     }
 
     try {
-      const res: any = await moderationApi.adminListModerationReports({
-        page,
-        limit: pageSize,
-        status: statusFilter === "all" ? undefined : statusFilter,
+      const res: any = await moderationApi.adminListReports({
+        status: statusFilter === "all" ? undefined : (statusFilter as any),
       })
 
-      const rawReports: ReportItem[] = res?.reports || []
+      const rawReports: ReportItem[] = res?.data?.reports || res?.reports || []
       setReports(rawReports)
 
-      const total = res?.total ?? rawReports.length
+      const total = res?.data?.total ?? res?.total ?? rawReports.length
       setTotalRecords(total)
       setTotalPages(Math.max(1, Math.ceil(total / pageSize)))
     } catch (err: any) {
@@ -65,9 +63,11 @@ export function useAdminModeration(initialPageSize = 10) {
   ): Promise<boolean> => {
     setSubmitting(true)
     try {
-      await moderationApi.adminResolveModerationReport({
+      await moderationApi.adminUpdateReport({
         id: reportId,
-        adminResolveModerationReportRequest: { action },
+        adminUpdateReportRequest: {
+          status: action === "delete_comment" ? "RESOLVED" : "REJECTED",
+        },
       })
       toast.success(
         action === "delete_comment"
@@ -100,9 +100,11 @@ export function useAdminModeration(initialPageSize = 10) {
     try {
       for (const r of items) {
         try {
-          await moderationApi.adminResolveModerationReport({
+          await moderationApi.adminUpdateReport({
             id: r.id,
-            adminResolveModerationReportRequest: { action },
+            adminUpdateReportRequest: {
+              status: action === "delete_comment" ? "RESOLVED" : "REJECTED",
+            },
           })
           count++
         } catch {}

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { toast } from "sonner"
 import { sortGenresByNaturalName } from "@/lib/sort-genres"
-import { administrationApi } from "@/lib/sdk-client"
+import { administrationApi, genresApi } from "@/lib/sdk-client"
 
 export interface GenreItem {
   id: string
@@ -25,9 +25,10 @@ export function useAdminGenres() {
     }
 
     try {
-      const data: any = await administrationApi.adminListGenres()
-      if (data && data.genres) {
-        setGenres(sortGenresByNaturalName(data.genres))
+      const data: any = await genresApi.listGenres()
+      const genreList = data?.data || data?.genres || []
+      if (Array.isArray(genreList)) {
+        setGenres(sortGenresByNaturalName(genreList))
       } else {
         toast.error("Failed to fetch genre list")
       }
@@ -51,10 +52,11 @@ export function useAdminGenres() {
 
     setSubmitting(true)
     try {
+      const slug = data.name.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")
       const res: any = await administrationApi.adminCreateGenre({
-        adminCreateGenreRequest: { name: data.name.trim(), description: data.description?.trim() || undefined },
+        adminCreateGenreRequest: { name: data.name.trim(), slug, description: data.description?.trim() || undefined },
       })
-      if (res && res.success) {
+      if (res && (res.status === "ok" || res.success)) {
         toast.success(`Genre "${data.name}" successfully added.`)
         fetchGenres(true)
         return true
@@ -81,11 +83,12 @@ export function useAdminGenres() {
 
     setSubmitting(true)
     try {
+      const slug = data.name.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")
       const res: any = await administrationApi.adminUpdateGenre({
         id,
-        adminUpdateGenreRequest: { name: data.name.trim(), description: data.description?.trim() || undefined },
+        adminUpdateGenreRequest: { name: data.name.trim(), slug, description: data.description?.trim() || undefined },
       })
-      if (res && res.success) {
+      if (res && (res.status === "ok" || res.success)) {
         toast.success(`Genre "${data.name}" successfully updated.`)
         fetchGenres(true)
         return true

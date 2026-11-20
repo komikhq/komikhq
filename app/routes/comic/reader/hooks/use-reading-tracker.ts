@@ -76,8 +76,8 @@ export function useReadingTracker({
       if (isModeSwitchingRef?.current) return
 
       readingHistoryApi
-        .recordReadingProgress({
-          recordReadingProgressRequest: {
+        .recordReadingHistory({
+          recordReadingHistoryRequest: {
             comicId,
             chapterId,
             lastReadPage: activePageIndex + 1,

@@ -28,24 +28,21 @@ export function meta(): Route.MetaDescriptors {
 export async function loader() {
   try {
     const [trendingRes, popularRes, latestRes] = await Promise.allSettled([
-      comicsApi.listTrendingComics({ period: "daily", limit: "20" }),
-      comicsApi.listTrendingComics({ period: "popular", limit: "20" }),
-      comicsApi.browseComics({ limit: "12", sort: "latest" }),
+      comicsApi.getTrendingComics({ limit: 20 }),
+      comicsApi.getTrendingComics({ limit: 20 }),
+      comicsApi.listComics({ limit: 12, sort: "latest" }),
     ]);
 
+    const getItems = (res: PromiseSettledResult<any>) => {
+      if (res.status !== "fulfilled" || !res.value) return [];
+      const v = res.value;
+      return v.data?.items || v.comics || v.data || [];
+    };
+
     return {
-      trendingComics:
-        trendingRes.status === "fulfilled" && trendingRes.value?.comics
-          ? trendingRes.value.comics
-          : [],
-      popularComics:
-        popularRes.status === "fulfilled" && popularRes.value?.comics
-          ? popularRes.value.comics
-          : [],
-      latestComics:
-        latestRes.status === "fulfilled" && latestRes.value?.comics
-          ? latestRes.value.comics
-          : [],
+      trendingComics: getItems(trendingRes),
+      popularComics: getItems(popularRes),
+      latestComics: getItems(latestRes),
     };
   } catch (err) {
     console.error("Home loader error:", err);

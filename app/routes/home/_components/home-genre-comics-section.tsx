@@ -19,10 +19,10 @@ export function HomeGenreComicsSection() {
 
     // Fetch browse catalog to categorize comics by genre
     comicsApi
-      .browseComics({ limit: "100" })
+      .listComics({ limit: 100 })
       .then((data: any) => {
         if (!isMounted) return
-        const comics: any[] = data.comics || []
+        const comics: any[] = data.data?.items || data.comics || data.data || []
         const map: Record<string, any[]> = {}
         COMMON_GENRES.forEach((g) => {
           map[g.slug] = []
@@ -44,7 +44,7 @@ export function HomeGenreComicsSection() {
 
         setComicsByGenre(map)
       })
-      .catch((err) => {
+      .catch((err: any) => {
         console.error("[HomeGenreComicsSection] Failed to fetch comics:", err)
       })
       .finally(() => {

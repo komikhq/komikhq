@@ -17,10 +17,11 @@ export async function loader({ params }: Route.LoaderArgs) {
 
   if (slug && chapterSlug) {
     try {
-      chapterData = (await chaptersApi.getPublicChapter({
-        slug,
+      const res = (await chaptersApi.getChapterReaderPages({
+        comicSlug: slug,
         chapterSlug,
-      })) as unknown as ChapterFullData
+      })) as any
+      chapterData = (res?.data || res) as unknown as ChapterFullData
     } catch (error) {
       console.warn(
         `[ReaderPage] Failed to load chapter metadata for ${slug}/${chapterSlug}:`,

@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
-import { administrationApi } from "@/lib/sdk-client"
+import { systemApi } from "@/lib/sdk-client"
 
 interface SyncViewsResult {
   "synced-chapters"?: number
@@ -35,9 +35,10 @@ export function SettingsSyncViewsCard() {
   useEffect(() => {
     const fetchLastSync = async () => {
       try {
-        const res: any = await administrationApi.getSystemMaintenanceStatus()
-        if (res?.data?.["last-synced-at"]) {
-          setLastSyncedAt(res.data["last-synced-at"])
+        const res: any = await systemApi.getSystemStatus()
+        const lastSync = res?.data?.lastSyncedAt ?? res?.data?.["last-synced-at"]
+        if (lastSync) {
+          setLastSyncedAt(lastSync)
         }
       } catch {
         // silently ignore
@@ -53,7 +54,7 @@ export function SettingsSyncViewsCard() {
     )
 
     try {
-      const data: any = await administrationApi.synchronizeViewCounts()
+      const data: any = await systemApi.syncSystemViews()
 
       const syncedChapters = data?.["synced-chapters"] ?? 0
       const syncedComics =

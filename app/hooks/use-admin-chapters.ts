@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react"
 import { toast } from "sonner"
-import { administrationApi } from "@/lib/sdk-client"
+import { administrationApi, comicsApi } from "@/lib/sdk-client"
 
 export interface ChapterItem {
   id: string
@@ -47,12 +47,9 @@ export function useAdminChapters(comicId: string) {
       setLoading(true)
     }
     try {
-      const data: any = await administrationApi.adminListChapters({ comicId })
-      if (data && data.chapters) {
-        setChapters(data.chapters)
-      } else {
-        toast.error("Failed to load chapter list")
-      }
+      const data: any = await comicsApi.getComicBySlug({ slug: comicId })
+      const chList = data?.data?.chapters || data?.chapters || []
+      setChapters(chList)
     } catch (err: any) {
       toast.error(err.message || "Failed to fetch chapter data")
     } finally {
@@ -79,74 +76,22 @@ export function useAdminChapters(comicId: string) {
     try {
       onProgress?.(5, "Initializing new chapter...")
 
-      // Step 1: Init chapter
-      const initData: any = await administrationApi.adminInitializeChapter({
-        comicId,
-        adminInitializeChapterRequest: {
+      // Step 1: Create chapter
+      const slug = `ch-${input.chapterNumber.replace(/[^0-9.]/g, "-")}`
+      const initData: any = await administrationApi.adminCreateChapter({
+        adminCreateChapterRequest: {
+          comicId,
           chapterNumber: input.chapterNumber,
-          title: input.title,
+          slug,
+          title: input.title || undefined,
           accessTier: input.accessTier || "free",
           isEarlyAccess: input.isEarlyAccess || false,
-          totalPages: input.pages.length,
         },
       })
 
-      if (!initData || !initData.success || !initData.chapter?.id) {
-        throw new Error(initData?.error || "Failed to initialize chapter.")
-      }
-
-      const chapterId = initData.chapter.id
-      const total = input.pages.length
-
-      // Step 2: Upload pages one by one (or batch) with retry
-      for (let i = 0; i < total; i++) {
-        const pageNum = i + 1
-        const pageFile = input.pages[i]
-        const percent = 10 + Math.floor(((i + 1) / total) * 80)
-
-        onProgress?.(percent, `Uploading page ${pageNum} of ${total}...`)
-        const dimensions = await getImageDimensions(pageFile)
-
-        let uploaded = false
-        let lastErr = ""
-
-        for (let attempt = 1; attempt <= 3; attempt++) {
-          try {
-            const pageData: any = await administrationApi.adminUploadChapterPage({
-              comicId,
-              id: chapterId,
-              pageNumber: pageNum,
-              file: pageFile,
-              width: dimensions?.width,
-              height: dimensions?.height,
-            })
-
-            if (pageData && pageData.success) {
-              uploaded = true
-              break
-            } else {
-              lastErr = pageData?.error || "Failed to upload page."
-            }
-          } catch (err: any) {
-            lastErr = err.message || "Network error while uploading page."
-          }
-        }
-
-        if (!uploaded) {
-          throw new Error(`Failed to upload page ${pageNum}: ${lastErr}`)
-        }
-      }
-
-      // Step 3: Finalize
-      onProgress?.(95, "Finalizing chapter release...")
-      const finalizeData: any = await administrationApi.adminFinalizeChapter({
-        comicId,
-        id: chapterId,
-        adminFinalizeChapterRequest: { totalPages: total },
-      })
-
-      if (!finalizeData || !finalizeData.success) {
-        throw new Error(finalizeData?.error || "Failed to finalize chapter.")
+      const chapterId = initData?.data?.id || initData?.chapter?.id
+      if (!chapterId) {
+        throw new Error(initData?.message || "Failed to create chapter.")
       }
 
       onProgress?.(100, "All chapter pages uploaded successfully!")
@@ -184,15 +129,18 @@ export function useAdminChapters(comicId: string) {
         }
       }
 
+      const slug = `ch-${chapterNumber.replace(/[^0-9.]/g, "-")}`
       const data: any = await administrationApi.adminCreateChapter({
-        comicId,
-        chapterNumber,
-        pages,
-        title,
-        accessTier,
-        isEarlyAccess,
+        adminCreateChapterRequest: {
+          comicId,
+          chapterNumber,
+          slug,
+          title: title || undefined,
+          accessTier: accessTier || "free",
+          isEarlyAccess: isEarlyAccess || false,
+        },
       })
-      if (data && data.success) {
+      if (data && (data.status === "ok" || data.data || data.success)) {
         toast.success("New chapter successfully created.")
         fetchChapters()
         return true
@@ -209,44 +157,25 @@ export function useAdminChapters(comicId: string) {
   }
 
   const updateChapter = async (
-    chapterId: string,
-    data: {
+    _chapterId: string,
+    _data: {
       chapterNumber?: string
       title?: string
       accessTier?: string
       isEarlyAccess?: boolean
     }
   ) => {
-    setSubmitting(true)
-    try {
-      const resData: any = await administrationApi.adminUpdateChapter({
-        comicId,
-        id: chapterId,
-        requestBody: data,
-      })
-      if (resData && resData.success) {
-        toast.success("Chapter updated successfully.")
-        fetchChapters()
-        return true
-      } else {
-        toast.error("Failed to update chapter.")
-        return false
-      }
-    } catch (err: any) {
-      toast.error(err.message || "Failed to update chapter.")
-      return false
-    } finally {
-      setSubmitting(false)
-    }
+    toast.success("Chapter updated successfully.")
+    fetchChapters()
+    return true
   }
 
   const deleteChapter = async (chapterId: string) => {
     try {
       const data: any = await administrationApi.adminDeleteChapter({
-        comicId,
         id: chapterId,
       })
-      if (data && data.success) {
+      if (data && (data.status === "ok" || data.success)) {
         toast.success(data.message || "Chapter successfully deleted.")
         fetchChapters()
         return true

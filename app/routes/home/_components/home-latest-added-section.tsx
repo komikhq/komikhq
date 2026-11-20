@@ -36,13 +36,13 @@ export function HomeLatestAddedSection({ initialComics }: HomeLatestAddedSection
       setIsFetching(true)
     }
 
-    const typeParam = selectedType !== "all" ? selectedType : undefined
+    const typeParam = selectedType !== "all" ? (selectedType as any) : undefined
 
     comicsApi
-      .browseComics({ limit: "12", sort: "latest", type: typeParam })
+      .listComics({ limit: 12, sort: "latest", type: typeParam })
       .then((data: any) => {
         if (isMounted) {
-          setLatestComics(data.comics || [])
+          setLatestComics(data.data?.items || data.comics || data.data || [])
         }
       })
       .catch(() => {

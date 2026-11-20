@@ -7,7 +7,7 @@ import {
 } from "@phosphor-icons/react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { administrationApi } from "@/lib/sdk-client"
+import { comicsApi } from "@/lib/sdk-client"
 
 interface AdminComicDetailHeaderProps {
   comicId: string
@@ -23,9 +23,10 @@ export function AdminComicDetailHeader({
   useEffect(() => {
     async function fetchDetail() {
       try {
-        const data: any = await administrationApi.adminGetComic({ id: comicId })
-        if (data && data.comic) {
-          setComic(data)
+        const data: any = await comicsApi.getComicBySlug({ slug: comicId })
+        const comicItem = data?.data || data?.comic || data
+        if (comicItem) {
+          setComic({ comic: comicItem })
         }
       } catch (err) {
         console.error("Failed to load comic details", err)

@@ -30,7 +30,7 @@ export function AdminStatsOverviewCard() {
     const fetchStats = async () => {
       setIsLoading(true)
       try {
-        const json: any = await administrationApi.adminGetPlatformStats()
+        const json: any = await administrationApi.adminGetStats()
         const data = json?.data || json
         setStatsData(data)
       } catch (e) {

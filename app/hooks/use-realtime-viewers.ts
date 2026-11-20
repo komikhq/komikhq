@@ -35,42 +35,40 @@ export function useRealtimeViewers(options: UseRealtimeViewersOptions = {}) {
       if (!isMounted) return
 
       const visitorId = getVisitorId()
-      getRealtimeWebSocketUrl(channelName, { visitorId })
-        .then((wsUrl) => {
-          if (!isMounted) return
-          ws = new WebSocket(wsUrl)
+      try {
+        const wsUrl = getRealtimeWebSocketUrl(channelName, { visitorId })
+        ws = new WebSocket(wsUrl)
 
-          ws.onmessage = (event) => {
-            try {
-              const data = JSON.parse(event.data)
-              if (
-                data.event === "online_count" &&
-                typeof data.count === "number"
-              ) {
-                setOnlineCount(data.count)
-              }
-            } catch {
-              // Ignore parse errors
+        ws.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data)
+            if (
+              data.event === "online_count" &&
+              typeof data.count === "number"
+            ) {
+              setOnlineCount(data.count)
             }
+          } catch {
+            // Ignore parse errors
           }
+        }
 
-          ws.onclose = () => {
-            if (isMounted) {
-              reconnectTimeout = setTimeout(connect, 5000)
-            }
-          }
-
-          ws.onerror = () => {
-            if (ws) {
-              ws.close()
-            }
-          }
-        })
-        .catch(() => {
+        ws.onclose = () => {
           if (isMounted) {
             reconnectTimeout = setTimeout(connect, 5000)
           }
-        })
+        }
+
+        ws.onerror = () => {
+          if (ws) {
+            ws.close()
+          }
+        }
+      } catch {
+        if (isMounted) {
+          reconnectTimeout = setTimeout(connect, 5000)
+        }
+      }
     }
 
     connect()

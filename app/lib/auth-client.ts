@@ -3,7 +3,7 @@ import { BASE_PATH } from "@komikhq/komikhq-typescript"
 
 export const authClient = createAuthClient({
   baseURL: BASE_PATH,
-  basePath: "/v1/auth",
+  basePath: "/auth",
   fetchOptions: {
     credentials: "include",
   },

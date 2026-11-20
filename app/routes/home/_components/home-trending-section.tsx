@@ -32,10 +32,10 @@ export function HomeTrendingSection({ initialComics }: HomeTrendingSectionProps)
     }
 
     comicsApi
-      .listTrendingComics({ period, limit: "20" })
+      .getTrendingComics({ limit: 20 })
       .then((data: any) => {
         if (isMounted) {
-          setTrendingComics(data.comics || [])
+          setTrendingComics(data.data?.items || data.comics || data.data || [])
         }
       })
       .catch(() => {

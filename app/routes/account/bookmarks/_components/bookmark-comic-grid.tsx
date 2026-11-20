@@ -32,7 +32,7 @@ export function BookmarkComicGrid() {
     e.preventDefault()
     e.stopPropagation()
     try {
-      await bookmarksApi.removeBookmark({ comicId })
+      await bookmarksApi.deleteBookmark({ comicId })
       invalidateCache("/bookmarks")
       setBookmarks((prev) => prev.filter((b) => b.comic.id !== comicId))
     } catch (err) {

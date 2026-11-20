@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react"
 import { toast } from "sonner"
-import { administrationApi } from "@/lib/sdk-client"
+import { administrationApi, comicsApi } from "@/lib/sdk-client"
 
 export interface ComicAdminItem {
   id: string
@@ -42,19 +42,17 @@ export function useAdminComics(initialPageSize = 15) {
     }
 
     try {
-      const data: any = await administrationApi.adminListComics({
+      const data: any = await comicsApi.listComics({
         q: search.trim() || undefined,
-        status: statusFilter && statusFilter !== "all" ? statusFilter : undefined,
-        page: String(page),
-        limit: String(pageSize),
+        status: statusFilter && statusFilter !== "all" ? (statusFilter as any) : undefined,
+        page,
+        limit: pageSize,
       })
-      if (data && data.comics) {
-        setComics(data.comics)
-        setTotalPages(data.pagination?.totalPages || 1)
-        setTotalCount(data.pagination?.total || 0)
-      } else {
-        toast.error("Failed to load comic catalog")
-      }
+      const items = data?.data?.items || data?.comics || []
+      const pagination = data?.data?.pagination || data?.pagination
+      setComics(items)
+      setTotalPages(pagination?.totalPages || 1)
+      setTotalCount(pagination?.total || items.length)
     } catch (err: any) {
       toast.error(err.message || "Failed to fetch comics")
     } finally {
@@ -86,8 +84,10 @@ export function useAdminComics(initialPageSize = 15) {
       for (const [key, val] of formData.entries()) {
         params[key] = val
       }
-      const data: any = await administrationApi.adminCreateComic(params)
-      if (data && data.success) {
+      const data: any = await administrationApi.adminCreateComic({
+        adminCreateComicRequest: params,
+      })
+      if (data && (data.status === "ok" || data.success)) {
         toast.success("New comic successfully added.")
         fetchComics()
         return true
@@ -110,8 +110,11 @@ export function useAdminComics(initialPageSize = 15) {
       for (const [key, val] of formData.entries()) {
         params[key] = val
       }
-      const data: any = await administrationApi.adminUpdateComic(params)
-      if (data && data.success) {
+      const data: any = await administrationApi.adminUpdateComic({
+        id,
+        adminUpdateComicRequest: params,
+      })
+      if (data && (data.status === "ok" || data.success)) {
         toast.success("Comic successfully updated.")
         fetchComics()
         return true
@@ -130,7 +133,7 @@ export function useAdminComics(initialPageSize = 15) {
   const deleteComic = async (id: string) => {
     try {
       const data: any = await administrationApi.adminDeleteComic({ id })
-      if (data && data.success) {
+      if (data && (data.status === "ok" || data.success)) {
         toast.success(data.message || "Comic successfully deleted.")
         fetchComics()
         return true

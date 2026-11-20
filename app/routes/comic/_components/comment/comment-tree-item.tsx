@@ -76,7 +76,7 @@ export function CommentTreeItem({
     setLikeCount((prev) => (nextState ? prev + 1 : prev - 1))
 
     try {
-      await commentsApi.toggleCommentLike({ commentId: comment.id })
+      await commentsApi.toggleCommentLike({ id: comment.id })
     } catch {
       // Rollback on failure
       setIsLiked(!nextState)

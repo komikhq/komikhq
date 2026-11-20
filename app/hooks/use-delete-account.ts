@@ -53,8 +53,8 @@ export function useDeleteAccount() {
     }
 
     try {
-      await usersApi.deleteUserAccount({
-        deleteUserAccountRequest: payload,
+      await usersApi.deleteOwnAccount({
+        deleteOwnAccountRequest: payload,
       })
 
       toast.success("Your account has been permanently deleted.")

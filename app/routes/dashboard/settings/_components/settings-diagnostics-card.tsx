@@ -14,17 +14,24 @@ import {
   CardDescription,
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { administrationApi } from "@/lib/sdk-client"
+import { systemApi } from "@/lib/sdk-client"
 
 interface MaintenanceStatus {
-  "cached-search-keys-count": number
-  "kv-healthy": boolean
+  "cached-search-keys-count"?: number
+  cachedSearchKeysCount?: number
+  "kv-healthy"?: boolean
+  kvHealthy?: boolean
   "kv-views-healthy"?: boolean
+  kvViewsHealthy?: boolean
   "ae-healthy"?: boolean
+  aeHealthy?: boolean
   "last-synced-at"?: string | null
+  lastSyncedAt?: string | null
   "cached-rankings-count"?: number
-  "r2-healthy": boolean
-  timestamp: string
+  cachedRankingsCount?: number
+  "r2-healthy"?: boolean
+  r2Healthy?: boolean
+  timestamp?: string
 }
 
 export function SettingsDiagnosticsCard() {
@@ -34,7 +41,7 @@ export function SettingsDiagnosticsCard() {
   const fetchStatus = async () => {
     try {
       setLoadingStatus(true)
-      const res: any = await administrationApi.getSystemMaintenanceStatus()
+      const res: any = await systemApi.getSystemStatus()
       if (res?.data) {
         setStatus(res.data)
       }
@@ -48,6 +55,12 @@ export function SettingsDiagnosticsCard() {
   useEffect(() => {
     fetchStatus()
   }, [])
+
+  const isKvHealthy = status?.kvHealthy ?? status?.["kv-healthy"] ?? false
+  const isKvViewsHealthy = status?.kvViewsHealthy ?? status?.["kv-views-healthy"] ?? false
+  const isR2Healthy = status?.r2Healthy ?? status?.["r2-healthy"] ?? false
+  const cachedKeysCount = status?.cachedSearchKeysCount ?? status?.["cached-search-keys-count"]
+  const cachedRankings = status?.cachedRankingsCount ?? status?.["cached-rankings-count"]
 
   return (
     <Card className="border-border/60 shadow-xs">
@@ -84,13 +97,13 @@ export function SettingsDiagnosticsCard() {
               Cloudflare KV (App)
             </span>
             <div className="flex items-center gap-1.5">
-              {status?.["kv-healthy"] ? (
+              {isKvHealthy ? (
                 <CheckCircle className="h-4 w-4 text-emerald-500" />
               ) : (
                 <WarningCircle className="h-4 w-4 text-amber-500" />
               )}
               <span className="text-xs font-semibold">
-                {status?.["kv-healthy"] ? "Operational" : "Degraded"}
+                {isKvHealthy ? "Operational" : "Degraded"}
               </span>
             </div>
           </div>
@@ -100,17 +113,17 @@ export function SettingsDiagnosticsCard() {
               KV Views & Rankings
             </span>
             <div className="flex items-center gap-1.5">
-              {status?.["kv-views-healthy"] ? (
+              {isKvViewsHealthy ? (
                 <CheckCircle className="h-4 w-4 text-emerald-500" />
               ) : (
                 <WarningCircle className="h-4 w-4 text-amber-500" />
               )}
               <span className="text-xs font-semibold">
-                {status?.["kv-views-healthy"] ? "Operational" : "Degraded"}
+                {isKvViewsHealthy ? "Operational" : "Degraded"}
               </span>
-              {status?.["cached-rankings-count"] ? (
+              {cachedRankings ? (
                 <span className="font-mono text-[10px] text-muted-foreground">
-                  ({status["cached-rankings-count"]} cached)
+                  ({cachedRankings} cached)
                 </span>
               ) : null}
             </div>
@@ -121,13 +134,13 @@ export function SettingsDiagnosticsCard() {
               R2 Media Storage
             </span>
             <div className="flex items-center gap-1.5">
-              {status?.["r2-healthy"] ? (
+              {isR2Healthy ? (
                 <CheckCircle className="h-4 w-4 text-emerald-500" />
               ) : (
                 <WarningCircle className="h-4 w-4 text-rose-500" />
               )}
               <span className="text-xs font-semibold">
-                {status?.["r2-healthy"] ? "Connected" : "Disconnected"}
+                {isR2Healthy ? "Connected" : "Disconnected"}
               </span>
             </div>
           </div>
@@ -139,8 +152,8 @@ export function SettingsDiagnosticsCard() {
             <div className="flex items-center gap-1.5">
               <MagnifyingGlass className="h-4 w-4 text-purple-500" />
               <span className="font-mono text-xs font-semibold">
-                {status
-                  ? `${status["cached-search-keys-count"]} cached`
+                {cachedKeysCount !== undefined
+                  ? `${cachedKeysCount} cached`
                   : "..."}
               </span>
             </div>

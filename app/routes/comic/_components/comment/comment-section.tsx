@@ -4,7 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { CommentInput } from "./comment-input"
 import { CommentTreeItem, type CommentData } from "./comment-tree-item"
 import { CommentReportModal } from "./comment-report-modal"
-import { commentsApi, authenticationApi, getRealtimeWebSocketUrl } from "@/lib/sdk-client"
+import { commentsApi, getRealtimeWebSocketUrl } from "@/lib/sdk-client"
+import { authClient } from "@/lib/auth-client"
 
 interface CommentSectionProps {
   comicId?: string
@@ -27,14 +28,14 @@ export function CommentSection({
   )
 
   useEffect(() => {
-    // Check if user is logged in via session endpoint
-    authenticationApi
-      .getAuthSession()
+    // Check if user is logged in via Better Auth client session
+    authClient
+      .getSession()
       .then((res: any) => {
-        if (res && (res.user || res.id)) {
+        if (res && res.data && res.data.user) {
           setIsLoggedIn(true)
-          const u = res.user || res
-          setCurrentUserId(u.id || u.userId || null)
+          const u = res.data.user
+          setCurrentUserId(u.id || null)
           if (u.role === "admin") setIsAdmin(true)
         } else {
           setIsLoggedIn(false)
@@ -77,7 +78,7 @@ export function CommentSection({
     if (showSkeleton) setIsLoading(true)
 
     commentsApi
-      .listComments({ comicId, chapterId })
+      .listComments({ comicId: comicId || "", chapterId: chapterId || undefined })
       .then((data: any) => {
         const rawList: CommentData[] = data.comments || []
         setComments(buildCommentTree(rawList))
@@ -93,29 +94,24 @@ export function CommentSection({
     if (!targetId || typeof window === "undefined") return
 
     let ws: WebSocket | null = null
-    let isMounted = true
-
-    getRealtimeWebSocketUrl(`comment_stream:${targetId}`)
-      .then((wsUrl) => {
-        if (!isMounted) return
-        ws = new WebSocket(wsUrl)
-        ws.onmessage = (event) => {
-          try {
-            const data = JSON.parse(event.data)
-            if (data.event === "new_comment") {
-              fetchComments()
-            }
-          } catch {
-            // Ignore
+    try {
+      const wsUrl = getRealtimeWebSocketUrl(`comment_stream:${targetId}`)
+      ws = new WebSocket(wsUrl)
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data)
+          if (data.event === "new_comment") {
+            fetchComments()
           }
+        } catch {
+          // Ignore
         }
-      })
-      .catch(() => {
-        // Ignore WS fail
-      })
+      }
+    } catch {
+      // Ignore WS fail
+    }
 
     return () => {
-      isMounted = false
       if (ws) ws.close()
     }
   }, [comicId, chapterId])
@@ -127,7 +123,7 @@ export function CommentSection({
   ) => {
     await commentsApi.createComment({
       createCommentRequest: {
-        comicId: comicId || undefined,
+        comicId: comicId || "",
         chapterId: chapterId || undefined,
         parentId: parentId || undefined,
         content,
@@ -140,7 +136,7 @@ export function CommentSection({
   }
 
   const handleDeleteComment = async (commentId: string) => {
-    await commentsApi.deleteComment({ commentId })
+    await commentsApi.deleteComment({ id: commentId })
     fetchComments(false)
   }
 
@@ -152,12 +148,12 @@ export function CommentSection({
     if (!reportingCommentId) return
 
     await commentsApi.reportComment({
-      commentId: reportingCommentId,
+      id: reportingCommentId,
       reportCommentRequest: {
-        reason,
+        reason: (reason.toLowerCase() as any),
         details,
-        guestName: guestInfo?.guestName,
-        guestEmail: guestInfo?.guestEmail,
+        reporterGuestName: guestInfo?.guestName,
+        reporterGuestEmail: guestInfo?.guestEmail,
       },
     })
 

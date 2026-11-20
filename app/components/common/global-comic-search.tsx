@@ -65,13 +65,14 @@ export function GlobalComicSearch() {
       setHasError(false)
 
       searchApi
-        .getComicSearchSuggestions(
+        .getSearchSuggestions(
           { q: normalizedQuery, limit: MAX_SUGGESTIONS },
           { signal: controller.signal }
         )
         .then((response: any) => {
+          const suggestions = response?.data?.suggestions || response?.suggestions || []
           setSuggestions(
-            Array.isArray(response.suggestions) ? response.suggestions : []
+            Array.isArray(suggestions) ? suggestions : []
           )
           setHasSearched(true)
         })

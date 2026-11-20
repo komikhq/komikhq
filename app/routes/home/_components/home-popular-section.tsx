@@ -19,10 +19,10 @@ export function HomePopularSection({ initialComics }: HomePopularSectionProps) {
     setIsLoading(true)
 
     comicsApi
-      .listTrendingComics({ period: "popular", limit: "20" })
+      .getTrendingComics({ limit: 20 })
       .then((data: any) => {
         if (isMounted) {
-          setPopularComics(data.comics || [])
+          setPopularComics(data.data?.items || data.comics || data.data || [])
         }
       })
       .catch(() => {

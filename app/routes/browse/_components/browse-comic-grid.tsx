@@ -36,18 +36,17 @@ export function BrowseComicGrid() {
           if (matchedGenre) params.set("genre", matchedGenre.id)
         }
 
-        const response = (await comicsApi.browseComics({
-          search: params.get("search") || undefined,
-          q: params.get("q") || undefined,
+        const response = (await comicsApi.listComics({
+          q: params.get("q") || params.get("search") || undefined,
           genre: params.get("genre") || undefined,
-          status: params.get("status") || undefined,
-          type: params.get("type") || undefined,
-          sort: params.get("sort") || undefined,
-          page: params.get("page") || undefined,
-          limit: params.get("limit") || undefined,
+          status: (params.get("status") as any) || undefined,
+          type: (params.get("type") as any) || undefined,
+          sort: (params.get("sort") as any) || undefined,
+          page: params.get("page") ? Number(params.get("page")) : undefined,
+          limit: params.get("limit") ? Number(params.get("limit")) : undefined,
         })) as any
         if (isMounted && currentRequestId === requestId) {
-          setComics(response.comics || response.data || [])
+          setComics(response.data?.items || response.comics || response.data || [])
         }
       } catch {
         if (isMounted && currentRequestId === requestId) setComics([])

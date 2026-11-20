@@ -23,9 +23,8 @@ import {
   AdministrationApi,
   ModerationApi,
   UsersApi,
-  AuthenticationApi,
+  SystemApi,
   RatingsApi,
-  RealtimeApi,
   HealthApi,
   SitemapsApi,
 } from "@komikhq/komikhq-typescript"
@@ -45,39 +44,32 @@ export const healthApi = new HealthApi(sdkConfig)
 export const sitemapsApi = new SitemapsApi(sdkConfig)
 
 // ── Authenticated User APIs ─────────────────────────────────
-export const authenticationApi = new AuthenticationApi(sdkConfig)
 export const bookmarksApi = new BookmarksApi(sdkConfig)
 export const commentsApi = new CommentsApi(sdkConfig)
 export const readingHistoryApi = new ReadingHistoryApi(sdkConfig)
 export const ratingsApi = new RatingsApi(sdkConfig)
 export const viewsApi = new ViewsApi(sdkConfig)
-export const realtimeApi = new RealtimeApi(sdkConfig)
 export const usersApi = new UsersApi(sdkConfig)
 
 // ── Admin APIs ──────────────────────────────────────────────
 export const administrationApi = new AdministrationApi(sdkConfig)
 export const moderationApi = new ModerationApi(sdkConfig)
+export const systemApi = new SystemApi(sdkConfig)
 
 // Re-export the configuration & BASE_PATH from the SDK
 export { sdkConfig }
 export { BASE_PATH } from "@komikhq/komikhq-typescript"
 
 /**
- * Resolves a WebSocket URL dynamically using the SDK's RealtimeApi endpoint definition and BASE_PATH.
- * No hardcoded paths or hosts are used.
+ * Resolves a WebSocket URL dynamically using BASE_PATH.
  */
-export async function getRealtimeWebSocketUrl(
+export function getRealtimeWebSocketUrl(
   channel: string,
   extraParams?: Record<string, string>
-): Promise<string> {
-  const opts = await realtimeApi.connectRealtimeWebSocketRequestOpts({ channel })
-  const url = new URL(opts.path, BASE_PATH)
+): string {
+  const url = new URL("/realtime/ws", BASE_PATH)
   url.protocol = url.protocol === "https:" ? "wss:" : "ws:"
-  if (opts.query) {
-    for (const [key, val] of Object.entries(opts.query)) {
-      if (val != null) url.searchParams.set(key, String(val))
-    }
-  }
+  url.searchParams.set("channel", channel)
   if (extraParams) {
     for (const [key, val] of Object.entries(extraParams)) {
       if (val != null) url.searchParams.set(key, val)

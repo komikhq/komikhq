@@ -103,7 +103,7 @@ export function useAdminUsers(initialPageSize = 10) {
           name: data.name,
           email: data.email,
           password: data.password,
-          role: data.role,
+          role: data.role as any,
         },
       })
       toast.success(`User "${data.name}" successfully created.`)
@@ -130,10 +130,10 @@ export function useAdminUsers(initialPageSize = 10) {
     try {
       await administrationApi.adminUpdateUser({
         id,
-        requestBody: {
+        adminUpdateUserRequest: {
           name: data.name,
           email: data.email,
-          role: data.role,
+          role: data.role as any,
           password: data.password || undefined,
         },
       })

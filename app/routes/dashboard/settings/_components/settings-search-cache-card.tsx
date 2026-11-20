@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
-import { administrationApi } from "@/lib/sdk-client"
+import { systemApi } from "@/lib/sdk-client"
 
 interface ClearCacheResult {
   "cleared-keys": number
@@ -25,9 +25,12 @@ export function SettingsSearchCacheCard() {
   useEffect(() => {
     const fetchCacheCount = async () => {
       try {
-        const res: any = await administrationApi.getSystemMaintenanceStatus()
+        const res: any = await systemApi.getSystemStatus()
         if (res?.data) {
-          setCachedKeysCount(res.data["cached-search-keys-count"])
+          const count = res.data.cachedSearchKeysCount ?? res.data["cached-search-keys-count"]
+          if (count !== undefined) {
+            setCachedKeysCount(count)
+          }
         }
       } catch {
         // silently ignore
@@ -43,9 +46,9 @@ export function SettingsSearchCacheCard() {
     )
 
     try {
-      const data: any = await administrationApi.clearSearchSuggestionCache()
+      const data: any = await systemApi.clearSystemCache()
 
-      const clearedKeys = data?.["cleared-keys"] ?? 0
+      const clearedKeys = data?.data?.clearedKeys ?? data?.["cleared-keys"] ?? 0
       const now = new Date().toLocaleTimeString("en-US", {
         hour: "2-digit",
         minute: "2-digit",

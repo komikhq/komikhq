@@ -7,7 +7,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
-import { administrationApi } from "@/lib/sdk-client"
+import { systemApi } from "@/lib/sdk-client"
 
 interface PurgeOrphansResult {
   "purged-count": number
@@ -27,10 +27,10 @@ export function SettingsR2PurgeCard() {
     )
 
     try {
-      const data: any = await administrationApi.purgeOrphanedStorageFiles()
+      const data: any = await systemApi.purgeSystemStorage()
 
-      const purgedCount = data?.["purged-count"] ?? data?.purgedCount ?? 0
-      const totalSizeMB = data?.["total-size-mb"] ?? data?.totalSizeMB ?? "0.00"
+      const purgedCount = data?.data?.purgedCount ?? data?.["purged-count"] ?? data?.purgedCount ?? 0
+      const totalSizeMB = data?.data?.totalSizeMB ?? data?.["total-size-mb"] ?? data?.totalSizeMB ?? "0.00"
       const now = new Date().toLocaleTimeString("en-US", {
         hour: "2-digit",
         minute: "2-digit",

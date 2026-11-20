@@ -6,4 +6,4 @@ allowBuilds:
   esbuild: true
   workerd: true
 minimumReleaseAgeExclude:
-  - '@komikhq/komikhq-typescript@1.1.1'
+  - '@komikhq/komikhq-typescript@1.1.1 || 1.2.0'

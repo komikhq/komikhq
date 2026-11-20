@@ -23,10 +23,10 @@ export function useListAllComics() {
 
     // Fetch comic catalog with high limit for comprehensive alphabetical index
     comicsApi
-      .browseComics({ limit: "500" })
+      .listComics({ limit: 500 })
       .then((res: any) => {
         if (isMounted) {
-          setComics(res.comics || res.data || [])
+          setComics(res.data?.items || res.comics || res.data || [])
         }
       })
       .catch(() => {

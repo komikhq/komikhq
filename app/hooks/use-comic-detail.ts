@@ -85,11 +85,11 @@ export function useComicDetail(slug?: string, initialData?: ComicDetailData | nu
 
     try {
       if (nextState) {
-        await bookmarksApi.saveBookmark({
-          saveBookmarkRequest: { comicId: targetComicId, status: "reading" },
+        await bookmarksApi.upsertBookmark({
+          upsertBookmarkRequest: { comicId: targetComicId, status: "reading" },
         })
       } else {
-        await bookmarksApi.removeBookmark({ comicId: targetComicId })
+        await bookmarksApi.deleteBookmark({ comicId: targetComicId })
       }
       invalidateCache("/bookmarks")
     } catch {
