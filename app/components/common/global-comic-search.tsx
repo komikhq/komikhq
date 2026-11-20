@@ -70,7 +70,7 @@ export function GlobalComicSearch() {
           { signal: controller.signal }
         )
         .then((response: any) => {
-          const suggestions = response?.data?.suggestions || response?.suggestions || []
+          const suggestions = response?.data || []
           setSuggestions(
             Array.isArray(suggestions) ? suggestions : []
           )

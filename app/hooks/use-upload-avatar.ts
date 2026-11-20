@@ -15,7 +15,10 @@ export function useUploadAvatar() {
         file: fileBlob,
       })
 
-      const finalUrl = response?.avatarUrl || response?.imageUrl
+      const finalUrl =
+        response?.data?.avatarUrl ||
+        response?.avatarUrl ||
+        response?.imageUrl
 
       if (!finalUrl) {
         throw new Error(

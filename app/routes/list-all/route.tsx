@@ -5,6 +5,7 @@ import { ListAllFilterBar } from "./_components/list-all-filter-bar"
 import { ListAllComicTable } from "./_components/list-all-comic-table"
 import { useListAllComics } from "@/hooks/use-list-all-comics"
 import { SITE_NAME } from "@/constants"
+import { comicsApi } from "@/lib/sdk-client"
 
 export function meta(): Route.MetaDescriptors {
   return [
@@ -23,10 +24,20 @@ export function meta(): Route.MetaDescriptors {
   ]
 }
 
-export default function ListAllRoute() {
+export async function loader() {
+  try {
+    const res: any = await comicsApi.listComics({ limit: 500 })
+    const comics = res?.data?.items || res?.comics || res?.data || []
+    return { comics }
+  } catch {
+    return { comics: [] }
+  }
+}
+
+export default function ListAllRoute({ loaderData }: Route.ComponentProps) {
   const [searchParams, setSearchParams] = useSearchParams()
   const { sortedComics, groupedComics, availableLetters, isLoading } =
-    useListAllComics()
+    useListAllComics(loaderData?.comics)
 
   // Track currently active letter from URL search params or fallback to "ALL"
   const [activeLetter, setActiveLetter] = useState<string>(() => {

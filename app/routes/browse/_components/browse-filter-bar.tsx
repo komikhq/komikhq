@@ -25,7 +25,7 @@ import {
   ComboboxItem,
   ComboboxList,
 } from "@/components/ui/combobox"
-import { useBrowseFilters } from "@/hooks/use-browse-filters"
+import { useBrowseFilters, type GenreOption } from "@/hooks/use-browse-filters"
 
 interface BrowseFilterBarProps {
   onFilterChange?: (filters: {
@@ -34,9 +34,10 @@ interface BrowseFilterBarProps {
     status: string
     sort: string
   }) => void
+  initialGenres?: GenreOption[]
 }
 
-export function BrowseFilterBar({ onFilterChange }: BrowseFilterBarProps) {
+export function BrowseFilterBar({ onFilterChange, initialGenres }: BrowseFilterBarProps) {
   const {
     search,
     statusFilter,
@@ -47,7 +48,7 @@ export function BrowseFilterBar({ onFilterChange }: BrowseFilterBarProps) {
     handleSelectGenreItem,
     handleStatusChange,
     handleSortChange,
-  } = useBrowseFilters(onFilterChange)
+  } = useBrowseFilters(onFilterChange, initialGenres)
 
   return (
     <Card>

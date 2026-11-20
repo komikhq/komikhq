@@ -14,7 +14,8 @@ export function useDeleteAccount() {
     async function fetchProfileInfo() {
       try {
         const data: any = await usersApi.getUserProfile()
-        setHasPassword(Boolean(data?.hasPassword))
+        const profile = data?.data || data
+        setHasPassword(Boolean(profile?.hasPassword))
       } catch (e) {
         console.error("Failed to load account profile:", e)
       }

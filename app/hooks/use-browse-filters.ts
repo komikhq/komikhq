@@ -15,25 +15,27 @@ export function useBrowseFilters(
     genre: string
     status: string
     sort: string
-  }) => void
+  }) => void,
+  initialGenres?: GenreOption[]
 ) {
   const [search, setSearch] = useState("")
   const [selectedGenre, setSelectedGenre] = useState("all")
   const [statusFilter, setStatusFilter] = useState("all")
   const [sortBy, setSortBy] = useState("latest")
-  const [genres, setGenres] = useState<GenreOption[]>([])
-  const [isLoadingGenres, setIsLoadingGenres] = useState(true)
+  const [genres, setGenres] = useState<GenreOption[]>(initialGenres || [])
+  const [isLoadingGenres, setIsLoadingGenres] = useState(!initialGenres?.length)
 
   // Fetch public genres from database
   useEffect(() => {
+    if (initialGenres && initialGenres.length > 0) return
     let isMounted = true
     setIsLoadingGenres(true)
 
     genresApi
       .listGenres()
       .then((data: any) => {
-        if (isMounted && data.genres) {
-          setGenres(sortGenresByNaturalName(data.genres))
+        if (isMounted && data.data) {
+          setGenres(sortGenresByNaturalName(data.data))
         }
       })
       .catch((err: any) => {

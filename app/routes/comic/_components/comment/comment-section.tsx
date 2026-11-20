@@ -80,7 +80,7 @@ export function CommentSection({
     commentsApi
       .listComments({ comicId: comicId || "", chapterId: chapterId || undefined })
       .then((data: any) => {
-        const rawList: CommentData[] = data.comments || []
+        const rawList: CommentData[] = data.data || []
         setComments(buildCommentTree(rawList))
       })
       .catch(() => setComments([]))

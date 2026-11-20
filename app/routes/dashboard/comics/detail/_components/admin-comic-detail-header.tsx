@@ -24,7 +24,8 @@ export function AdminComicDetailHeader({
     async function fetchDetail() {
       try {
         const data: any = await comicsApi.getComicBySlug({ slug: comicId })
-        const comicItem = data?.data || data?.comic || data
+        const resolvedData = data?.data || data
+        const comicItem = resolvedData?.comic || resolvedData
         if (comicItem) {
           setComic({ comic: comicItem })
         }

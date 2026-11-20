@@ -19,7 +19,7 @@ export function BookmarkComicGrid() {
     setIsLoading(true)
     bookmarksApi
       .listBookmarks()
-      .then((data: any) => setBookmarks(data.bookmarks || []))
+      .then((data: any) => setBookmarks(data.data || []))
       .catch(() => setBookmarks([]))
       .finally(() => setIsLoading(false))
   }

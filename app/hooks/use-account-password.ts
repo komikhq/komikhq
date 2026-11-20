@@ -21,7 +21,8 @@ export function useAccountPassword() {
     async function fetchProfileData() {
       try {
         const data: any = await usersApi.getUserProfile()
-        setHasPassword(Boolean(data?.hasPassword))
+        const profile = data?.data || data
+        setHasPassword(Boolean(profile?.hasPassword))
       } catch (e) {
         console.error("Failed to load password status:", e)
       } finally {

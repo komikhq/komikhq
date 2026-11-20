@@ -20,7 +20,7 @@ export function HistoryList() {
       .listReadingHistory()
       .then((data: any) => {
         if (isMounted) {
-          setHistory(data.history || [])
+          setHistory(data.data || [])
         }
       })
       .catch(() => {

@@ -26,8 +26,8 @@ export function useComicDetail(slug?: string, initialData?: ComicDetailData | nu
         bookmarksApi
           .listBookmarks()
           .then((res: any) => {
-            if (res.bookmarks) {
-              const isSaved = res.bookmarks.some(
+            if (res.data) {
+              const isSaved = res.data.some(
                 (b: any) => b.comic.id === initialData.comic.id
               )
               setBookmarked(isSaved)
@@ -52,8 +52,8 @@ export function useComicDetail(slug?: string, initialData?: ComicDetailData | nu
             bookmarksApi
               .listBookmarks()
               .then((res: any) => {
-                if (isMounted && res.bookmarks) {
-                  const isSaved = res.bookmarks.some(
+                if (isMounted && res.data) {
+                  const isSaved = res.data.some(
                     (b: any) => b.comic.id === data.comic.id
                   )
                   setBookmarked(isSaved)

@@ -55,6 +55,16 @@ export function meta({ data }: Route.MetaArgs & { data?: any }): Route.MetaDescr
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
     { name: "twitter:image", content: ogImage },
+    {
+      "script:ld+json": {
+        "@context": "https://schema.org",
+        "@type": "ComicSeries",
+        name: formattedTitle,
+        description,
+        image: ogImage,
+        genre: comic?.genres?.map((g: any) => g.name) || [],
+      },
+    },
   ];
 }
 

@@ -13,11 +13,12 @@ export interface ListAllComicItem {
   totalViews?: number
 }
 
-export function useListAllComics() {
-  const [comics, setComics] = useState<ListAllComicItem[]>([])
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+export function useListAllComics(initialComics?: ListAllComicItem[]) {
+  const [comics, setComics] = useState<ListAllComicItem[]>(initialComics || [])
+  const [isLoading, setIsLoading] = useState<boolean>(!initialComics?.length)
 
   useEffect(() => {
+    if (initialComics && initialComics.length > 0) return
     let isMounted = true
     setIsLoading(true)
 

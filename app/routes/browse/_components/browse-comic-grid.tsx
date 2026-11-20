@@ -10,9 +10,13 @@ import { ComicCoverImage } from "@/components/comic/comic-cover-image"
 import { genresApi, comicsApi } from "@/lib/sdk-client"
 import { BROWSE_FILTERS_CHANGE_EVENT } from "@/hooks/use-browse-filters"
 
-export function BrowseComicGrid() {
-  const [comics, setComics] = useState<any[]>([])
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+interface BrowseComicGridProps {
+  initialComics?: any[]
+}
+
+export function BrowseComicGrid({ initialComics }: BrowseComicGridProps = {}) {
+  const [comics, setComics] = useState<any[]>(initialComics || [])
+  const [isLoading, setIsLoading] = useState<boolean>(!initialComics?.length)
 
   useEffect(() => {
     let isMounted = true
@@ -28,7 +32,7 @@ export function BrowseComicGrid() {
         if (genre) {
           if (!genreCache) {
             const response = (await genresApi.listGenres()) as any
-            genreCache = response.genres || []
+            genreCache = response.data || []
           }
           const matchedGenre = genreCache!.find(
             (item) => item.slug === genre || item.id === genre
@@ -65,7 +69,12 @@ export function BrowseComicGrid() {
       )
     }
 
-    void loadComics(++requestId)
+    // Skip client fetch on mount if SSR already provided initial comics and no filters are present
+    const hasActiveFilters = Boolean(window.location.search)
+    if (!initialComics?.length || hasActiveFilters) {
+      void loadComics(++requestId)
+    }
+
     window.addEventListener(BROWSE_FILTERS_CHANGE_EVENT, reloadComics)
 
     return () => {
