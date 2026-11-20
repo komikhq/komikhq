@@ -84,9 +84,7 @@ export function useAdminComics(initialPageSize = 15) {
       for (const [key, val] of formData.entries()) {
         params[key] = val
       }
-      const data: any = await administrationApi.adminCreateComic({
-        adminCreateComicRequest: params,
-      })
+      const data: any = await administrationApi.adminCreateComic(params)
       if (data && (data.status === "ok" || data.success)) {
         toast.success("New comic successfully added.")
         fetchComics()
@@ -112,7 +110,7 @@ export function useAdminComics(initialPageSize = 15) {
       }
       const data: any = await administrationApi.adminUpdateComic({
         id,
-        adminUpdateComicRequest: params,
+        ...params,
       })
       if (data && (data.status === "ok" || data.success)) {
         toast.success("Comic successfully updated.")

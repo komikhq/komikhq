@@ -76,23 +76,50 @@ export function useAdminChapters(comicId: string) {
     try {
       onProgress?.(5, "Initializing new chapter...")
 
-      // Step 1: Create chapter
-      const slug = `ch-${input.chapterNumber.replace(/[^0-9.]/g, "-")}`
-      const initData: any = await administrationApi.adminCreateChapter({
-        adminCreateChapterRequest: {
+      // Step 1: Initialize chapter
+      const initData: any = await administrationApi.adminInitializeChapter({
+        adminInitializeChapterRequest: {
           comicId,
           chapterNumber: input.chapterNumber,
-          slug,
           title: input.title || undefined,
           accessTier: input.accessTier || "free",
           isEarlyAccess: input.isEarlyAccess || false,
+          totalPages: input.pages.length,
         },
       })
 
-      const chapterId = initData?.data?.id || initData?.chapter?.id
+      const chapterId = initData?.data?.id || initData?.chapter?.id || initData?.id
       if (!chapterId) {
-        throw new Error(initData?.message || "Failed to create chapter.")
+        throw new Error(initData?.message || "Failed to initialize chapter.")
       }
+
+      // Step 2: Upload each page sequentially with progress tracking
+      const totalPages = input.pages.length
+      for (let i = 0; i < totalPages; i++) {
+        const file = input.pages[i]
+        const pageNumber = i + 1
+        const dims = await getImageDimensions(file)
+
+        await administrationApi.adminUploadChapterPage({
+          id: chapterId,
+          file,
+          pageNumber,
+          width: dims?.width,
+          height: dims?.height,
+        })
+
+        const percent = 10 + Math.round(((i + 1) / totalPages) * 80)
+        onProgress?.(percent, `Uploading page ${pageNumber} of ${totalPages}...`)
+      }
+
+      // Step 3: Finalize chapter
+      onProgress?.(95, "Finalizing chapter...")
+      await administrationApi.adminFinalizeChapter({
+        id: chapterId,
+        adminFinalizeChapterRequest: {
+          totalPages,
+        },
+      })
 
       onProgress?.(100, "All chapter pages uploaded successfully!")
       toast.success("New chapter successfully created.")
@@ -157,17 +184,34 @@ export function useAdminChapters(comicId: string) {
   }
 
   const updateChapter = async (
-    _chapterId: string,
-    _data: {
+    chapterId: string,
+    data: {
       chapterNumber?: string
       title?: string
       accessTier?: string
       isEarlyAccess?: boolean
     }
   ) => {
-    toast.success("Chapter updated successfully.")
-    fetchChapters()
-    return true
+    setSubmitting(true)
+    try {
+      await administrationApi.adminUpdateChapter({
+        id: chapterId,
+        adminUpdateChapterRequest: {
+          chapterNumber: data.chapterNumber,
+          title: data.title,
+          accessTier: data.accessTier,
+          isEarlyAccess: data.isEarlyAccess,
+        },
+      })
+      toast.success("Chapter updated successfully.")
+      fetchChapters(true)
+      return true
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update chapter.")
+      return false
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const deleteChapter = async (chapterId: string) => {

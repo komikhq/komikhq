@@ -1,7 +1,7 @@
 import { sitemapsApi } from "@/lib/sdk-client";
 
 export async function loader() {
-  const res = await sitemapsApi.getComicSitemapXmlRaw();
+  const res = await sitemapsApi.getComicsSitemapXmlRaw({});
   const rawXml = await res.raw.text();
 
   const xml = rawXml.includes("<?xml-stylesheet")

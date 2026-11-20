@@ -1,8 +1,15 @@
+import { sitemapsApi } from "@/lib/sdk-client";
+
 export async function loader() {
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type="text/css" href="/sitemap.css"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-</urlset>`;
+  const res = await sitemapsApi.getChaptersSitemapXmlRaw({});
+  const rawXml = await res.raw.text();
+
+  const xml = rawXml.includes("<?xml-stylesheet")
+    ? rawXml
+    : rawXml.replace(
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<?xml version="1.0" encoding="UTF-8"?>\n<?xml-stylesheet type="text/css" href="/sitemap.css"?>'
+      );
 
   return new Response(xml, {
     headers: {
