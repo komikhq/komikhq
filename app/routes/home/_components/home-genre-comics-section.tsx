@@ -22,7 +22,15 @@ export function HomeGenreComicsSection() {
       .listComics({ limit: 100 })
       .then((data: any) => {
         if (!isMounted) return
-        const comics: any[] = data.data?.items || data.comics || data.data || []
+        const comics: any[] = Array.isArray(data?.data?.items)
+          ? data.data.items
+          : Array.isArray(data?.data?.comics)
+          ? data.data.comics
+          : Array.isArray(data?.data)
+          ? data.data
+          : Array.isArray(data?.comics)
+          ? data.comics
+          : []
         const map: Record<string, any[]> = {}
         COMMON_GENRES.forEach((g) => {
           map[g.slug] = []

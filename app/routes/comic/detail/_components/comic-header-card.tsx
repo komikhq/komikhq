@@ -189,7 +189,11 @@ export function ComicHeaderCard({ slug, initialData }: ComicHeaderCardProps) {
     )
   }
 
-  const { comic, genres = [], creators = [], chapters = [] } = comicData
+  const raw: any = (comicData as any)?.data || comicData || {}
+  const comic = raw.comic || raw
+  const genres = raw.genres || []
+  const creators = raw.creators || []
+  const chapters = raw.chapters || []
   const firstChapter = chapters[0]
   const visibleGenres = genres.slice(0, 3)
   const remainingGenres = genres.slice(3)

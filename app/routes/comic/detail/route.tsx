@@ -16,10 +16,13 @@ export async function loader({ params }: Route.LoaderArgs) {
     }
   }
 
+  const rawData = comicData?.data || comicData;
+  const resolvedComic = rawData?.comic || rawData;
+
   return {
     slug,
-    comicData,
-    comic: comicData?.comic || comicData,
+    comicData: rawData,
+    comic: resolvedComic,
   };
 }
 
