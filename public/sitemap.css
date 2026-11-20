@@ -59,7 +59,7 @@ sitemapindex::before {
 urlset::after,
 sitemapindex::after {
   display: block;
-  content: "Generated for search engines and web crawlers. Styled with KomikHQ Shadcn Design Tokens.";
+  content: "Generated for search engines and web crawlers.";
   font-size: 0.875rem;
   color: var(--muted-foreground);
   margin-top: 2rem;

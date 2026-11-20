@@ -27,7 +27,8 @@
 		"BETTER_AUTH_URL": "https://api.komikhq.com",
 		"PUBLIC_API_URL": "https://api.komikhq.com",
 		"PUBLIC_GA_ID": "G-V44GMCRBP2",
-		"PUBLIC_CLARITY_ID": "yui00n93x1"
+		"PUBLIC_CLARITY_ID": "yui00n93x1",
+		"BASE_PATH": "https://api.komikhq.com"
 	},
 	"observability": {
 		"enabled": true

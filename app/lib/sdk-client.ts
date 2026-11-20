@@ -11,7 +11,7 @@
 
 import {
   Configuration,
-  BASE_PATH,
+  BASE_PATH as DEFAULT_BASE_PATH,
   ComicsApi,
   ChaptersApi,
   GenresApi,
@@ -30,7 +30,14 @@ import {
 } from "@komikhq/komikhq-typescript"
 import { coalescingFetch } from "@/lib/coalescing-fetch"
 
+// Dynamic API Base URL resolution: prefers env vars (SSR or Vite client) before fallback to SDK default
+export const BASE_PATH =
+  (typeof process !== "undefined" && (process.env.PUBLIC_API_URL || process.env.BASE_PATH)) ||
+  (typeof import.meta !== "undefined" && (import.meta.env?.PUBLIC_API_URL || (import.meta.env as any)?.BASE_PATH || import.meta.env?.VITE_PUBLIC_API_URL)) ||
+  DEFAULT_BASE_PATH
+
 const sdkConfig = new Configuration({
+  basePath: BASE_PATH,
   credentials: "include", // Automatically sends the komikhq.session_token cookie
   fetchApi: coalescingFetch, // Single-flight + in-memory TTL cache
 })
@@ -56,9 +63,8 @@ export const administrationApi = new AdministrationApi(sdkConfig)
 export const moderationApi = new ModerationApi(sdkConfig)
 export const systemApi = new SystemApi(sdkConfig)
 
-// Re-export the configuration & BASE_PATH from the SDK
+// Re-export the configuration & dynamically resolved BASE_PATH
 export { sdkConfig }
-export { BASE_PATH } from "@komikhq/komikhq-typescript"
 
 /**
  * Resolves a WebSocket URL dynamically using BASE_PATH.
