@@ -2,7 +2,7 @@ import type { Route } from "./+types/route";
 import { BookmarkHeader } from "./_components/bookmark-header";
 import { BookmarkComicGrid } from "./_components/bookmark-comic-grid";
 import { SITE_NAME } from "@/constants";
-import { requireUser } from "@/lib/auth-server";
+import { requireUser } from "@/lib/auth";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const sessionData = await requireUser(request);

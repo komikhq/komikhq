@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { authClient } from "@/lib/auth-client"
+import { authClient } from "@/lib/auth"
 import { useGuestOnly } from "@/hooks/use-guest-only"
 import { useResendCooldown } from "@/hooks/use-resend-cooldown"
 

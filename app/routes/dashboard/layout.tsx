@@ -3,7 +3,7 @@ import type { Route } from "./+types/layout";
 import { AdminTabNav, type AdminTabNavProps } from "@/routes/dashboard/_components/admin-tab-nav";
 import { AdminFooter } from "@/routes/dashboard/_components/admin-footer";
 import { SITE_NAME } from "@/constants";
-import { requireAdmin } from "@/lib/auth-server";
+import { requireAdmin } from "@/lib/auth";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const sessionData = await requireAdmin(request);

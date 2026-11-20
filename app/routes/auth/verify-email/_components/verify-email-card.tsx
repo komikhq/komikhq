@@ -11,7 +11,7 @@ import { toast } from "sonner"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { authClient } from "@/lib/auth-client"
+import { authClient } from "@/lib/auth"
 import { useResendCooldown } from "@/hooks/use-resend-cooldown"
 
 export function VerifyEmailCard() {

@@ -1,5 +1,8 @@
 import { redirect } from "react-router"
+import { createAuthClient } from "better-auth/react"
 import { BASE_PATH } from "@/lib/sdk-client"
+
+// ── Types ───────────────────────────────────────────────────
 
 export interface AuthSessionData {
   user: {
@@ -18,21 +21,40 @@ export interface AuthSessionData {
   }
 }
 
+// ── Browser Auth Client (better-auth/react) ─────────────────
+
+export const authClient = createAuthClient({
+  baseURL: BASE_PATH,
+  basePath: "/auth",
+  fetchOptions: {
+    credentials: "include",
+  },
+})
+
+export const { useSession, signIn, signOut, signUp, sendVerificationEmail } =
+  authClient
+
+// ── SSR Session Fetcher ─────────────────────────────────────
+
 /**
- * Extracts and validates the current session directly on the server (Worker SSR).
+ * Extracts and validates the current session on the server (Worker SSR).
  * Forwards the browser's Cookie header to the Better Auth backend.
+ *
+ * Uses Nitro's `/auth/get-session` endpoint (no /v1/ prefix).
  */
-export async function getSession(request: Request): Promise<AuthSessionData | null> {
+export async function getSession(
+  request: Request
+): Promise<AuthSessionData | null> {
   const cookieHeader = request.headers.get("Cookie")
   if (!cookieHeader || !cookieHeader.includes("session")) {
     return null
   }
 
   try {
-    const res = await fetch(`${BASE_PATH}/v1/auth/get-session`, {
+    const res = await fetch(`${BASE_PATH}/auth/get-session`, {
       headers: {
         cookie: cookieHeader,
-        "Accept": "application/json",
+        Accept: "application/json",
       },
     })
 
@@ -47,13 +69,15 @@ export async function getSession(request: Request): Promise<AuthSessionData | nu
 
     return null
   } catch (err) {
-    console.error("[auth-server] Error fetching session:", err)
+    console.error("[auth] Error fetching session:", err)
     return null
   }
 }
 
+// ── Route Guards ────────────────────────────────────────────
+
 /**
- * Guard for guest-only routes (e.g. /login, /register, /forgot-password, /reset-password).
+ * Guard for guest-only routes (e.g. /login, /register, /forgot-password).
  * If authenticated, performs an immediate HTTP 302 redirect on the server.
  */
 export async function requireGuest(
@@ -89,11 +113,12 @@ export async function requireUser(
  * Guard for admin-only routes (e.g. /dashboard/*).
  * If unauthenticated or role is not admin, performs an immediate HTTP 302 redirect.
  */
-export async function requireAdmin(request: Request): Promise<AuthSessionData> {
+export async function requireAdmin(
+  request: Request
+): Promise<AuthSessionData> {
   const session = await requireUser(request)
   if (session.user.role !== "admin") {
     throw redirect("/")
   }
   return session
 }
-

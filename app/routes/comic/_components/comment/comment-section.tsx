@@ -5,7 +5,7 @@ import { CommentInput } from "./comment-input"
 import { CommentTreeItem, type CommentData } from "./comment-tree-item"
 import { CommentReportModal } from "./comment-report-modal"
 import { commentsApi, getRealtimeWebSocketUrl } from "@/lib/sdk-client"
-import { authClient } from "@/lib/auth-client"
+import { authClient } from "@/lib/auth"
 
 interface CommentSectionProps {
   comicId?: string

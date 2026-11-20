@@ -2,7 +2,7 @@ import { Outlet, useLocation } from "react-router";
 import type { Route } from "./+types/layout";
 import { AccountTabNav } from "@/routes/account/_components/account-tab-nav";
 import { UserCircleIcon as UserCircle } from "@phosphor-icons/react";
-import { requireUser } from "@/lib/auth-server";
+import { requireUser } from "@/lib/auth";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const sessionData = await requireUser(request);

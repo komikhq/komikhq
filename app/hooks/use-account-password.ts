@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { toast } from "sonner"
 import { usersApi } from "@/lib/sdk-client"
-import { authClient } from "@/lib/auth-client"
+import { authClient } from "@/lib/auth"
 
 export function useAccountPassword() {
   const [hasPassword, setHasPassword] = useState<boolean | null>(null)

@@ -4,7 +4,7 @@ import { toast } from "sonner"
 import {
   authClient,
   sendVerificationEmail,
-} from "@/lib/auth-client"
+} from "@/lib/auth"
 
 export interface UseAuthReturn {
   user: any

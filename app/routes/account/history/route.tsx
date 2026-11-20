@@ -2,7 +2,7 @@ import type { Route } from "./+types/route";
 import { HistoryHeader } from "./_components/history-header";
 import { HistoryList } from "./_components/history-list";
 import { SITE_NAME } from "@/constants";
-import { requireUser } from "@/lib/auth-server";
+import { requireUser } from "@/lib/auth";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const sessionData = await requireUser(request);

@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react"
 import { toast } from "sonner"
-import { authClient } from "@/lib/auth-client"
+import { authClient } from "@/lib/auth"
 
 export function useUpdateUserName() {
   const [isEditingName, setIsEditingName] = useState(false)

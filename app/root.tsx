@@ -20,7 +20,7 @@ import { GlobalPresenceListener } from "@/components/common/global-presence-list
 import { CookieConsent } from "@/components/common/cookie-consent";
 import { GoogleAnalytics, MicrosoftClarity } from "@/components/common/analytics";
 import { ErrorViewCard } from "@/components/common/error-view-card";
-import { getSession } from "@/lib/auth-server";
+import { getSession } from "@/lib/auth";
 import { useAuth } from "@/hooks/use-auth";
 import { AuthProvider } from "@/components/common/auth/auth-provider";
 import { SITE_NAME, SITE_DESCRIPTION } from "@/constants";

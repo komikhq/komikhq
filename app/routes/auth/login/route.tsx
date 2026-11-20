@@ -1,7 +1,7 @@
 import type { Route } from "./+types/route";
 import { LoginFormCard } from "./_components/login-form-card";
 import { SITE_NAME } from "@/constants";
-import { requireGuest } from "@/lib/auth-server";
+import { requireGuest } from "@/lib/auth";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);

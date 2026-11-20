@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { toast } from "sonner"
-import { authClient } from "@/lib/auth-client"
+import { authClient } from "@/lib/auth"
 import { usersApi } from "@/lib/sdk-client"
 
 export function useUploadAvatar() {
