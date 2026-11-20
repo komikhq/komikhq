@@ -1,0 +1,117 @@
+/* ==========================================================================
+   KomikHQ XML Sitemap Stylesheet
+   Powered by Shadcn Design Tokens (OKLCH)
+   ========================================================================== */
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.147 0.004 49.3);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.147 0.004 49.3);
+  --primary: oklch(0.555 0.163 48.998);
+  --primary-foreground: oklch(0.987 0.022 95.277);
+  --muted: oklch(0.96 0.002 17.2);
+  --muted-foreground: oklch(0.547 0.021 43.1);
+  --border: oklch(0.922 0.005 34.3);
+  --radius: 0.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: oklch(0.147 0.004 49.3);
+    --foreground: oklch(0.986 0.002 67.8);
+    --card: oklch(0.214 0.009 43.1);
+    --card-foreground: oklch(0.986 0.002 67.8);
+    --primary: oklch(0.473 0.137 46.201);
+    --primary-foreground: oklch(0.987 0.022 95.277);
+    --muted: oklch(0.268 0.011 36.5);
+    --muted-foreground: oklch(0.714 0.014 41.2);
+    --border: oklch(1 0 0 / 12%);
+  }
+}
+
+/* Root containers */
+urlset,
+sitemapindex {
+  display: block;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--background);
+  color: var(--foreground);
+  max-width: 1040px;
+  margin: 2rem auto;
+  padding: 2rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-sizing: border-box;
+}
+
+/* Page Header */
+urlset::before,
+sitemapindex::before {
+  display: block;
+  content: "KomikHQ XML Sitemap";
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin-bottom: 0.5rem;
+}
+
+urlset::after,
+sitemapindex::after {
+  display: block;
+  content: "Generated for search engines and web crawlers. Styled with KomikHQ Shadcn Design Tokens.";
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+/* Row items */
+url,
+sitemap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.875rem 1rem;
+  margin: 0.35rem 0;
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) - 2px);
+  gap: 0.75rem;
+  box-sizing: border-box;
+}
+
+/* URL Location */
+loc {
+  display: block;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--primary);
+  word-break: break-all;
+  flex: 1 1 50%;
+}
+
+/* Last Modified Timestamp */
+lastmod {
+  display: inline-block;
+  font-size: 0.8125rem;
+  color: var(--muted-foreground);
+  background-color: var(--muted);
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.25rem;
+}
+
+/* Frequency & Priority Tags */
+changefreq,
+priority {
+  display: inline-block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  background-color: var(--muted);
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.25rem;
+  margin-left: 0.25rem;
+}
