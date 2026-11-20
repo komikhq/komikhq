@@ -55,7 +55,9 @@ export function useAuth(): UseAuthReturn {
 
       if (err) {
         const msg =
-          err.message || "Login failed. Check your email and password."
+          err.status === 500
+            ? "Authentication server encountered an error. Please try again later."
+            : err.message || "Login failed. Check your email and password."
         setAuthError(msg)
         toast.error(msg)
         return false
@@ -65,7 +67,10 @@ export function useAuth(): UseAuthReturn {
       revalidator.revalidate()
       return true
     } catch (e: any) {
-      const msg = e.message || "Login failed."
+      const msg =
+        e?.status === 500
+          ? "Authentication server encountered an error. Please try again later."
+          : e.message || "Login failed."
       setAuthError(msg)
       toast.error(msg)
       return false
@@ -74,25 +79,37 @@ export function useAuth(): UseAuthReturn {
     }
   }
 
-  const handleSignInGoogle = async () => {
+  const handleSignInSocial = async (provider: "google" | "discord" | "facebook") => {
     setIsLoading(true)
     setAuthError(null)
     try {
       await authClient.signIn.social({
-        provider: "google",
+        provider,
         callbackURL: window.location.origin + "/account",
         newUserCallbackURL: window.location.origin + "/account",
-        authParams: {
-          prompt: "select_account consent",
-        },
+        ...(provider === "google"
+          ? {
+              authParams: {
+                prompt: "select_account consent",
+              },
+            }
+          : {}),
       } as any)
     } catch (e: any) {
-      const msg = e.message || "Login with Google failed."
+      const providerName = provider.charAt(0).toUpperCase() + provider.slice(1)
+      const msg =
+        e?.status === 500
+          ? `${providerName} OAuth service is currently unavailable.`
+          : e.message || `Login with ${providerName} failed.`
       setAuthError(msg)
       toast.error(msg)
       setIsLoading(false)
     }
   }
+
+  const handleSignInGoogle = async () => handleSignInSocial("google")
+  const handleSignInDiscord = async () => handleSignInSocial("discord")
+  const handleSignInFacebook = async () => handleSignInSocial("facebook")
 
   const handleSignUpEmail = async (
     name: string,
@@ -186,6 +203,8 @@ export function useAuth(): UseAuthReturn {
     setAuthError,
     handleSignInEmail,
     handleSignInGoogle,
+    handleSignInDiscord,
+    handleSignInFacebook,
     handleSignUpEmail,
     handleSendVerificationEmail,
     handleSignOut,

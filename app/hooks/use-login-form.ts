@@ -13,6 +13,8 @@ export function useLoginForm() {
   const {
     handleSignInEmail,
     handleSignInGoogle,
+    handleSignInDiscord,
+    handleSignInFacebook,
     handleSendVerificationEmail,
     isLoading,
     authError,
@@ -83,5 +85,7 @@ export function useLoginForm() {
     handleSubmit,
     handleResendUnverified,
     handleSignInGoogle,
+    handleSignInDiscord,
+    handleSignInFacebook,
   }
 }
