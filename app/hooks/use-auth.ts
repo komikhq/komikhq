@@ -84,8 +84,9 @@ export function useAuth(): UseAuthReturn {
   const handleSignInSocial = async (provider: "google" | "discord" | "facebook") => {
     setIsLoading(true)
     setAuthError(null)
+    const providerName = provider.charAt(0).toUpperCase() + provider.slice(1)
     try {
-      await authClient.signIn.social({
+      const result = await authClient.signIn.social({
         provider,
         callbackURL: window.location.origin + "/account",
         newUserCallbackURL: window.location.origin + "/account",
@@ -97,8 +98,17 @@ export function useAuth(): UseAuthReturn {
             }
           : {}),
       } as any)
+
+      if (result?.error) {
+        const msg =
+          result.error.status === 500
+            ? `${providerName} OAuth service is currently unavailable.`
+            : result.error.message || `Login with ${providerName} failed.`
+        setAuthError(msg)
+        toast.error(msg)
+        setIsLoading(false)
+      }
     } catch (e: any) {
-      const providerName = provider.charAt(0).toUpperCase() + provider.slice(1)
       const msg =
         e?.status === 500
           ? `${providerName} OAuth service is currently unavailable.`
