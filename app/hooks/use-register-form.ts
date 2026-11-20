@@ -30,6 +30,8 @@ export function useRegisterForm() {
   const {
     handleSignUpEmail,
     handleSignInGoogle,
+    handleSignInDiscord,
+    handleSignInFacebook,
     handleSendVerificationEmail,
     isLoading,
     authError,
@@ -96,5 +98,7 @@ export function useRegisterForm() {
     handleSubmit,
     handleResend,
     handleSignInGoogle,
+    handleSignInDiscord,
+    handleSignInFacebook,
   }
 }

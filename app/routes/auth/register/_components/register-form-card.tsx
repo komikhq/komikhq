@@ -49,6 +49,8 @@ export function RegisterFormCard() {
     handleSubmit,
     handleResend,
     handleSignInGoogle,
+    handleSignInDiscord,
+    handleSignInFacebook,
   } = useRegisterForm()
 
   return (
@@ -106,16 +108,41 @@ export function RegisterFormCard() {
                   </div>
                 )}
 
-                {/* One-Click Google OAuth */}
-                <Button
-                  variant="outline"
-                  className="flex h-10 w-full items-center justify-center gap-2"
-                  onClick={handleSignInGoogle}
-                  disabled={isLoading}
-                >
-                  <GoogleLogo className="h-4 w-4 text-primary" weight="bold" />
-                  <span>Sign up with Google</span>
-                </Button>
+                {/* Social Logins */}
+                <div className="grid grid-cols-3 gap-2">
+                  <Button
+                    variant="outline"
+                    type="button"
+                    className="flex h-10 items-center justify-center gap-2 px-2 text-xs font-medium"
+                    onClick={handleSignInGoogle}
+                    disabled={isLoading}
+                  >
+                    <img src="/images/google.svg" alt="Google" className="h-4 w-4" />
+                    <span>Google</span>
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    type="button"
+                    className="flex h-10 items-center justify-center gap-2 px-2 text-xs font-medium"
+                    onClick={handleSignInDiscord}
+                    disabled={isLoading}
+                  >
+                    <img src="/images/discord.svg" alt="Discord" className="h-4 w-4" />
+                    <span>Discord</span>
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    type="button"
+                    className="flex h-10 items-center justify-center gap-2 px-2 text-xs font-medium"
+                    onClick={handleSignInFacebook}
+                    disabled={isLoading}
+                  >
+                    <img src="/images/facebook.svg" alt="Facebook" className="h-4 w-4" />
+                    <span>Facebook</span>
+                  </Button>
+                </div>
 
                 <div className="relative my-2 flex items-center justify-center text-xs text-muted-foreground uppercase">
                   <span className="bg-card px-2">Or sign up with email</span>

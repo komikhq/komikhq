@@ -16,6 +16,8 @@ export interface UseAuthReturn {
   setAuthError: (err: string | null) => void
   handleSignInEmail: (email: string, password: string) => Promise<boolean>
   handleSignInGoogle: () => Promise<void>
+  handleSignInDiscord: () => Promise<void>
+  handleSignInFacebook: () => Promise<void>
   handleSignUpEmail: (
     name: string,
     email: string,
