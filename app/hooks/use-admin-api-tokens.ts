@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react"
 import { toast } from "sonner"
+import { BASE_PATH } from "@/lib/sdk-client"
 
 export interface ApiTokenRecord {
   id: string
@@ -11,61 +12,6 @@ export interface ApiTokenRecord {
   expiresAt?: string | null
 }
 
-const STORAGE_KEY = "komikhq_admin_mock_api_tokens"
-
-const INITIAL_MOCK_TOKENS: ApiTokenRecord[] = [
-  {
-    id: "tok_1a2b3c4d5e",
-    name: "Production Scraper Daemon",
-    tokenPrefix: "khq_live_9a2f1b",
-    scopes: ["read:comics", "write:comics"],
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 14).toISOString(),
-    lastUsedAt: new Date(Date.now() - 1000 * 60 * 18).toISOString(),
-    expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 76).toISOString(),
-  },
-  {
-    id: "tok_6f7e8d9c0b",
-    name: "CI/CD Deployment Pipeline",
-    tokenPrefix: "khq_live_c4d1e2",
-    scopes: ["admin:full"],
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 45).toISOString(),
-    lastUsedAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
-    expiresAt: null,
-  },
-  {
-    id: "tok_1122334455",
-    name: "External Metrics & Analytics Ingestion",
-    tokenPrefix: "khq_live_f890ab",
-    scopes: ["read:comics", "manage:system"],
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3).toISOString(),
-    lastUsedAt: null,
-    expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 27).toISOString(),
-  },
-]
-
-function getStoredTokens(): ApiTokenRecord[] {
-  if (typeof window === "undefined") return INITIAL_MOCK_TOKENS
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_MOCK_TOKENS))
-      return INITIAL_MOCK_TOKENS
-    }
-    return JSON.parse(raw)
-  } catch {
-    return INITIAL_MOCK_TOKENS
-  }
-}
-
-function saveStoredTokens(tokens: ApiTokenRecord[]): void {
-  if (typeof window === "undefined") return
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(tokens))
-  } catch (err) {
-    console.error("Failed to persist mock tokens:", err)
-  }
-}
-
 export function useAdminApiTokens() {
   const [tokens, setTokens] = useState<ApiTokenRecord[]>([])
   const [loading, setLoading] = useState(true)
@@ -74,10 +20,13 @@ export function useAdminApiTokens() {
   const fetchTokens = useCallback(async () => {
     setLoading(true)
     try {
-      // Simulated network latency
-      await new Promise((r) => setTimeout(r, 200))
-      const data = getStoredTokens()
-      setTokens(data)
+      const res = await fetch(`${BASE_PATH}/admin/api-tokens`, {
+        credentials: "include",
+      })
+      if (!res.ok) throw new Error("Failed to load API tokens list")
+      const data = await res.json()
+      const list = data?.tokens || data?.data || []
+      setTokens(list)
     } catch {
       toast.error("Failed to load API tokens list")
     } finally {
@@ -106,33 +55,23 @@ export function useAdminApiTokens() {
 
     setSubmitting(true)
     try {
-      await new Promise((r) => setTimeout(r, 350))
+      const res = await fetch(`${BASE_PATH}/admin/api-tokens`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(data),
+      })
 
-      const randomPart = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10)
-      const secretPart = Math.random().toString(36).substring(2, 12) + Math.random().toString(36).substring(2, 12)
-      const tokenPrefix = `khq_live_${randomPart.substring(0, 6)}`
-      const rawToken = `${tokenPrefix}_${secretPart}`
-
-      const expiresAt =
-        data.expiresInDays && data.expiresInDays > 0
-          ? new Date(Date.now() + 1000 * 60 * 60 * 24 * data.expiresInDays).toISOString()
-          : null
-
-      const newToken: ApiTokenRecord = {
-        id: `tok_${Math.random().toString(36).substring(2, 12)}`,
-        name: data.name.trim(),
-        tokenPrefix,
-        scopes: data.scopes,
-        createdAt: new Date().toISOString(),
-        lastUsedAt: null,
-        expiresAt,
+      if (!res.ok) {
+        const err = await res.json().catch(() => null)
+        throw new Error(err?.message || "Failed to generate token")
       }
 
-      const updated = [newToken, ...getStoredTokens()]
-      saveStoredTokens(updated)
-      setTokens(updated)
+      const resData = await res.json()
+      const rawToken = resData.rawToken
 
-      toast.success(`API Token "${newToken.name}" created successfully.`)
+      toast.success(`API Token "${data.name.trim()}" created successfully.`)
+      fetchTokens()
       return { success: true, rawToken }
     } catch (err: any) {
       toast.error(err.message || "Failed to generate token")
@@ -145,14 +84,15 @@ export function useAdminApiTokens() {
   const revokeToken = async (id: string): Promise<boolean> => {
     setSubmitting(true)
     try {
-      await new Promise((r) => setTimeout(r, 250))
-      const current = getStoredTokens()
-      const target = current.find((t) => t.id === id)
-      const updated = current.filter((t) => t.id !== id)
-      saveStoredTokens(updated)
-      setTokens(updated)
+      const res = await fetch(`${BASE_PATH}/admin/api-tokens/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      })
 
-      toast.success(`Token "${target?.name || id}" revoked successfully.`)
+      if (!res.ok) throw new Error("Failed to revoke token")
+
+      toast.success("Token revoked successfully.")
+      fetchTokens()
       return true
     } catch (err: any) {
       toast.error(err.message || "Failed to revoke token")
