@@ -36,6 +36,7 @@ export default [
     route("dashboard/users", "routes/dashboard/users/route.tsx"),
     route("dashboard/moderation", "routes/dashboard/moderation/route.tsx"),
     route("dashboard/analytics", "routes/dashboard/analytics/route.tsx"),
+    route("dashboard/api-tokens", "routes/dashboard/api-tokens/route.tsx"),
     route("dashboard/settings", "routes/dashboard/settings/route.tsx"),
   ]),
 

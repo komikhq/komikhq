@@ -8,6 +8,7 @@ import {
   GearIcon as Gear,
   ShieldCheckIcon as ShieldCheck,
   ChatDotsIcon as ChatDots,
+  KeyIcon as Key,
 } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
 
@@ -19,6 +20,7 @@ export interface AdminTabNavProps {
     | "genres"
     | "moderation"
     | "analytics"
+    | "api-tokens"
     | "settings"
 }
 
@@ -49,6 +51,12 @@ export function AdminTabNav({ currentTab }: AdminTabNavProps) {
       label: "Analytics",
       href: "/dashboard/analytics",
       icon: ChartBar,
+    },
+    {
+      id: "api-tokens",
+      label: "API Tokens",
+      href: "/dashboard/api-tokens",
+      icon: Key,
     },
     {
       id: "settings",

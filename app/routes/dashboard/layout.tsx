@@ -27,6 +27,7 @@ export default function DashboardLayout() {
   else if (path.includes("/dashboard/genres")) currentTab = "genres";
   else if (path.includes("/dashboard/moderation")) currentTab = "moderation";
   else if (path.includes("/dashboard/analytics")) currentTab = "analytics";
+  else if (path.includes("/dashboard/api-tokens")) currentTab = "api-tokens";
   else if (path.includes("/dashboard/settings")) currentTab = "settings";
 
   return (
