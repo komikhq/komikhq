@@ -43,7 +43,11 @@ export function useAdminUsers(initialPageSize = 10) {
       })
 
       const rawUsers: UserItem[] =
-        resJson?.data?.users || resJson?.users || []
+        resJson?.data?.items ||
+        resJson?.data?.users ||
+        resJson?.users ||
+        resJson?.items ||
+        []
 
       // Client-side role filter fallback if server doesn't filter role
       const filtered =
